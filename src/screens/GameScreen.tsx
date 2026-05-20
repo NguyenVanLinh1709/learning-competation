@@ -1,0 +1,132 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useGameStore } from '../store/gameStore';
+import { useTheme } from '../hooks/useTheme';
+import { PlayerPanel } from '../components/PlayerPanel';
+import { TimerBar } from '../components/TimerBar';
+import type { PlayerPosition, RootStackParamList } from '../types';
+import { SIZES } from '../constants/theme';
+
+type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Game'> };
+
+export default function GameScreen({ navigation }: Props) {
+  const {
+    config, questions, currentIndex,
+    player1, player2, phase,
+    submitAnswer, resolveQuestion, nextQuestion,
+  } = useGameStore();
+
+  const { C } = useTheme();
+
+  const [remainingMs, setRemainingMs] = useState(config?.timeLimitMs ?? 15000);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const questionStartRef = useRef<number>(Date.now());
+  const onTimeUpRef = useRef<() => void>(() => {});
+
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+  }, []);
+
+  const startTimer = useCallback(() => {
+    if (!config) return;
+    clearTimer();
+    questionStartRef.current = Date.now();
+    setRemainingMs(config.timeLimitMs);
+
+    timerRef.current = setInterval(() => {
+      const left = Math.max(0, config.timeLimitMs - (Date.now() - questionStartRef.current));
+      setRemainingMs(left);
+      if (left <= 0) { clearTimer(); onTimeUpRef.current(); }
+    }, 50);
+  }, [config, clearTimer]);
+
+  onTimeUpRef.current = () => resolveQuestion();
+
+  useEffect(() => {
+    if (phase === 'active') startTimer();
+    return clearTimer;
+  }, [phase, currentIndex]);
+
+  useEffect(() => {
+    if (phase !== 'resolved') return;
+    const id = setTimeout(nextQuestion, 1500);
+    return () => clearTimeout(id);
+  }, [phase, currentIndex]);
+
+  useEffect(() => {
+    if (phase === 'finished') navigation.replace('Result');
+  }, [phase]);
+
+  useEffect(() => {
+    if (!config || questions.length === 0) navigation.replace('Home');
+  }, []);
+
+  const handleAnswer = useCallback(
+    (position: PlayerPosition, choiceIndex: number) => {
+      if (phase !== 'active') return;
+      const responseMs = Date.now() - questionStartRef.current;
+      const result = submitAnswer(position, choiceIndex, responseMs);
+
+      if (result === 'correct') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        clearTimer();
+        resolveQuestion();
+      } else if (result === 'both-wrong') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        clearTimer();
+        resolveQuestion();
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    },
+    [phase, submitAnswer, resolveQuestion, clearTimer],
+  );
+
+  if (!config || questions.length === 0) return null;
+
+  const question = questions[currentIndex];
+
+  return (
+    <View style={[styles.root, { backgroundColor: C.screenBg }]}>
+      <View style={styles.half}>
+        <PlayerPanel
+          player={player2}
+          question={question}
+          isRotated
+          onAnswer={(i) => handleAnswer('top', i)}
+          phase={phase}
+        />
+      </View>
+
+      <View style={[styles.center, { backgroundColor: C.screenBg }]}>
+        <View style={[styles.centerLine, { backgroundColor: C.divider }]} />
+        <TimerBar
+          remainingMs={remainingMs}
+          totalMs={config.timeLimitMs}
+          questionNumber={currentIndex + 1}
+          totalQuestions={config.totalQuestions}
+        />
+        <View style={[styles.centerLine, { backgroundColor: C.divider }]} />
+      </View>
+
+      <View style={styles.half}>
+        <PlayerPanel
+          player={player1}
+          question={question}
+          isRotated={false}
+          onAnswer={(i) => handleAnswer('bottom', i)}
+          phase={phase}
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  half: { flex: 1, overflow: 'hidden' },
+  center: { height: SIZES.centerBarHeight, justifyContent: 'center', gap: 6 },
+  centerLine: { height: 1 },
+});
