@@ -2,22 +2,22 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useGameStore } from '../store/gameStore';
+import { useVocabStore } from '../store/vocabStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
-import { PlayerPanel } from '../components/PlayerPanel';
+import { VocabPlayerPanel } from '../components/VocabPlayerPanel';
 import { TimerBar } from '../components/TimerBar';
 import type { PlayerPosition, RootStackParamList } from '../types';
 import { SIZES } from '../constants/theme';
 
-type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Game'> };
+type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabGame'> };
 
-export default function GameScreen({ navigation }: Props) {
+export default function VocabGameScreen({ navigation }: Props) {
   const {
     config, questions, currentIndex,
     player1, player2, phase,
     submitAnswer, resolveQuestion, nextQuestion, resetGame,
-  } = useGameStore();
+  } = useVocabStore();
 
   const { t } = useLanguageStore();
   const { C } = useTheme();
@@ -58,7 +58,7 @@ export default function GameScreen({ navigation }: Props) {
   }, [phase, currentIndex]);
 
   useEffect(() => {
-    if (phase === 'finished') navigation.replace('Result');
+    if (phase === 'finished') navigation.replace('VocabResult');
   }, [phase]);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export default function GameScreen({ navigation }: Props) {
   return (
     <View style={[styles.root, { backgroundColor: C.screenBg }]}>
       <View style={styles.half}>
-        <PlayerPanel
+        <VocabPlayerPanel
           player={player2}
           question={question}
           isRotated
@@ -140,7 +140,7 @@ export default function GameScreen({ navigation }: Props) {
       </View>
 
       <View style={styles.half}>
-        <PlayerPanel
+        <VocabPlayerPanel
           player={player1}
           question={question}
           isRotated={false}

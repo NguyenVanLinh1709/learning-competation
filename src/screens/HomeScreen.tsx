@@ -92,39 +92,61 @@ export default function HomeScreen({ navigation }: Props) {
         <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.selectSubject}</Text>
 
         {/* Mathematics — active */}
-        <TouchableOpacity
+        <LinearGradient
+          colors={G.p1Button}
           style={[styles.cardActive, { shadowColor: C.p1Primary }]}
-          onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Setup'); }}
-          activeOpacity={0.85}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
         >
-          <LinearGradient
-            colors={G.p1Button}
-            style={styles.cardInner}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
+          <View style={styles.cardInner}>
             <Text style={styles.cardEmoji}>🔢</Text>
             <View style={styles.cardText}>
               <Text style={styles.cardName}>{t.subjectMath}</Text>
               <Text style={styles.cardDesc}>{t.subjectMathDesc}</Text>
             </View>
-            <View style={styles.playBadge}>
-              <Text style={styles.playText}>{t.play}</Text>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
+          </View>
+          <View style={styles.modeBtnRow}>
+            <TouchableOpacity
+              style={styles.modeBtn}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Setup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modeBtn, styles.modeBtnSolo]}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('SoloSetup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
 
-        {/* Science — soon */}
-        <View style={[styles.cardDisabled, { backgroundColor: C.surface }]}>
-          <Text style={[styles.cardEmoji, { opacity: 0.3 }]}>🔬</Text>
-          <View style={styles.cardText}>
-            <Text style={[styles.cardName, { color: C.text, opacity: 0.3 }]}>{t.subjectScience}</Text>
-            <Text style={[styles.cardDesc, { opacity: 0.3 }]}>{t.subjectScienceDesc}</Text>
+        {/* English Vocabulary — active */}
+        <LinearGradient
+          colors={['#059669', '#10B981']}
+          style={[styles.cardActive, { shadowColor: '#059669' }]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.cardInner}>
+            <Text style={styles.cardEmoji}>📖</Text>
+            <View style={styles.cardText}>
+              <Text style={styles.cardName}>{t.subjectVocab}</Text>
+              <Text style={styles.cardDesc}>{t.subjectVocabDesc}</Text>
+            </View>
           </View>
-          <View style={[styles.soonBadge, { backgroundColor: C.divider }]}>
-            <Text style={[styles.soonText, { color: C.textMuted }]}>{t.soon}</Text>
+          <View style={styles.modeBtnRow}>
+            <TouchableOpacity
+              style={styles.modeBtn}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSetup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
+            </TouchableOpacity>
           </View>
-        </View>
+        </LinearGradient>
 
         {/* Geography — soon */}
         <View style={[styles.cardDisabled, { backgroundColor: C.surface }]}>
@@ -197,7 +219,19 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
-  cardInner: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
+  cardInner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10, gap: 12 },
+  modeBtnRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingBottom: 14 },
+  modeBtn: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderRadius: 12,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.25)',
+  },
+  modeBtnSolo: { backgroundColor: 'rgba(255,255,255,0.12)' },
+  modeBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: '800', letterSpacing: 0.5 },
   cardDisabled: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -210,15 +244,6 @@ const styles = StyleSheet.create({
   cardText: { flex: 1 },
   cardName: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
   cardDesc: { color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2 },
-  playBadge: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
-  playText: { color: '#FFFFFF', fontSize: 12, fontWeight: '800', letterSpacing: 1 },
   soonBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20 },
   soonText: { fontSize: 11, fontWeight: '700', letterSpacing: 1 },
   footer: { fontSize: 11, textAlign: 'center', letterSpacing: 0.5 },

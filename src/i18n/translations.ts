@@ -19,6 +19,23 @@ export interface Translations {
   homeFooter: string;
   language: string;
 
+  // Home mode selection
+  battle: string;
+  solo: string;
+
+  // Solo setup
+  soloSetup: string;
+  soloTagline: string;
+  yourName: string;
+  timeLimitLabel: string;
+  unlimited: string;
+  startPractice: string;
+
+  // Solo result
+  soloComplete: string;
+  playAgain: string;
+  totalTimeStat: string;
+
   // Setup
   battleSetup: string;
   back: string;
@@ -35,6 +52,12 @@ export interface Translations {
   questionsLabel: string;
   startBattle: string;
 
+  // Quit dialog
+  quitTitle: string;
+  quitMessage: string;
+  quitAction: string;
+  cancelAction: string;
+
   // Countdown
   getReady: string;
 
@@ -47,6 +70,23 @@ export interface Translations {
   avgTimeStat: string;
   rematch: string;
   backHome: string;
+
+  // Vocab subject
+  subjectVocab: string;
+  subjectVocabDesc: string;
+
+  // Vocab setup
+  vocabSetup: string;
+  vocabDifficultyLabel: string;
+  vocabEasy: string;
+  vocabEasyDesc: string;
+  vocabMedium: string;
+  vocabMediumDesc: string;
+  vocabHard: string;
+  vocabHardDesc: string;
+  vocabExpert: string;
+  vocabExpertDesc: string;
+  startVocabBattle: string;
 }
 
 const en: Translations = {
@@ -66,6 +106,20 @@ const en: Translations = {
   homeFooter: 'Turn the phone between players',
   language: 'LANGUAGE',
 
+  battle: 'BATTLE',
+  solo: 'SOLO',
+
+  soloSetup: 'Solo Practice',
+  soloTagline: 'PRACTICE ALONE · BEAT YOUR BEST',
+  yourName: 'YOUR NAME',
+  timeLimitLabel: 'TIME PER QUESTION',
+  unlimited: '∞',
+  startPractice: '🎯  START PRACTICE',
+
+  soloComplete: 'Practice Complete!',
+  playAgain: '🔄  PLAY AGAIN',
+  totalTimeStat: '⏱ Total Time',
+
   battleSetup: 'Battle Setup',
   back: '‹ Back',
   player1Tag: 'PLAYER 1 — BOTTOM',
@@ -81,6 +135,11 @@ const en: Translations = {
   questionsLabel: 'QUESTIONS',
   startBattle: '⚔️  START BATTLE',
 
+  quitTitle: 'Quit Match',
+  quitMessage: 'Are you sure you want to quit?',
+  quitAction: 'Quit',
+  cancelAction: 'Cancel',
+
   getReady: 'Get ready…',
 
   wins: (name) => `${name} WINS!`,
@@ -91,6 +150,21 @@ const en: Translations = {
   avgTimeStat: '⚡ Avg Time',
   rematch: '🔄  REMATCH',
   backHome: '← Back to Home',
+
+  subjectVocab: 'English Vocab',
+  subjectVocabDesc: 'Animals · Fruits · Colors · More',
+
+  vocabSetup: 'Vocab Battle Setup',
+  vocabDifficultyLabel: 'DIFFICULTY',
+  vocabEasy: 'Easy',
+  vocabEasyDesc: 'Animals · Fruits · Colors · School',
+  vocabMedium: 'Medium',
+  vocabMediumDesc: 'Actions · Family · Body · Food',
+  vocabHard: 'Hard',
+  vocabHardDesc: 'Places · Transport · Weather · Verbs',
+  vocabExpert: 'Expert',
+  vocabExpertDesc: 'All + Adjectives',
+  startVocabBattle: '📖  START VOCAB BATTLE',
 };
 
 const vi: Translations = {
@@ -110,6 +184,20 @@ const vi: Translations = {
   homeFooter: 'Xoay điện thoại giữa hai người chơi',
   language: 'NGÔN NGỮ',
 
+  battle: 'ĐẤU',
+  solo: 'SOLO',
+
+  soloSetup: 'Luyện tập một mình',
+  soloTagline: 'LUYỆN TẬP · PHÁ KỶ LỤC BẢN THÂN',
+  yourName: 'TÊN BẠN',
+  timeLimitLabel: 'THỜI GIAN MỖI CÂU',
+  unlimited: '∞',
+  startPractice: '🎯  BẮT ĐẦU LUYỆN TẬP',
+
+  soloComplete: 'Hoàn thành luyện tập!',
+  playAgain: '🔄  CHƠI LẠI',
+  totalTimeStat: '⏱ Tổng thời gian',
+
   battleSetup: 'Thiết lập trận đấu',
   back: '‹ Quay lại',
   player1Tag: 'NGƯỜI CHƠI 1 — DƯỚI',
@@ -125,6 +213,11 @@ const vi: Translations = {
   questionsLabel: 'SỐ CÂU HỎI',
   startBattle: '⚔️  BẮT ĐẦU TRẬN',
 
+  quitTitle: 'Thoát trận?',
+  quitMessage: 'Bạn có chắc muốn thoát không?',
+  quitAction: 'Thoát',
+  cancelAction: 'Hủy',
+
   getReady: 'Chuẩn bị…',
 
   wins: (name) => `${name} THẮNG!`,
@@ -135,6 +228,21 @@ const vi: Translations = {
   avgTimeStat: '⚡ Thời gian TB',
   rematch: '🔄  CHƠI LẠI',
   backHome: '← Trang chủ',
+
+  subjectVocab: 'Từ vựng Anh',
+  subjectVocabDesc: 'Động vật · Trái cây · Màu sắc · Thêm',
+
+  vocabSetup: 'Thiết lập Từ vựng',
+  vocabDifficultyLabel: 'ĐỘ KHÓ',
+  vocabEasy: 'Dễ',
+  vocabEasyDesc: 'Động vật · Trái cây · Màu sắc · Đồ dùng học tập',
+  vocabMedium: 'Vừa',
+  vocabMediumDesc: 'Hành động · Gia đình · Cơ thể · Thức ăn',
+  vocabHard: 'Khó',
+  vocabHardDesc: 'Địa điểm · Giao thông · Thời tiết · Động từ',
+  vocabExpert: 'Chuyên gia',
+  vocabExpertDesc: 'Tất cả + Tính từ',
+  startVocabBattle: '📖  BẮT ĐẦU TỪ VỰNG',
 };
 
 const zh: Translations = {
@@ -154,6 +262,20 @@ const zh: Translations = {
   homeFooter: '两位玩家之间翻转手机',
   language: '语言',
 
+  battle: '对战',
+  solo: '单人',
+
+  soloSetup: '单人练习',
+  soloTagline: '独自练习 · 超越自我',
+  yourName: '您的名字',
+  timeLimitLabel: '每题时限',
+  unlimited: '∞',
+  startPractice: '🎯  开始练习',
+
+  soloComplete: '练习完成！',
+  playAgain: '🔄  再来一次',
+  totalTimeStat: '⏱ 总用时',
+
   battleSetup: '对战设置',
   back: '‹ 返回',
   player1Tag: '玩家 1 — 下方',
@@ -169,6 +291,11 @@ const zh: Translations = {
   questionsLabel: '题目数量',
   startBattle: '⚔️  开始对战',
 
+  quitTitle: '退出比赛',
+  quitMessage: '确定要退出吗？',
+  quitAction: '退出',
+  cancelAction: '取消',
+
   getReady: '准备好了吗…',
 
   wins: (name) => `${name} 获胜！`,
@@ -179,6 +306,21 @@ const zh: Translations = {
   avgTimeStat: '⚡ 平均用时',
   rematch: '🔄  再来一局',
   backHome: '← 返回主页',
+
+  subjectVocab: '英语词汇',
+  subjectVocabDesc: '动物 · 水果 · 颜色 · 更多',
+
+  vocabSetup: '词汇对战设置',
+  vocabDifficultyLabel: '难度',
+  vocabEasy: '简单',
+  vocabEasyDesc: '动物 · 水果 · 颜色 · 学校',
+  vocabMedium: '中等',
+  vocabMediumDesc: '动作 · 家庭 · 身体 · 食物',
+  vocabHard: '困难',
+  vocabHardDesc: '地点 · 交通 · 天气 · 动词',
+  vocabExpert: '专家',
+  vocabExpertDesc: '全部 + 形容词',
+  startVocabBattle: '📖  开始词汇对战',
 };
 
 export const TRANSLATIONS: Record<LangCode, Translations> = { en, vi, zh };
