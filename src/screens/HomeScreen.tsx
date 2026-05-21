@@ -161,7 +161,15 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
       </Animated.View>
 
-      <Text style={[styles.footer, { color: C.textMuted }]}>{t.homeFooter}</Text>
+      <View style={styles.footerRow}>
+        <Text style={[styles.footer, { color: C.textMuted }]}>{t.homeFooter}</Text>
+        <TouchableOpacity
+          onPress={() => { tap(); navigation.navigate('Feedback'); }}
+          activeOpacity={0.75}
+        >
+          <Text style={[styles.feedbackLink, { color: C.textMuted }]}>{t.feedbackBtn}</Text>
+        </TouchableOpacity>
+      </View>
     </LinearGradient>
   );
 }
@@ -246,5 +254,7 @@ const styles = StyleSheet.create({
   cardDesc: { color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2 },
   soonBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20 },
   soonText: { fontSize: 11, fontWeight: '700', letterSpacing: 1 },
+  footerRow: { alignItems: 'center', gap: 8 },
   footer: { fontSize: 11, textAlign: 'center', letterSpacing: 0.5 },
+  feedbackLink: { fontSize: 11, letterSpacing: 0.5, textDecorationLine: 'underline' },
 });

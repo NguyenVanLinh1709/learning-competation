@@ -87,6 +87,24 @@ export interface Translations {
   vocabExpert: string;
   vocabExpertDesc: string;
   startVocabBattle: string;
+
+  // Feedback
+  feedbackBtn: string;
+  feedbackTitle: string;
+  feedbackSubtitle: string;
+  feedbackTypeGeneral: string;
+  feedbackTypeBug: string;
+  feedbackPlaceholder: string;
+  feedbackSend: string;
+  feedbackSent: string;
+  feedbackSentDesc: string;
+  feedbackSendAnother: string;
+  feedbackError: string;
+  feedbackAddImage: string;
+  feedbackImagePickTitle: string;
+  feedbackImageCamera: string;
+  feedbackImageGallery: string;
+  feedbackImageCancel: string;
 }
 
 const en: Translations = {
@@ -165,6 +183,23 @@ const en: Translations = {
   vocabExpert: 'Expert',
   vocabExpertDesc: 'All + Adjectives',
   startVocabBattle: '📖  START VOCAB BATTLE',
+
+  feedbackBtn: '💬 Feedback',
+  feedbackTitle: 'Send Feedback',
+  feedbackSubtitle: 'Help us improve MathBattle — report a bug or share an idea.',
+  feedbackTypeGeneral: 'Suggestion',
+  feedbackTypeBug: 'Bug Report',
+  feedbackPlaceholder: 'Describe your feedback or bug in detail…',
+  feedbackSend: '📨  SEND',
+  feedbackSent: 'Thank you!',
+  feedbackSentDesc: 'Your message has been sent. We read every piece of feedback.',
+  feedbackSendAnother: 'Send Another',
+  feedbackError: 'Failed to send. Check your connection and try again.',
+  feedbackAddImage: '📎 Attach Image',
+  feedbackImagePickTitle: 'Attach Image',
+  feedbackImageCamera: 'Take Photo',
+  feedbackImageGallery: 'Choose from Library',
+  feedbackImageCancel: 'Cancel',
 };
 
 const vi: Translations = {
@@ -243,6 +278,23 @@ const vi: Translations = {
   vocabExpert: 'Chuyên gia',
   vocabExpertDesc: 'Tất cả + Tính từ',
   startVocabBattle: '📖  BẮT ĐẦU TỪ VỰNG',
+
+  feedbackBtn: '💬 Góp ý',
+  feedbackTitle: 'Gửi phản hồi',
+  feedbackSubtitle: 'Giúp chúng tôi cải thiện MathBattle — báo lỗi hoặc chia sẻ ý tưởng.',
+  feedbackTypeGeneral: 'Góp ý',
+  feedbackTypeBug: 'Báo lỗi',
+  feedbackPlaceholder: 'Mô tả phản hồi hoặc lỗi của bạn…',
+  feedbackSend: '📨  GỬI',
+  feedbackSent: 'Cảm ơn bạn!',
+  feedbackSentDesc: 'Tin nhắn của bạn đã được gửi. Chúng tôi đọc mọi phản hồi.',
+  feedbackSendAnother: 'Gửi thêm',
+  feedbackError: 'Gửi thất bại. Kiểm tra kết nối và thử lại.',
+  feedbackAddImage: '📎 Đính kèm ảnh',
+  feedbackImagePickTitle: 'Đính kèm ảnh',
+  feedbackImageCamera: 'Chụp ảnh',
+  feedbackImageGallery: 'Chọn từ thư viện',
+  feedbackImageCancel: 'Hủy',
 };
 
 const zh: Translations = {
@@ -321,6 +373,23 @@ const zh: Translations = {
   vocabExpert: '专家',
   vocabExpertDesc: '全部 + 形容词',
   startVocabBattle: '📖  开始词汇对战',
+
+  feedbackBtn: '💬 反馈',
+  feedbackTitle: '发送反馈',
+  feedbackSubtitle: '帮助我们改进 MathBattle — 报告错误或分享想法。',
+  feedbackTypeGeneral: '建议',
+  feedbackTypeBug: '报告错误',
+  feedbackPlaceholder: '详细描述您的反馈或错误…',
+  feedbackSend: '📨  发送',
+  feedbackSent: '谢谢！',
+  feedbackSentDesc: '您的消息已发送。我们会阅读每一条反馈。',
+  feedbackSendAnother: '再发一条',
+  feedbackError: '发送失败。请检查网络连接后重试。',
+  feedbackAddImage: '📎 附加图片',
+  feedbackImagePickTitle: '附加图片',
+  feedbackImageCamera: '拍照',
+  feedbackImageGallery: '从相册选择',
+  feedbackImageCancel: '取消',
 };
 
 export const TRANSLATIONS: Record<LangCode, Translations> = { en, vi, zh };

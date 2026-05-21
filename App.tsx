@@ -16,6 +16,7 @@ import VocabSetupScreen from './src/screens/VocabSetupScreen';
 import VocabCountdown from './src/screens/VocabCountdown';
 import VocabGameScreen from './src/screens/VocabGameScreen';
 import VocabResultScreen from './src/screens/VocabResultScreen';
+import FeedbackScreen from './src/screens/FeedbackScreen';
 import type { RootStackParamList } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,6 +42,7 @@ export default function App() {
           <Stack.Screen name="VocabCountdown" component={VocabCountdown} options={{ animation: 'fade' }} />
           <Stack.Screen name="VocabGame" component={VocabGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="VocabResult" component={VocabResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="Feedback" component={FeedbackScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

@@ -57,6 +57,7 @@ export type RootStackParamList = {
   VocabCountdown: undefined;
   VocabGame: undefined;
   VocabResult: undefined;
+  Feedback: undefined;
 };
 
 // ─── Vocabulary Battle ───────────────────────────────────────────────────────
