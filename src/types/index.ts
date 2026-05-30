@@ -57,6 +57,15 @@ export type RootStackParamList = {
   VocabCountdown: undefined;
   VocabGame: undefined;
   VocabResult: undefined;
+  VocabSoloSetup: undefined;
+  VocabSoloGame: undefined;
+  VocabSoloResult: undefined;
+  ColorSetup: undefined;
+  ColorGame: undefined;
+  ColorResult: undefined;
+  ColorBattleSetup: undefined;
+  ColorBattleGame: undefined;
+  ColorBattleResult: undefined;
   Feedback: undefined;
 };
 
@@ -99,4 +108,11 @@ export interface VocabGameConfig {
   difficulty: VocabDifficulty;
   player1Name: string;
   player2Name: string;
+}
+
+export interface VocabSoloConfig {
+  playerName: string;
+  difficulty: VocabDifficulty;
+  totalQuestions: number;
+  timeLimitMs: number; // 0 = unlimited
 }

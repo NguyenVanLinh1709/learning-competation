@@ -16,6 +16,15 @@ import VocabSetupScreen from './src/screens/VocabSetupScreen';
 import VocabCountdown from './src/screens/VocabCountdown';
 import VocabGameScreen from './src/screens/VocabGameScreen';
 import VocabResultScreen from './src/screens/VocabResultScreen';
+import VocabSoloSetupScreen from './src/screens/VocabSoloSetupScreen';
+import VocabSoloGameScreen from './src/screens/VocabSoloGameScreen';
+import VocabSoloResultScreen from './src/screens/VocabSoloResultScreen';
+import ColorSetupScreen from './src/screens/ColorSetupScreen';
+import ColorGameScreen from './src/screens/ColorGameScreen';
+import ColorResultScreen from './src/screens/ColorResultScreen';
+import ColorBattleSetupScreen from './src/screens/ColorBattleSetupScreen';
+import ColorBattleGameScreen from './src/screens/ColorBattleGameScreen';
+import ColorBattleResultScreen from './src/screens/ColorBattleResultScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
 import type { RootStackParamList } from './src/types';
 
@@ -42,6 +51,15 @@ export default function App() {
           <Stack.Screen name="VocabCountdown" component={VocabCountdown} options={{ animation: 'fade' }} />
           <Stack.Screen name="VocabGame" component={VocabGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="VocabResult" component={VocabResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="VocabSoloSetup" component={VocabSoloSetupScreen} />
+          <Stack.Screen name="VocabSoloGame" component={VocabSoloGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="VocabSoloResult" component={VocabSoloResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorSetup" component={ColorSetupScreen} />
+          <Stack.Screen name="ColorGame" component={ColorGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorResult" component={ColorResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorBattleSetup" component={ColorBattleSetupScreen} />
+          <Stack.Screen name="ColorBattleGame" component={ColorBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorBattleResult" component={ColorBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} />
         </Stack.Navigator>
       </NavigationContainer>

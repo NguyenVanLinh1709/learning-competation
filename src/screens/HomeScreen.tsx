@@ -145,6 +145,45 @@ export default function HomeScreen({ navigation }: Props) {
             >
               <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modeBtn, styles.modeBtnSolo]}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSoloSetup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+
+        {/* Color Sense — active, solo only */}
+        <LinearGradient
+          colors={['#7C3AED', '#A855F7']}
+          style={[styles.cardActive, { shadowColor: '#7C3AED' }]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.cardInner}>
+            <Text style={styles.cardEmoji}>🎨</Text>
+            <View style={styles.cardText}>
+              <Text style={styles.cardName}>{t.subjectColor}</Text>
+              <Text style={styles.cardDesc}>{t.subjectColorDesc}</Text>
+            </View>
+          </View>
+          <View style={styles.modeBtnRow}>
+            <TouchableOpacity
+              style={styles.modeBtn}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('ColorBattleSetup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modeBtn, styles.modeBtnSolo]}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('ColorSetup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
+            </TouchableOpacity>
           </View>
         </LinearGradient>
 

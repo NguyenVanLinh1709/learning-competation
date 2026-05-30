@@ -88,6 +88,24 @@ export interface Translations {
   vocabExpertDesc: string;
   startVocabBattle: string;
 
+  // Vocab solo
+  vocabSoloSetup: string;
+  vocabSoloTagline: string;
+  startVocabPractice: string;
+  vocabSoloComplete: string;
+
+  // Color perception
+  subjectColor: string;
+  subjectColorDesc: string;
+  colorSetup: string;
+  colorTagline: string;
+  colorFindDifferent: string;
+  colorTapNumber: string;
+  startColorPractice: string;
+  colorSoloComplete: string;
+  colorBattleSetup: string;
+  startColorBattle: string;
+
   // Feedback
   feedbackBtn: string;
   feedbackTitle: string;
@@ -184,6 +202,22 @@ const en: Translations = {
   vocabExpertDesc: 'All + Adjectives',
   startVocabBattle: '📖  START VOCAB BATTLE',
 
+  vocabSoloSetup: 'Vocab Practice',
+  vocabSoloTagline: 'PRACTICE ALONE · BUILD YOUR VOCAB',
+  startVocabPractice: '📖  START VOCAB PRACTICE',
+  vocabSoloComplete: 'Vocab Practice Complete!',
+
+  subjectColor: 'Color Sense',
+  subjectColorDesc: 'Find the different shade · Train your vision',
+  colorSetup: 'Color Practice',
+  colorTagline: 'SPOT THE ODD ONE OUT',
+  colorFindDifferent: 'Which tile is different?',
+  colorTapNumber: 'Tap the number of the odd tile',
+  startColorPractice: '🎨  START COLOR PRACTICE',
+  colorSoloComplete: 'Color Practice Complete!',
+  colorBattleSetup: 'Color Battle Setup',
+  startColorBattle: '🎨  START COLOR BATTLE',
+
   feedbackBtn: '💬 Feedback',
   feedbackTitle: 'Send Feedback',
   feedbackSubtitle: 'Help us improve MathBattle — report a bug or share an idea.',
@@ -279,6 +313,22 @@ const vi: Translations = {
   vocabExpertDesc: 'Tất cả + Tính từ',
   startVocabBattle: '📖  BẮT ĐẦU TỪ VỰNG',
 
+  vocabSoloSetup: 'Luyện từ vựng',
+  vocabSoloTagline: 'LUYỆN TẬP · MỞ RỘNG VỐN TỪ',
+  startVocabPractice: '📖  BẮT ĐẦU LUYỆN TỪ VỰNG',
+  vocabSoloComplete: 'Hoàn thành luyện từ vựng!',
+
+  subjectColor: 'Cảm nhận màu sắc',
+  subjectColorDesc: 'Tìm màu khác biệt · Rèn thị giác',
+  colorSetup: 'Luyện màu sắc',
+  colorTagline: 'TÌM MÀU KHÁC BIỆT',
+  colorFindDifferent: 'Ô nào khác màu?',
+  colorTapNumber: 'Chọn số của ô khác biệt',
+  startColorPractice: '🎨  BẮT ĐẦU LUYỆN MÀU SẮC',
+  colorSoloComplete: 'Hoàn thành luyện màu sắc!',
+  colorBattleSetup: 'Thiết lập đấu màu sắc',
+  startColorBattle: '🎨  BẮT ĐẦU ĐẤU MÀU SẮC',
+
   feedbackBtn: '💬 Góp ý',
   feedbackTitle: 'Gửi phản hồi',
   feedbackSubtitle: 'Giúp chúng tôi cải thiện MathBattle — báo lỗi hoặc chia sẻ ý tưởng.',
@@ -373,6 +423,22 @@ const zh: Translations = {
   vocabExpert: '专家',
   vocabExpertDesc: '全部 + 形容词',
   startVocabBattle: '📖  开始词汇对战',
+
+  vocabSoloSetup: '词汇练习',
+  vocabSoloTagline: '独自练习 · 积累词汇',
+  startVocabPractice: '📖  开始词汇练习',
+  vocabSoloComplete: '词汇练习完成！',
+
+  subjectColor: '色彩感知',
+  subjectColorDesc: '找出不同的色调 · 训练视觉',
+  colorSetup: '色彩练习',
+  colorTagline: '找出异色格',
+  colorFindDifferent: '哪个格子颜色不同？',
+  colorTapNumber: '点击不同格子的数字',
+  startColorPractice: '🎨  开始色彩练习',
+  colorSoloComplete: '色彩练习完成！',
+  colorBattleSetup: '色彩对战设置',
+  startColorBattle: '🎨  开始色彩对战',
 
   feedbackBtn: '💬 反馈',
   feedbackTitle: '发送反馈',
