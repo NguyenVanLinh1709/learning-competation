@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useVocabStore } from '../store/vocabStore';
@@ -87,19 +87,10 @@ export default function VocabGameScreen({ navigation }: Props) {
   );
 
   const handleQuit = useCallback(() => {
-    Alert.alert(t.quitTitle, t.quitMessage, [
-      { text: t.cancelAction, style: 'cancel' },
-      {
-        text: t.quitAction,
-        style: 'destructive',
-        onPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          resetGame();
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-        },
-      },
-    ]);
-  }, [t, resetGame, navigation]);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    resetGame();
+    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+  }, [resetGame, navigation]);
 
   if (!config || questions.length === 0) return null;
 

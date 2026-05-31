@@ -26,9 +26,10 @@ const TIME_LIMITS = [
 ];
 
 const DIFFICULTIES: { label: string; value: ColorDifficulty; emoji: string; hint: string }[] = [
-  { label: 'Easy',   value: 'easy',   emoji: '🌈', hint: 'Obvious difference' },
-  { label: 'Medium', value: 'medium', emoji: '🔮', hint: 'Subtle difference' },
-  { label: 'Hard',   value: 'hard',   emoji: '🧠', hint: 'Very subtle!' },
+  { label: 'Easy',   value: 'easy',   emoji: '🌈', hint: 'Obvious' },
+  { label: 'Medium', value: 'medium', emoji: '🔮', hint: 'Subtle' },
+  { label: 'Hard',   value: 'hard',   emoji: '🧠', hint: 'Very subtle' },
+  { label: 'Expert', value: 'expert', emoji: '🎯', hint: 'Barely there' },
 ];
 
 export default function ColorSetupScreen({ navigation }: Props) {
@@ -91,12 +92,13 @@ export default function ColorSetupScreen({ navigation }: Props) {
           {/* Difficulty */}
           <View style={styles.section}>
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.difficultyLabel}</Text>
-            <View style={styles.optionRow}>
+            <View style={styles.diffGrid}>
               {DIFFICULTIES.map((d) => (
                 <TouchableOpacity
                   key={d.value}
                   style={[
                     styles.optionBtn,
+                    styles.diffBtn,
                     { backgroundColor: C.surface, borderColor: C.border },
                     difficulty === d.value && { borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.12)' },
                   ]}
@@ -196,6 +198,8 @@ const styles = StyleSheet.create({
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
   optionRow: { flexDirection: 'row', gap: 8 },
   optionBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 12, alignItems: 'center', gap: 2 },
+  diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  diffBtn: { flex: 0, width: '23%', paddingVertical: 10, paddingHorizontal: 2 },
   optionEmoji: { fontSize: 20 },
   optionLabel: { fontSize: 13, fontWeight: '700' },
   optionHint: { fontSize: 10, fontWeight: '500', textAlign: 'center' },

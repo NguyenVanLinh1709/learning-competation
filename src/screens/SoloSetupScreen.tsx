@@ -29,7 +29,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
-  const [playerName, setPlayerName] = useState('');
+  const [playerName, setPlayerName] = useState('Player');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
   const [operation, setOperation] = useState<MathOperation>('mixed');
   const [questionCount, setQuestionCount] = useState(20);

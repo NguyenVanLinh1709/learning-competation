@@ -41,7 +41,20 @@
       "Bash(adb -s emulator-5554 pull /sdcard/ui5.xml /tmp/ui5.xml)",
       "Bash(adb -s emulator-5554 shell input tap 672 1697)",
       "Bash(adb -s emulator-5554 shell uiautomator dump /sdcard/ui6.xml)",
-      "Bash(adb -s emulator-5554 pull /sdcard/ui6.xml /tmp/ui6.xml)"
-    ]
+      "Bash(adb -s emulator-5554 pull /sdcard/ui6.xml /tmp/ui6.xml)",
+      "Bash(adb shell *)",
+      "Bash(kill -0 38414)",
+      "Bash(adb pull *)",
+      "Bash(echo \"started with PID $!\")",
+      "Bash(echo \"PID $!\")",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(pkill -f \"expo start\")",
+      "Skill(update-config)",
+      "Bash(kill 54493)",
+      "Bash(xargs kill -9)",
+      "Bash(kill 0)"
+    ],
+    "defaultMode": "bypassPermissions"
   }
 }

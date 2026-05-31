@@ -19,6 +19,7 @@ const DIFFICULTIES: { label: string; value: ColorDifficulty; emoji: string; hint
   { label: 'Easy',   value: 'easy',   emoji: '🌈', hint: 'Obvious' },
   { label: 'Medium', value: 'medium', emoji: '🔮', hint: 'Subtle' },
   { label: 'Hard',   value: 'hard',   emoji: '🧠', hint: 'Very subtle' },
+  { label: 'Expert', value: 'expert', emoji: '🎯', hint: 'Barely there' },
 ];
 const TIME_LIMITS_MS = 15000;
 
@@ -27,8 +28,8 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
-  const [p1Name, setP1Name] = useState('');
-  const [p2Name, setP2Name] = useState('');
+  const [p1Name, setP1Name] = useState('Player A');
+  const [p2Name, setP2Name] = useState('Player B');
   const [difficulty, setDifficulty] = useState<ColorDifficulty>('medium');
   const [questionCount, setQuestionCount] = useState(10);
 
@@ -106,12 +107,13 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
           {/* Difficulty */}
           <View style={styles.section}>
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.difficultyLabel}</Text>
-            <View style={styles.optionRow}>
+            <View style={styles.diffGrid}>
               {DIFFICULTIES.map((d) => (
                 <TouchableOpacity
                   key={d.value}
                   style={[
                     styles.optionBtn,
+                    styles.diffBtn,
                     { backgroundColor: C.surface, borderColor: C.border },
                     difficulty === d.value && { borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.12)' },
                   ]}
@@ -192,6 +194,8 @@ const styles = StyleSheet.create({
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
   optionRow: { flexDirection: 'row', gap: 8 },
   optionBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 12, alignItems: 'center', gap: 2 },
+  diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  diffBtn: { flex: 0, width: '23%', paddingVertical: 10, paddingHorizontal: 2 },
   optionEmoji: { fontSize: 20 },
   optionLabel: { fontSize: 13, fontWeight: '700' },
   optionHint: { fontSize: 10, fontWeight: '500', textAlign: 'center' },

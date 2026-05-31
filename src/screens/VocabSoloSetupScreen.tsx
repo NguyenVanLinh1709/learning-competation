@@ -31,7 +31,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
-  const [playerName, setPlayerName] = useState('');
+  const [playerName, setPlayerName] = useState('Player');
   const [difficulty, setDifficulty] = useState<VocabDifficulty>('medium');
   const [questionCount, setQuestionCount] = useState(20);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);

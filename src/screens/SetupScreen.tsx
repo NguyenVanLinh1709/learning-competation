@@ -20,8 +20,8 @@ export default function SetupScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
-  const [p1Name, setP1Name] = useState('');
-  const [p2Name, setP2Name] = useState('');
+  const [p1Name, setP1Name] = useState('Player A');
+  const [p2Name, setP2Name] = useState('Player B');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
   const [operation, setOperation] = useState<MathOperation>('mixed');
   const [questionCount, setQuestionCount] = useState(20);
