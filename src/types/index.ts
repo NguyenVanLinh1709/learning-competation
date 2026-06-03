@@ -69,7 +69,27 @@ export type RootStackParamList = {
   ColorBattleGame: undefined;
   ColorBattleResult: undefined;
   Feedback: undefined;
+  Leaderboard: undefined;
 };
+
+// Which game a leaderboard score came from.
+export type GameMode = 'math' | 'vocab' | 'color';
+
+// A single score row as stored in / read from Supabase (`leaderboard` table).
+export interface LeaderboardEntry {
+  id: string;
+  player_name: string;
+  score: number;
+  total: number;
+  mode: GameMode;
+  difficulty: string | null;
+  accuracy: number; // 0–100
+  avg_time_ms: number | null;
+  created_at: string;
+}
+
+// What a Result screen submits (the DB fills id + created_at).
+export type NewLeaderboardEntry = Omit<LeaderboardEntry, 'id' | 'created_at'>;
 
 // ─── Vocabulary Battle ───────────────────────────────────────────────────────
 

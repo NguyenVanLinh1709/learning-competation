@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSoloStore } from '../store/soloStore';
+import { useLeaderboardStore } from '../store/leaderboardStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import type { RootStackParamList } from '../types';
@@ -28,6 +29,7 @@ function StatRow({ label, value, highlight, textColor, mutedColor }: {
 
 export default function SoloResultScreen({ navigation }: Props) {
   const { config, score, correctCount, wrongCount, responseTimes, resetGame, initGame } = useSoloStore();
+  const submitScore = useLeaderboardStore((s) => s.submitScore);
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
@@ -46,6 +48,22 @@ export default function SoloResultScreen({ navigation }: Props) {
       ? Haptics.NotificationFeedbackType.Success
       : Haptics.NotificationFeedbackType.Warning;
     Haptics.notificationAsync(feedback);
+
+    // Post this run to the shared leaderboard (no-op if Supabase isn't configured).
+    if (config) {
+      const times = responseTimes;
+      submitScore({
+        player_name: config.playerName?.trim() || 'Anonymous',
+        score,
+        total: config.totalQuestions,
+        mode: 'math',
+        difficulty: config.difficulty,
+        accuracy,
+        avg_time_ms: times.length
+          ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+          : null,
+      });
+    }
 
     Animated.spring(bannerScale, { toValue: 1, friction: 5, useNativeDriver: true }).start(() => {
       Animated.parallel([

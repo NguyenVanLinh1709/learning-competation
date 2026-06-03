@@ -106,6 +106,16 @@ export interface Translations {
   colorBattleSetup: string;
   startColorBattle: string;
 
+  // Leaderboard
+  leaderboardBtn: string;
+  leaderboardTitle: string;
+  lbPlayer: string;
+  lbPlayers: string;
+  lbAll: string;
+  lbEmpty: string;
+  lbUnconfigured: string;
+  lbError: string;
+
   // Feedback
   feedbackBtn: string;
   feedbackTitle: string;
@@ -218,6 +228,15 @@ const en: Translations = {
   colorBattleSetup: 'Color Battle Setup',
   startColorBattle: '🎨  START COLOR BATTLE',
 
+  leaderboardBtn: 'Leaderboard',
+  leaderboardTitle: 'Leaderboard',
+  lbPlayer: 'player',
+  lbPlayers: 'players',
+  lbAll: 'All',
+  lbEmpty: 'No scores yet.\nPlay a solo game to get on the board!',
+  lbUnconfigured: 'Leaderboard not set up yet.\nAdd your Supabase keys in app.json.',
+  lbError: 'Could not load the leaderboard.',
+
   feedbackBtn: '💬 Feedback',
   feedbackTitle: 'Send Feedback',
   feedbackSubtitle: 'Help us improve Learning Battle — report a bug or share an idea.',
@@ -329,6 +348,15 @@ const vi: Translations = {
   colorBattleSetup: 'Thiết lập đấu màu sắc',
   startColorBattle: '🎨  BẮT ĐẦU ĐẤU MÀU SẮC',
 
+  leaderboardBtn: 'Bảng xếp hạng',
+  leaderboardTitle: 'Bảng xếp hạng',
+  lbPlayer: 'người chơi',
+  lbPlayers: 'người chơi',
+  lbAll: 'Tất cả',
+  lbEmpty: 'Chưa có điểm nào.\nChơi chế độ một người để ghi danh!',
+  lbUnconfigured: 'Bảng xếp hạng chưa được thiết lập.\nThêm khóa Supabase trong app.json.',
+  lbError: 'Không tải được bảng xếp hạng.',
+
   feedbackBtn: '💬 Góp ý',
   feedbackTitle: 'Gửi phản hồi',
   feedbackSubtitle: 'Giúp chúng tôi cải thiện Learning Battle — báo lỗi hoặc chia sẻ ý tưởng.',
@@ -439,6 +467,15 @@ const zh: Translations = {
   colorSoloComplete: '色彩练习完成！',
   colorBattleSetup: '色彩对战设置',
   startColorBattle: '🎨  开始色彩对战',
+
+  leaderboardBtn: '排行榜',
+  leaderboardTitle: '排行榜',
+  lbPlayer: '位玩家',
+  lbPlayers: '位玩家',
+  lbAll: '全部',
+  lbEmpty: '还没有成绩。\n玩单人模式来登榜吧！',
+  lbUnconfigured: '排行榜尚未配置。\n请在 app.json 中添加 Supabase 密钥。',
+  lbError: '无法加载排行榜。',
 
   feedbackBtn: '💬 反馈',
   feedbackTitle: '发送反馈',

@@ -26,6 +26,10 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": []
+    "plugins": [],
+    "extra": {
+      "supabaseUrl": "https://zwoxbpqttnnolqpjldss.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3b3hicHF0dG5ub2xxcGpsZHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODkyMDcsImV4cCI6MjA5NjA2NTIwN30.SOa7Y8p5BAQ8D2YAQ0Y8DhPwg9G1vG1yY6G2JJ0-Bks"
+    }
   }
 }

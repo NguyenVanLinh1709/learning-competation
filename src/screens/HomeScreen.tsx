@@ -190,12 +190,20 @@ export default function HomeScreen({ navigation }: Props) {
 
       <View style={styles.footerRow}>
         <Text style={[styles.footer, { color: C.textMuted }]}>{t.homeFooter}</Text>
-        <TouchableOpacity
-          onPress={() => { tap(); navigation.navigate('Feedback'); }}
-          activeOpacity={0.75}
-        >
-          <Text style={[styles.feedbackLink, { color: C.textMuted }]}>{t.feedbackBtn}</Text>
-        </TouchableOpacity>
+        <View style={styles.footerLinks}>
+          <TouchableOpacity
+            onPress={() => { tap(); navigation.navigate('Leaderboard'); }}
+            activeOpacity={0.75}
+          >
+            <Text style={[styles.feedbackLink, { color: C.textMuted }]}>🏆 {t.leaderboardBtn}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => { tap(); navigation.navigate('Feedback'); }}
+            activeOpacity={0.75}
+          >
+            <Text style={[styles.feedbackLink, { color: C.textMuted }]}>{t.feedbackBtn}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </LinearGradient>
   );
@@ -272,6 +280,7 @@ const styles = StyleSheet.create({
   cardName: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
   cardDesc: { color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2 },
   footerRow: { alignItems: 'center', gap: 8 },
+  footerLinks: { flexDirection: 'row', gap: 18 },
   footer: { fontSize: 11, textAlign: 'center', letterSpacing: 0.5 },
   feedbackLink: { fontSize: 11, letterSpacing: 0.5, textDecorationLine: 'underline' },
 });

@@ -26,6 +26,7 @@ import ColorBattleSetupScreen from './src/screens/ColorBattleSetupScreen';
 import ColorBattleGameScreen from './src/screens/ColorBattleGameScreen';
 import ColorBattleResultScreen from './src/screens/ColorBattleResultScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
+import LeaderboardScreen from './src/screens/LeaderboardScreen';
 import type { RootStackParamList } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,6 +62,7 @@ export default function App() {
           <Stack.Screen name="ColorBattleGame" component={ColorBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="ColorBattleResult" component={ColorBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} />
+          <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
