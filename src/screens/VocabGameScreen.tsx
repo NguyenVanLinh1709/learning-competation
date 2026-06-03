@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useVocabStore } from '../store/vocabStore';
@@ -87,10 +87,19 @@ export default function VocabGameScreen({ navigation }: Props) {
   );
 
   const handleQuit = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    resetGame();
-    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-  }, [resetGame, navigation]);
+    Alert.alert(t.quitTitle, t.quitMessage, [
+      { text: t.cancelAction, style: 'cancel' },
+      {
+        text: t.quitAction,
+        style: 'destructive',
+        onPress: () => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          resetGame();
+          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+        },
+      },
+    ]);
+  }, [t, resetGame, navigation]);
 
   if (!config || questions.length === 0) return null;
 
@@ -111,12 +120,14 @@ export default function VocabGameScreen({ navigation }: Props) {
       <View style={[styles.center, { backgroundColor: C.screenBg }]}>
         <View style={[styles.centerLine, { backgroundColor: C.divider }]} />
         <View style={styles.centerRow}>
-          <TimerBar
-            remainingMs={remainingMs}
-            totalMs={config.timeLimitMs}
-            questionNumber={currentIndex + 1}
-            totalQuestions={config.totalQuestions}
-          />
+          <View style={{ flex: 1 }}>
+            <TimerBar
+              remainingMs={remainingMs}
+              totalMs={config.timeLimitMs}
+              questionNumber={currentIndex + 1}
+              totalQuestions={config.totalQuestions}
+            />
+          </View>
           <TouchableOpacity
             onPress={handleQuit}
             style={[styles.quitBtn, { borderColor: C.border, backgroundColor: C.surface }]}

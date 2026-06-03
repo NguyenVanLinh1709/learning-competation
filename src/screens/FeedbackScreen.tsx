@@ -97,7 +97,7 @@ export default function FeedbackScreen({ navigation }: Props) {
           description: message.trim(),
           color: embedColor,
           image: { url: `attachment://${filename}` },
-          footer: { text: 'MathBattle App' },
+          footer: { text: 'Learning Battle App' },
           timestamp: new Date().toISOString(),
         };
 
@@ -113,7 +113,7 @@ export default function FeedbackScreen({ navigation }: Props) {
             title: `${emoji} ${label}`,
             description: message.trim(),
             color: embedColor,
-            footer: { text: 'MathBattle App' },
+            footer: { text: 'Learning Battle App' },
             timestamp: new Date().toISOString(),
           }],
         };

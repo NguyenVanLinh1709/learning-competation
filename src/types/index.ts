@@ -1,5 +1,7 @@
 export type DifficultyLevel = 'easy' | 'medium' | 'hard';
-export type MathOperation = 'addition' | 'subtraction' | 'multiplication' | 'division' | 'mixed';
+export type MathOperation =
+  | 'addition' | 'subtraction' | 'multiplication' | 'division' | 'mixed'
+  | 'conversion' | 'fraction' | 'sequence';
 export type GamePhase = 'idle' | 'active' | 'resolved' | 'finished';
 export type PlayerPosition = 'bottom' | 'top';
 export type AnswerButtonState = 'idle' | 'correct' | 'wrong' | 'disabled';

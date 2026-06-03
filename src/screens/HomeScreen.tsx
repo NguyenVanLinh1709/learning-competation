@@ -81,7 +81,7 @@ export default function HomeScreen({ navigation }: Props) {
         style={[styles.titleBlock, { opacity: titleOpacity, transform: [{ translateY: titleY }] }]}
       >
         <Text style={styles.logo}>⚡</Text>
-        <Text style={[styles.title, { color: C.text }]}>MathBattle</Text>
+        <Text style={[styles.title, { color: C.text }]}>Learning Battle</Text>
         <Text style={[styles.tagline, { color: C.textMuted }]}>{t.appTagline}</Text>
       </Animated.View>
 
@@ -186,18 +186,6 @@ export default function HomeScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </LinearGradient>
-
-        {/* Geography — soon */}
-        <View style={[styles.cardDisabled, { backgroundColor: C.surface }]}>
-          <Text style={[styles.cardEmoji, { opacity: 0.3 }]}>🌍</Text>
-          <View style={styles.cardText}>
-            <Text style={[styles.cardName, { color: C.text, opacity: 0.3 }]}>{t.subjectGeo}</Text>
-            <Text style={[styles.cardDesc, { opacity: 0.3 }]}>{t.subjectGeoDesc}</Text>
-          </View>
-          <View style={[styles.soonBadge, { backgroundColor: C.divider }]}>
-            <Text style={[styles.soonText, { color: C.textMuted }]}>{t.soon}</Text>
-          </View>
-        </View>
       </Animated.View>
 
       <View style={styles.footerRow}>
@@ -279,20 +267,10 @@ const styles = StyleSheet.create({
   },
   modeBtnSolo: { backgroundColor: 'rgba(255,255,255,0.12)' },
   modeBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: '800', letterSpacing: 0.5 },
-  cardDisabled: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 18,
-    padding: 16,
-    gap: 12,
-    marginBottom: 12,
-  },
   cardEmoji: { fontSize: 30, width: 40, textAlign: 'center' },
   cardText: { flex: 1 },
   cardName: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
   cardDesc: { color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2 },
-  soonBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20 },
-  soonText: { fontSize: 11, fontWeight: '700', letterSpacing: 1 },
   footerRow: { alignItems: 'center', gap: 8 },
   footer: { fontSize: 11, textAlign: 'center', letterSpacing: 0.5 },
   feedbackLink: { fontSize: 11, letterSpacing: 0.5, textDecorationLine: 'underline' },

@@ -42,6 +42,12 @@ export default function SetupScreen({ navigation }: Props) {
     { label: t.mixedOp, value: 'mixed'          as MathOperation },
   ];
 
+  const modes = [
+    { emoji: '📏', label: t.convertOp,  value: 'conversion' as MathOperation },
+    { emoji: '½',  label: t.fractionOp, value: 'fraction'   as MathOperation },
+    { emoji: '🔢', label: t.sequenceOp, value: 'sequence'   as MathOperation },
+  ];
+
   const handleStart = () => {
     if (!canStart) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -136,6 +142,21 @@ export default function SetupScreen({ navigation }: Props) {
                 >
                   <Text style={[styles.optionLabel, styles.opLabel, { color: operation === op.value ? C.text : C.textMuted }]}>
                     {op.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={[styles.optionRow, { marginTop: 8 }]}>
+              {modes.map((m) => (
+                <TouchableOpacity
+                  key={m.value}
+                  style={[styles.optionBtn, { backgroundColor: C.surface, borderColor: C.border },
+                    operation === m.value && { borderColor: C.p1Primary, backgroundColor: 'rgba(67,97,238,0.15)' }]}
+                  onPress={() => { tap(); setOperation(m.value); }}
+                >
+                  <Text style={styles.optionEmoji}>{m.emoji}</Text>
+                  <Text style={[styles.optionLabel, { color: operation === m.value ? C.text : C.textMuted }]}>
+                    {m.label}
                   </Text>
                 </TouchableOpacity>
               ))}

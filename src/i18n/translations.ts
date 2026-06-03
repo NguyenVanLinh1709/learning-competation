@@ -12,10 +12,7 @@ export interface Translations {
   subjectMathDesc: string;
   subjectScience: string;
   subjectScienceDesc: string;
-  subjectGeo: string;
-  subjectGeoDesc: string;
   play: string;
-  soon: string;
   homeFooter: string;
   language: string;
 
@@ -49,6 +46,9 @@ export interface Translations {
   hard: string;
   operationLabel: string;
   mixedOp: string;
+  convertOp: string;
+  fractionOp: string;
+  sequenceOp: string;
   questionsLabel: string;
   startBattle: string;
 
@@ -135,10 +135,7 @@ const en: Translations = {
   subjectMathDesc: 'Addition · Subtraction · Multiplication · Division',
   subjectScience: 'Science',
   subjectScienceDesc: 'Physics · Chemistry · Biology',
-  subjectGeo: 'Geography',
-  subjectGeoDesc: 'Capitals · Flags · Countries',
   play: 'PLAY',
-  soon: 'SOON',
   homeFooter: 'Turn the phone between players',
   language: 'LANGUAGE',
 
@@ -168,6 +165,9 @@ const en: Translations = {
   hard: 'Hard',
   operationLabel: 'OPERATION',
   mixedOp: 'Mix',
+  convertOp: 'Convert',
+  fractionOp: 'Fraction',
+  sequenceOp: 'Sequence',
   questionsLabel: 'QUESTIONS',
   startBattle: '⚔️  START BATTLE',
 
@@ -220,7 +220,7 @@ const en: Translations = {
 
   feedbackBtn: '💬 Feedback',
   feedbackTitle: 'Send Feedback',
-  feedbackSubtitle: 'Help us improve MathBattle — report a bug or share an idea.',
+  feedbackSubtitle: 'Help us improve Learning Battle — report a bug or share an idea.',
   feedbackTypeGeneral: 'Suggestion',
   feedbackTypeBug: 'Bug Report',
   feedbackPlaceholder: 'Describe your feedback or bug in detail…',
@@ -246,10 +246,7 @@ const vi: Translations = {
   subjectMathDesc: 'Cộng · Trừ · Nhân · Chia',
   subjectScience: 'Khoa học',
   subjectScienceDesc: 'Vật lý · Hóa học · Sinh học',
-  subjectGeo: 'Địa lý',
-  subjectGeoDesc: 'Thủ đô · Quốc kỳ · Quốc gia',
   play: 'CHƠI',
-  soon: 'SẮP RA',
   homeFooter: 'Xoay điện thoại giữa hai người chơi',
   language: 'NGÔN NGỮ',
 
@@ -279,6 +276,9 @@ const vi: Translations = {
   hard: 'Khó',
   operationLabel: 'PHÉP TÍNH',
   mixedOp: 'Hỗn hợp',
+  convertOp: 'Đổi đơn vị',
+  fractionOp: 'Phân số',
+  sequenceOp: 'Dãy số',
   questionsLabel: 'SỐ CÂU HỎI',
   startBattle: '⚔️  BẮT ĐẦU TRẬN',
 
@@ -331,7 +331,7 @@ const vi: Translations = {
 
   feedbackBtn: '💬 Góp ý',
   feedbackTitle: 'Gửi phản hồi',
-  feedbackSubtitle: 'Giúp chúng tôi cải thiện MathBattle — báo lỗi hoặc chia sẻ ý tưởng.',
+  feedbackSubtitle: 'Giúp chúng tôi cải thiện Learning Battle — báo lỗi hoặc chia sẻ ý tưởng.',
   feedbackTypeGeneral: 'Góp ý',
   feedbackTypeBug: 'Báo lỗi',
   feedbackPlaceholder: 'Mô tả phản hồi hoặc lỗi của bạn…',
@@ -357,10 +357,7 @@ const zh: Translations = {
   subjectMathDesc: '加法 · 减法 · 乘法 · 除法',
   subjectScience: '科学',
   subjectScienceDesc: '物理 · 化学 · 生物',
-  subjectGeo: '地理',
-  subjectGeoDesc: '首都 · 国旗 · 国家',
   play: '开始',
-  soon: '即将推出',
   homeFooter: '两位玩家之间翻转手机',
   language: '语言',
 
@@ -390,6 +387,9 @@ const zh: Translations = {
   hard: '困难',
   operationLabel: '运算类型',
   mixedOp: '混合',
+  convertOp: '单位换算',
+  fractionOp: '分数',
+  sequenceOp: '数列',
   questionsLabel: '题目数量',
   startBattle: '⚔️  开始对战',
 
@@ -442,7 +442,7 @@ const zh: Translations = {
 
   feedbackBtn: '💬 反馈',
   feedbackTitle: '发送反馈',
-  feedbackSubtitle: '帮助我们改进 MathBattle — 报告错误或分享想法。',
+  feedbackSubtitle: '帮助我们改进 Learning Battle — 报告错误或分享想法。',
   feedbackTypeGeneral: '建议',
   feedbackTypeBug: '报告错误',
   feedbackPlaceholder: '详细描述您的反馈或错误…',
