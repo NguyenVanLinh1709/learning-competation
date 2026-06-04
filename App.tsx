@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
@@ -27,11 +27,18 @@ import ColorBattleGameScreen from './src/screens/ColorBattleGameScreen';
 import ColorBattleResultScreen from './src/screens/ColorBattleResultScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
 import LeaderboardScreen from './src/screens/LeaderboardScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import { useProfileStore } from './src/store/profileStore';
 import type { RootStackParamList } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  // Load (or create) the stable device identity used for leaderboard ranking.
+  useEffect(() => {
+    useProfileStore.getState().init();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <StatusBar style="light" hidden />
@@ -63,6 +70,7 @@ export default function App() {
           <Stack.Screen name="ColorBattleResult" component={ColorBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} />
           <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

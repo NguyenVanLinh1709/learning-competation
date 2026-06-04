@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-  ActivityIndicator, FlatList, Platform, RefreshControl,
+  ActivityIndicator, FlatList, Image, Platform, RefreshControl,
   StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,6 +9,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useLeaderboardStore } from '../store/leaderboardStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import { flagForCountry } from '../data/countries';
 import type { GameMode, LeaderboardEntry, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Leaderboard'> };
@@ -72,18 +73,27 @@ export default function LeaderboardScreen({ navigation }: Props) {
       <View style={[styles.pedestalCol, big && styles.pedestalColCenter]}>
         {big && <Text style={styles.crown}>👑</Text>}
         <View style={[styles.avatarWrap, { width: avatarSize, height: avatarSize }]}>
-          <View
-            style={[
-              styles.avatar,
-              { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2, backgroundColor: colorForName(entry.player_name) },
-            ]}
-          >
-            <Text style={[styles.avatarText, { fontSize: big ? 26 : 20 }]}>{initials(entry.player_name)}</Text>
-          </View>
+          {entry.avatar_url ? (
+            <Image
+              source={{ uri: entry.avatar_url }}
+              style={[styles.avatar, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]}
+            />
+          ) : (
+            <View
+              style={[
+                styles.avatar,
+                { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2, backgroundColor: colorForName(entry.player_name) },
+              ]}
+            >
+              <Text style={[styles.avatarText, { fontSize: big ? 26 : 20 }]}>{initials(entry.player_name)}</Text>
+            </View>
+          )}
           <Text style={[styles.avatarMedal, big && styles.avatarMedalBig]}>{MEDAL[place]}</Text>
         </View>
 
-        <Text style={[styles.podiumName, { color: C.text }]} numberOfLines={1}>{entry.player_name}</Text>
+        <Text style={[styles.podiumName, { color: C.text }]} numberOfLines={1}>
+          {flagForCountry(entry.country) ? `${flagForCountry(entry.country)} ` : ''}{entry.player_name}
+        </Text>
         <Text style={[styles.podiumScore, { color: C.text }]}>
           {entry.score}<Text style={[styles.podiumScoreOf, { color: C.textMuted }]}> /{entry.total}</Text>
         </Text>
@@ -130,12 +140,18 @@ export default function LeaderboardScreen({ navigation }: Props) {
           )}
         </View>
 
-        <View style={[styles.rowAvatar, { backgroundColor: colorForName(item.player_name) }]}>
-          <Text style={styles.rowAvatarText}>{initials(item.player_name)}</Text>
-        </View>
+        {item.avatar_url ? (
+          <Image source={{ uri: item.avatar_url }} style={styles.rowAvatar} />
+        ) : (
+          <View style={[styles.rowAvatar, styles.rowAvatarFallback, { backgroundColor: colorForName(item.player_name) }]}>
+            <Text style={styles.rowAvatarText}>{initials(item.player_name)}</Text>
+          </View>
+        )}
 
         <View style={styles.rowMain}>
-          <Text style={[styles.name, { color: C.text }]} numberOfLines={1}>{item.player_name}</Text>
+          <Text style={[styles.name, { color: C.text }]} numberOfLines={1}>
+            {flagForCountry(item.country) ? `${flagForCountry(item.country)} ` : ''}{item.player_name}
+          </Text>
           <View style={styles.pillRow}>
             <View style={[styles.pill, { backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)' }]}>
               <Text style={[styles.pillText, { color: C.textMuted }]}>{MODE_EMOJI[item.mode]} {item.difficulty ?? '—'}</Text>
@@ -281,7 +297,8 @@ const styles = StyleSheet.create({
   rankCol: { width: 26, alignItems: 'center' },
   rank: { fontSize: 15, fontWeight: '800' },
   rowMedal: { fontSize: 18 },
-  rowAvatar: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  rowAvatar: { width: 40, height: 40, borderRadius: 20, overflow: 'hidden' },
+  rowAvatarFallback: { alignItems: 'center', justifyContent: 'center' },
   rowAvatarText: { color: '#fff', fontSize: 14, fontWeight: '800' },
   rowMain: { flex: 1 },
   name: { fontSize: 15, fontWeight: '700' },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TextInput, TouchableOpacity, View,
@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorPerceptionStore } from '../store/colorPerceptionStore';
+import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import type { RootStackParamList } from '../types';
@@ -34,10 +35,13 @@ const DIFFICULTIES: { label: string; value: ColorDifficulty; emoji: string; hint
 
 export default function ColorSetupScreen({ navigation }: Props) {
   const { setConfig } = useColorPerceptionStore();
+  const { displayName, setDisplayName } = useProfileStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
-  const [playerName, setPlayerName] = useState('');
+  const [playerName, setPlayerName] = useState(displayName);
+  // Sync once the persisted profile name finishes loading.
+  useEffect(() => { if (displayName) setPlayerName(displayName); }, [displayName]);
   const [difficulty, setDifficulty] = useState<ColorDifficulty>('medium');
   const [questionCount, setQuestionCount] = useState(10);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);
@@ -48,6 +52,7 @@ export default function ColorSetupScreen({ navigation }: Props) {
   const handleStart = () => {
     if (!canStart) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setDisplayName(playerName.trim());
     setConfig({ playerName: playerName.trim(), difficulty, totalQuestions: questionCount, timeLimitMs });
     navigation.navigate('ColorGame');
   };

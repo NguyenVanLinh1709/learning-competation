@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import {
-  Animated, Platform, StyleSheet, Text, TouchableOpacity, View,
+  Animated, Image, Platform, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -8,6 +8,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguageStore } from '../store/languageStore';
+import { useProfileStore } from '../store/profileStore';
 import { LangCode, TRANSLATIONS } from '../i18n/translations';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Home'> };
@@ -17,6 +18,7 @@ const LANG_ORDER: LangCode[] = ['en', 'vi', 'zh'];
 export default function HomeScreen({ navigation }: Props) {
   const { C, G, isDark, toggle } = useTheme();
   const { lang, t, setLanguage } = useLanguageStore();
+  const { displayName, avatarUrl } = useProfileStore();
 
   const titleY = useRef(new Animated.Value(-40)).current;
   const titleOpacity = useRef(new Animated.Value(0)).current;
@@ -66,14 +68,27 @@ export default function HomeScreen({ navigation }: Props) {
           ))}
         </View>
 
-        {/* Light / dark toggle */}
-        <TouchableOpacity
-          style={[styles.themeBtn, { backgroundColor: C.surface, borderColor: C.border }]}
-          onPress={() => { tap(); toggle(); }}
-          activeOpacity={0.75}
-        >
-          <Text style={styles.themeIcon}>{isDark ? '☀️' : '🌙'}</Text>
-        </TouchableOpacity>
+        <View style={styles.topBarRight}>
+          {/* Profile */}
+          <TouchableOpacity
+            style={[styles.profileBtn, { borderColor: C.p1Primary, backgroundColor: C.surface }]}
+            onPress={() => { tap(); navigation.navigate('Profile'); }}
+            activeOpacity={0.75}
+          >
+            {avatarUrl
+              ? <Image source={{ uri: avatarUrl }} style={styles.profileAvatar} />
+              : <Text style={[styles.profileIcon, { color: C.text }]}>{displayName ? displayName.trim()[0].toUpperCase() : '👤'}</Text>}
+          </TouchableOpacity>
+
+          {/* Light / dark toggle */}
+          <TouchableOpacity
+            style={[styles.themeBtn, { backgroundColor: C.surface, borderColor: C.border }]}
+            onPress={() => { tap(); toggle(); }}
+            activeOpacity={0.75}
+          >
+            <Text style={styles.themeIcon}>{isDark ? '☀️' : '🌙'}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Title */}
@@ -188,15 +203,29 @@ export default function HomeScreen({ navigation }: Props) {
         </LinearGradient>
       </Animated.View>
 
+      {/* Prominent leaderboard call-to-action */}
+      <Animated.View style={{ opacity: cardsOpacity, transform: [{ translateY: cardsY }] }}>
+        <TouchableOpacity
+          style={styles.leaderboardBtn}
+          onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Leaderboard'); }}
+          activeOpacity={0.85}
+        >
+          <LinearGradient
+            colors={['#FDE68A', '#F59E0B']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.leaderboardGrad}
+          >
+            <Text style={styles.leaderboardIcon}>🏆</Text>
+            <Text style={styles.leaderboardText}>{t.leaderboardBtn}</Text>
+            <Text style={styles.leaderboardChevron}>›</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </Animated.View>
+
       <View style={styles.footerRow}>
         <Text style={[styles.footer, { color: C.textMuted }]}>{t.homeFooter}</Text>
         <View style={styles.footerLinks}>
-          <TouchableOpacity
-            onPress={() => { tap(); navigation.navigate('Leaderboard'); }}
-            activeOpacity={0.75}
-          >
-            <Text style={[styles.feedbackLink, { color: C.textMuted }]}>🏆 {t.leaderboardBtn}</Text>
-          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => { tap(); navigation.navigate('Feedback'); }}
             activeOpacity={0.75}
@@ -234,6 +263,18 @@ const styles = StyleSheet.create({
   },
   langFlag: { fontSize: 14 },
   langCode: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
+  topBarRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  profileBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  profileAvatar: { width: '100%', height: '100%' },
+  profileIcon: { fontSize: 16, fontWeight: '800' },
   themeBtn: {
     width: 36,
     height: 36,
@@ -279,6 +320,28 @@ const styles = StyleSheet.create({
   cardText: { flex: 1 },
   cardName: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
   cardDesc: { color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2 },
+  // Leaderboard call-to-action
+  leaderboardBtn: {
+    borderRadius: 16,
+    marginBottom: 14,
+    shadowColor: '#F59E0B',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  leaderboardGrad: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+  },
+  leaderboardIcon: { fontSize: 24 },
+  leaderboardText: { flex: 1, color: '#78350F', fontSize: 16, fontWeight: '900', letterSpacing: 0.5 },
+  leaderboardChevron: { color: '#78350F', fontSize: 26, fontWeight: '900', marginTop: -2 },
+
   footerRow: { alignItems: 'center', gap: 8 },
   footerLinks: { flexDirection: 'row', gap: 18 },
   footer: { fontSize: 11, textAlign: 'center', letterSpacing: 0.5 },

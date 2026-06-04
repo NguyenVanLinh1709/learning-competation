@@ -133,6 +133,20 @@ export interface Translations {
   feedbackImageCamera: string;
   feedbackImageGallery: string;
   feedbackImageCancel: string;
+
+  // Profile
+  profileBtn: string;
+  profileTitle: string;
+  profileSubtitle: string;
+  profileNameLabel: string;
+  profileNamePlaceholder: string;
+  profileCountryLabel: string;
+  profileSelectCountry: string;
+  profileSearchCountry: string;
+  profileAvatarHint: string;
+  profileSave: string;
+  profileSaving: string;
+  profileNoCountry: string;
 }
 
 const en: Translations = {
@@ -253,6 +267,19 @@ const en: Translations = {
   feedbackImageCamera: 'Take Photo',
   feedbackImageGallery: 'Choose from Library',
   feedbackImageCancel: 'Cancel',
+
+  profileBtn: 'Profile',
+  profileTitle: 'My Profile',
+  profileSubtitle: 'Your player card for solo mode & the leaderboard',
+  profileNameLabel: 'Display Name',
+  profileNamePlaceholder: 'Your name',
+  profileCountryLabel: 'Country',
+  profileSelectCountry: 'Select country',
+  profileSearchCountry: 'Search…',
+  profileAvatarHint: 'Tap to change photo',
+  profileSave: 'Save Profile',
+  profileSaving: 'Saving…',
+  profileNoCountry: 'Not set',
 };
 
 const vi: Translations = {
@@ -373,6 +400,19 @@ const vi: Translations = {
   feedbackImageCamera: 'Chụp ảnh',
   feedbackImageGallery: 'Chọn từ thư viện',
   feedbackImageCancel: 'Hủy',
+
+  profileBtn: 'Hồ sơ',
+  profileTitle: 'Hồ sơ của tôi',
+  profileSubtitle: 'Thẻ người chơi cho chế độ đơn & bảng xếp hạng',
+  profileNameLabel: 'Tên hiển thị',
+  profileNamePlaceholder: 'Tên của bạn',
+  profileCountryLabel: 'Quốc gia',
+  profileSelectCountry: 'Chọn quốc gia',
+  profileSearchCountry: 'Tìm kiếm…',
+  profileAvatarHint: 'Chạm để đổi ảnh',
+  profileSave: 'Lưu hồ sơ',
+  profileSaving: 'Đang lưu…',
+  profileNoCountry: 'Chưa đặt',
 };
 
 const zh: Translations = {
@@ -493,6 +533,19 @@ const zh: Translations = {
   feedbackImageCamera: '拍照',
   feedbackImageGallery: '从相册选择',
   feedbackImageCancel: '取消',
+
+  profileBtn: '个人资料',
+  profileTitle: '我的资料',
+  profileSubtitle: '用于单人模式和排行榜的玩家卡片',
+  profileNameLabel: '显示名称',
+  profileNamePlaceholder: '你的名字',
+  profileCountryLabel: '国家/地区',
+  profileSelectCountry: '选择国家/地区',
+  profileSearchCountry: '搜索…',
+  profileAvatarHint: '点击更换照片',
+  profileSave: '保存资料',
+  profileSaving: '保存中…',
+  profileNoCountry: '未设置',
 };
 
 export const TRANSLATIONS: Record<LangCode, Translations> = { en, vi, zh };

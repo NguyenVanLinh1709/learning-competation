@@ -18,6 +18,17 @@ interface LeaderboardStore {
 
 const TOP_LIMIT = 50;
 
+// Ranking order used both when reading the board and when deciding whether a new
+// run beats a user's stored best: higher score, then better accuracy, then faster.
+function isBetter(
+  a: Pick<LeaderboardEntry, 'score' | 'accuracy' | 'avg_time_ms'>,
+  b: Pick<LeaderboardEntry, 'score' | 'accuracy' | 'avg_time_ms'>,
+): boolean {
+  if (a.score !== b.score) return a.score > b.score;
+  if (a.accuracy !== b.accuracy) return a.accuracy > b.accuracy;
+  return (a.avg_time_ms ?? Infinity) < (b.avg_time_ms ?? Infinity);
+}
+
 export const useLeaderboardStore = create<LeaderboardStore>((set, get) => ({
   entries: [],
   loading: false,
@@ -56,7 +67,21 @@ export const useLeaderboardStore = create<LeaderboardStore>((set, get) => ({
   submitScore: async (entry) => {
     if (!isSupabaseConfigured) return false;
     try {
-      const { error } = await supabase.from('leaderboard').insert(entry);
+      // One ranked row per (user_id, mode): keep the user's best run only.
+      const { data: existing, error: readErr } = await supabase
+        .from('leaderboard')
+        .select('score, accuracy, avg_time_ms')
+        .eq('user_id', entry.user_id)
+        .eq('mode', entry.mode)
+        .maybeSingle();
+      if (readErr) throw readErr;
+
+      // Already have a better-or-equal run stored — leave it untouched.
+      if (existing && !isBetter(entry, existing as LeaderboardEntry)) return false;
+
+      const { error } = await supabase
+        .from('leaderboard')
+        .upsert(entry, { onConflict: 'user_id,mode' });
       if (error) throw error;
       return true;
     } catch {

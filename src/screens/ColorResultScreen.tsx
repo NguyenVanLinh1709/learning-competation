@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorPerceptionStore } from '../store/colorPerceptionStore';
+import { useLeaderboardStore } from '../store/leaderboardStore';
+import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import type { RootStackParamList } from '../types';
@@ -28,6 +30,8 @@ function StatRow({ label, value, highlight, textColor, mutedColor }: {
 
 export default function ColorResultScreen({ navigation }: Props) {
   const { config, score, correctCount, wrongCount, responseTimes, resetGame, initGame } = useColorPerceptionStore();
+  const submitScore = useLeaderboardStore((s) => s.submitScore);
+  const { userId, avatarUrl, country } = useProfileStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
@@ -43,6 +47,25 @@ export default function ColorResultScreen({ navigation }: Props) {
       ? Haptics.NotificationFeedbackType.Success
       : Haptics.NotificationFeedbackType.Warning;
     Haptics.notificationAsync(feedback);
+
+    // Post this run to the shared leaderboard (no-op if Supabase isn't configured).
+    if (config && userId) {
+      const times = responseTimes;
+      submitScore({
+        user_id: userId,
+        player_name: config.playerName?.trim() || 'Anonymous',
+        score,
+        total: config.totalQuestions,
+        mode: 'color',
+        difficulty: config.difficulty,
+        accuracy,
+        avg_time_ms: times.length
+          ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+          : null,
+        avatar_url: avatarUrl || null,
+        country: country || null,
+      });
+    }
 
     Animated.spring(bannerScale, { toValue: 1, friction: 5, useNativeDriver: true }).start(() => {
       Animated.parallel([
@@ -84,6 +107,7 @@ export default function ColorResultScreen({ navigation }: Props) {
             { backgroundColor: C.surface, borderColor: C.border, opacity: cardOpacity, transform: [{ translateY: cardY }] },
           ]}
         >
+          {avatarUrl ? <Image source={{ uri: avatarUrl }} style={styles.resultAvatar} /> : null}
           <View style={[styles.nameBadge, { backgroundColor: '#7C3AED' }]}>
             <Text style={styles.nameText} numberOfLines={1}>{config?.playerName}</Text>
           </View>
@@ -139,6 +163,7 @@ const styles = StyleSheet.create({
   subText: { fontSize: 12, marginTop: 6, letterSpacing: 0.5 },
 
   card: { borderRadius: 20, padding: 20, borderWidth: 1, alignItems: 'center', gap: 4 },
+  resultAvatar: { width: 64, height: 64, borderRadius: 32, marginBottom: 10, borderWidth: 2, borderColor: 'rgba(255,255,255,0.25)' },
   nameBadge: { paddingHorizontal: 14, paddingVertical: 5, borderRadius: 20, marginBottom: 8 },
   nameText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
   scoreBlock: { flexDirection: 'row', alignItems: 'flex-end', gap: 4 },

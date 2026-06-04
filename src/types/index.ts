@@ -70,6 +70,7 @@ export type RootStackParamList = {
   ColorBattleResult: undefined;
   Feedback: undefined;
   Leaderboard: undefined;
+  Profile: undefined;
 };
 
 // Which game a leaderboard score came from.
@@ -78,6 +79,8 @@ export type GameMode = 'math' | 'vocab' | 'color';
 // A single score row as stored in / read from Supabase (`leaderboard` table).
 export interface LeaderboardEntry {
   id: string;
+  /** Stable per-device identity — one ranked row per user per mode. */
+  user_id: string;
   player_name: string;
   score: number;
   total: number;
@@ -85,6 +88,10 @@ export interface LeaderboardEntry {
   difficulty: string | null;
   accuracy: number; // 0–100
   avg_time_ms: number | null;
+  /** Public URL of the player's uploaded avatar, or null. */
+  avatar_url: string | null;
+  /** ISO 3166-1 alpha-2 country code, or null. */
+  country: string | null;
   created_at: string;
 }
 

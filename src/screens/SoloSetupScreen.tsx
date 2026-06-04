@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TextInput, TouchableOpacity, View,
@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSoloStore } from '../store/soloStore';
+import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import type { DifficultyLevel, MathOperation, RootStackParamList } from '../types';
@@ -26,10 +27,13 @@ const TIME_LIMITS = [
 
 export default function SoloSetupScreen({ navigation }: Props) {
   const { setConfig } = useSoloStore();
+  const { displayName, setDisplayName } = useProfileStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
 
-  const [playerName, setPlayerName] = useState('Player');
+  const [playerName, setPlayerName] = useState(displayName || 'Player');
+  // Sync once the persisted profile name finishes loading.
+  useEffect(() => { if (displayName) setPlayerName(displayName); }, [displayName]);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
   const [operation, setOperation] = useState<MathOperation>('mixed');
   const [questionCount, setQuestionCount] = useState(20);
@@ -60,6 +64,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
   const handleStart = () => {
     if (!canStart) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setDisplayName(playerName.trim());
     setConfig({ playerName: playerName.trim(), difficulty, operation, totalQuestions: questionCount, timeLimitMs });
     navigation.navigate('SoloGame');
   };
