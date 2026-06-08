@@ -4,126 +4,119 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useColorBattleStore } from '../store/colorBattleStore';
-import type { ColorBattlePlayerState } from '../store/colorBattleStore';
+import { useMemoryBattleStore } from '../store/memoryBattleStore';
+import type { MemoryBattlePlayerState } from '../store/memoryBattleStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { TimerBar } from '../components/TimerBar';
+import { MEMORY_SETTINGS, TILE_COLORS } from '../utils/memoryShared';
 import type { PlayerPosition, RootStackParamList } from '../types';
 import { SIZES } from '../constants/theme';
 
-type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorBattleGame'> };
+type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'MemoryBattleGame'> };
 
 const COUNTDOWN_STEPS = ['3', '2', '1', 'GO!'];
 const STEP_MS = 800;
-const RESOLVE_DELAY_MS = 1500;
-const TILE_GAP = 8;
+const RESOLVE_DELAY_MS = 1600;
+const SHOW_START_DELAY = 550;
 
-// ─── Tile grid for one player ────────────────────────────────────────────────
+// ─── One player's tile grid ──────────────────────────────────────────────────
 
-function ColorTileGrid({
-  tiles,
-  oddIndex,
-  player,
-  phase,
-  isRotated,
+function MemoryGrid({
+  gridSize,
+  cols,
   tileSize,
+  flashTile,
+  tapFlash,
+  player,
+  showing,
+  isResolved,
+  isRotated,
   onTap,
+  label,
 }: {
-  tiles: string[];
-  oddIndex: number;
-  player: ColorBattlePlayerState;
-  phase: string;
-  isRotated: boolean;
+  gridSize: number;
+  cols: number;
   tileSize: number;
-  onTap: (idx: number) => void;
+  flashTile: number | null;
+  tapFlash: number | null;
+  player: MemoryBattlePlayerState;
+  showing: boolean;
+  isResolved: boolean;
+  isRotated: boolean;
+  onTap: (tile: number) => void;
+  label: string;
 }) {
-  const isResolved = phase === 'resolved' || phase === 'finished';
-  // A player who answered wrong sees their own mistake immediately, while the
-  // round stays active waiting for the opponent / timer. The correct tile stays
-  // hidden until the round resolves so the still-playing opponent isn't shown it.
-  const showWrongEarly = player.hasAnswered && player.lastAnswerCorrect === false && !isResolved;
-
-  const getTileBorder = (idx: number) => {
-    if (isResolved) {
-      if (idx === oddIndex) return '#16A34A';
-      if (idx === player.selectedIndex && idx !== oddIndex) return '#DC2626';
-      return 'transparent';
-    }
-    if (showWrongEarly && idx === player.selectedIndex) return '#DC2626';
-    return 'transparent';
-  };
-
-  const getTileOpacity = (idx: number) => {
-    if (!isResolved) return 1;
-    if (idx === oddIndex || idx === player.selectedIndex) return 1;
-    return 0.3;
-  };
-
-  const grid = (
-    <View style={[styles.tilesGrid, { gap: TILE_GAP }]}>
-      {tiles.map((color, idx) => (
-        <TouchableOpacity
-          key={idx}
-          activeOpacity={isResolved ? 1 : 0.85}
-          onPress={() => onTap(idx)}
-          disabled={isResolved || player.hasAnswered}
-          style={[
-            styles.tile,
-            {
-              width: tileSize,
-              height: tileSize,
-              backgroundColor: color,
-              borderColor: getTileBorder(idx),
-              opacity: getTileOpacity(idx),
-            },
-          ]}
-        >
-          {isResolved && idx === oddIndex && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayIcon}>✓</Text>
-            </View>
-          )}
-          {(isResolved || showWrongEarly) && idx === player.selectedIndex && idx !== oddIndex && (
-            <View style={[styles.overlay, styles.overlayWrong]}>
-              <Text style={styles.overlayIcon}>✗</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
+  const disabled = showing || player.hasAnswered || isResolved;
 
   return (
     <View style={[styles.playerArea, isRotated && styles.rotated]}>
       <View style={styles.playerHeader}>
-        <View style={[styles.nameBadge, { backgroundColor: isRotated ? '#F72585' : '#7C3AED' }]}>
+        <View style={[styles.nameBadge, { backgroundColor: isRotated ? '#F72585' : '#6366F1' }]}>
           <Text style={styles.nameText} numberOfLines={1}>{player.name}</Text>
         </View>
+        <Text style={styles.statusText}>{label}</Text>
         <Text style={styles.scoreText}>⭐ {player.score}</Text>
       </View>
-      {grid}
+
+      <View style={styles.gridWrap}>
+        <View style={[styles.grid, { width: cols * tileSize + (cols - 1) * 10, gap: 10 }]}>
+          {Array.from({ length: gridSize }, (_, idx) => {
+            const lit = flashTile === idx || tapFlash === idx;
+            const isWrong = isResolved && player.wrongTile === idx;
+            return (
+              <TouchableOpacity
+                key={idx}
+                activeOpacity={0.9}
+                onPress={() => onTap(idx)}
+                disabled={disabled}
+                style={[
+                  styles.tile,
+                  {
+                    width: tileSize,
+                    height: tileSize,
+                    backgroundColor: TILE_COLORS[idx],
+                    opacity: lit ? 1 : 0.26,
+                    borderColor: isWrong ? '#DC2626' : lit ? '#FFFFFF' : 'transparent',
+                  },
+                ]}
+              >
+                {isWrong && <Text style={styles.tileMark}>✗</Text>}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
     </View>
   );
 }
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 
-export default function ColorBattleGameScreen({ navigation }: Props) {
+export default function MemoryBattleGameScreen({ navigation }: Props) {
   const {
-    config, questions, currentIndex,
+    config, rounds, currentIndex,
     player1, player2, phase,
-    initGame, submitAnswer, resolveQuestion, nextQuestion, resetGame,
-  } = useColorBattleStore();
+    initGame, submitTap, resolveQuestion, nextQuestion, resetGame,
+  } = useMemoryBattleStore();
 
   const { t } = useLanguageStore();
   const { C } = useTheme();
   const { width } = useWindowDimensions();
 
-  const tileSize = Math.floor((width - 32 - TILE_GAP * 3) / 4);
+  const difficulty = config?.difficulty ?? 'easy';
+  const { gridSize, flashMs } = MEMORY_SETTINGS[difficulty];
+  const cols = gridSize <= 4 ? 2 : 3;
+  const rawTile = Math.floor((width - 32 - (cols - 1) * 10) / cols);
+  const tileSize = Math.min(rawTile, gridSize <= 4 ? 96 : 78);
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);
+
+  const [flashTile, setFlashTile] = useState<number | null>(null);
+  const [tapP1, setTapP1] = useState<number | null>(null);
+  const [tapP2, setTapP2] = useState<number | null>(null);
+  const [inputOpen, setInputOpen] = useState(false);
 
   const [remainingMs, setRemainingMs] = useState(config?.timeLimitMs ?? 15000);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -134,7 +127,7 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
   }, []);
 
   const onTimeUpRef = useRef<() => void>(() => {});
-  onTimeUpRef.current = () => { resolveQuestion(); };
+  onTimeUpRef.current = () => { setInputOpen(false); resolveQuestion(); };
 
   const startTimer = useCallback(() => {
     if (!config) return;
@@ -153,11 +146,11 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
     initGame();
   }, []);
 
+  // Countdown intro
   useEffect(() => {
-    if (questions.length === 0) return;
+    if (rounds.length === 0) return;
     let step = 0;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-
     const tick = () => {
       step++;
       if (step < COUNTDOWN_STEPS.length) {
@@ -170,11 +163,41 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
     };
     const id = setTimeout(tick, STEP_MS);
     return () => clearTimeout(id);
-  }, [questions.length]);
+  }, [rounds.length]);
 
+  // Show the sequence on both grids, then open input.
   useEffect(() => {
-    if (phase === 'active' && countdownDone) startTimer();
-    return clearTimer;
+    if (phase !== 'active' || !countdownDone || rounds.length === 0) return;
+    const sequence = rounds[currentIndex].sequence;
+    let cancelled = false;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    setInputOpen(false);
+    setFlashTile(null);
+    setTapP1(null);
+    setTapP2(null);
+
+    let i = 0;
+    const gap = Math.max(150, flashMs * 0.4);
+    const playNext = () => {
+      if (cancelled) return;
+      if (i >= sequence.length) {
+        setFlashTile(null);
+        setInputOpen(true);
+        startTimer();
+        return;
+      }
+      setFlashTile(sequence[i]);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      timeouts.push(setTimeout(() => {
+        if (cancelled) return;
+        setFlashTile(null);
+        i++;
+        timeouts.push(setTimeout(playNext, gap));
+      }, flashMs));
+    };
+    timeouts.push(setTimeout(playNext, SHOW_START_DELAY));
+
+    return () => { cancelled = true; timeouts.forEach(clearTimeout); clearTimer(); };
   }, [phase, currentIndex, countdownDone]);
 
   useEffect(() => {
@@ -184,28 +207,36 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
   }, [phase, currentIndex]);
 
   useEffect(() => {
-    if (phase === 'finished') navigation.replace('ColorBattleResult');
+    if (phase === 'finished') navigation.replace('MemoryBattleResult');
   }, [phase]);
 
-  const handleAnswer = useCallback(
-    (position: PlayerPosition, tileIndex: number) => {
-      if (phase !== 'active') return;
-      const responseMs = Date.now() - questionStartRef.current;
-      const result = submitAnswer(position, tileIndex, responseMs);
+  const handleTap = useCallback(
+    (position: PlayerPosition, tile: number) => {
+      if (!inputOpen || phase !== 'active') return;
+      const setTap = position === 'bottom' ? setTapP1 : setTapP2;
+      setTap(tile);
+      setTimeout(() => setTap((cur) => (cur === tile ? null : cur)), 180);
 
-      if (result === 'correct') {
+      const responseMs = Date.now() - questionStartRef.current;
+      const result = submitTap(position, tile, responseMs);
+
+      if (result === 'progress') {
+        Haptics.selectionAsync();
+      } else if (result === 'correct') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         clearTimer();
+        setInputOpen(false);
         resolveQuestion();
       } else if (result === 'both-wrong') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         clearTimer();
+        setInputOpen(false);
         resolveQuestion();
       } else {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },
-    [phase, submitAnswer, resolveQuestion, clearTimer],
+    [inputOpen, phase, submitTap, resolveQuestion, clearTimer],
   );
 
   const handleQuit = useCallback(() => {
@@ -223,8 +254,7 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
     ]);
   }, [t, resetGame, navigation]);
 
-  if (!config || questions.length === 0) {
-    // Show countdown while loading
+  if (!config || rounds.length === 0) {
     const label = COUNTDOWN_STEPS[countdownStep];
     return (
       <View style={[styles.root, { backgroundColor: C.screenBg }]}>
@@ -235,11 +265,19 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
     );
   }
 
-  const question = questions[currentIndex];
+  const round = rounds[currentIndex];
+  const isResolved = phase === 'resolved' || phase === 'finished';
+  const showing = !inputOpen && !isResolved;
+
+  const statusFor = (p: MemoryBattlePlayerState): string => {
+    if (showing) return `👀 ${round.sequence.length}`;
+    if (isResolved) return p.lastAnswerCorrect ? '✅' : p.hasAnswered ? '❌' : '⏱';
+    if (p.hasAnswered) return p.lastAnswerCorrect ? '✅' : '❌';
+    return `${p.inputIndex}/${round.sequence.length}`;
+  };
 
   return (
     <View style={[styles.root, { backgroundColor: C.screenBg }]}>
-      {/* Countdown overlay */}
       {!countdownDone && (
         <View style={styles.countdownOverlay}>
           <Text style={[styles.countdownText, { color: C.text }]}>
@@ -252,14 +290,18 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
         <>
           {/* Player 2 (top, rotated) */}
           <View style={styles.half}>
-            <ColorTileGrid
-              tiles={question.tiles}
-              oddIndex={question.oddIndex}
-              player={player2}
-              phase={phase}
-              isRotated
+            <MemoryGrid
+              gridSize={gridSize}
+              cols={cols}
               tileSize={tileSize}
-              onTap={(idx) => handleAnswer('top', idx)}
+              flashTile={flashTile}
+              tapFlash={tapP2}
+              player={player2}
+              showing={showing}
+              isResolved={isResolved}
+              isRotated
+              onTap={(tile) => handleTap('top', tile)}
+              label={statusFor(player2)}
             />
           </View>
 
@@ -269,7 +311,7 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
             <View style={styles.centerRow}>
               <View style={{ flex: 1 }}>
                 <TimerBar
-                  remainingMs={remainingMs}
+                  remainingMs={showing ? config.timeLimitMs : remainingMs}
                   totalMs={config.timeLimitMs}
                   questionNumber={currentIndex + 1}
                   totalQuestions={config.totalQuestions}
@@ -290,14 +332,18 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
 
           {/* Player 1 (bottom) */}
           <View style={styles.half}>
-            <ColorTileGrid
-              tiles={question.tiles}
-              oddIndex={question.oddIndex}
-              player={player1}
-              phase={phase}
-              isRotated={false}
+            <MemoryGrid
+              gridSize={gridSize}
+              cols={cols}
               tileSize={tileSize}
-              onTap={(idx) => handleAnswer('bottom', idx)}
+              flashTile={flashTile}
+              tapFlash={tapP1}
+              player={player1}
+              showing={showing}
+              isResolved={isResolved}
+              isRotated={false}
+              onTap={(tile) => handleTap('bottom', tile)}
+              label={statusFor(player1)}
             />
           </View>
         </>
@@ -345,28 +391,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 20,
-    maxWidth: '70%',
+    maxWidth: '50%',
   },
   nameText: { color: '#FFFFFF', fontSize: 13, fontWeight: '800' },
+  statusText: { fontSize: 14, fontWeight: '800', color: '#FFFFFF' },
   scoreText: { fontSize: 18, fontWeight: '900', color: '#FFFFFF' },
 
-  tilesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
+  gridWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
   tile: {
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 3,
-    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(22,163,74,0.4)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  overlayWrong: { backgroundColor: 'rgba(220,38,38,0.4)' },
-  overlayIcon: { fontSize: 28, fontWeight: '900', color: '#FFFFFF' },
+  tileMark: { fontSize: 28, fontWeight: '900', color: '#FFFFFF' },
 });

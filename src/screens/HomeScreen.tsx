@@ -201,6 +201,38 @@ export default function HomeScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </LinearGradient>
+
+        {/* Memory Flash — active, no reading needed (pre-alphabet kids) */}
+        <LinearGradient
+          colors={['#6366F1', '#818CF8']}
+          style={[styles.cardActive, { shadowColor: '#6366F1' }]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.cardInner}>
+            <Text style={styles.cardEmoji}>🧠</Text>
+            <View style={styles.cardText}>
+              <Text style={styles.cardName}>{t.subjectMemory}</Text>
+              <Text style={styles.cardDesc}>{t.subjectMemoryDesc}</Text>
+            </View>
+          </View>
+          <View style={styles.modeBtnRow}>
+            <TouchableOpacity
+              style={styles.modeBtn}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemoryBattleSetup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modeBtn, styles.modeBtnSolo]}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemorySetup'); }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
       </Animated.View>
 
       {/* Prominent leaderboard call-to-action */}

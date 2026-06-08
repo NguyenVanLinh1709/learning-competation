@@ -16,7 +16,7 @@ type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Leader
 
 type ModeFilter = GameMode | 'all';
 
-const MODE_EMOJI: Record<GameMode, string> = { math: '🔢', vocab: '📖', color: '🎨' };
+const MODE_EMOJI: Record<GameMode, string> = { math: '🔢', vocab: '📖', color: '🎨', memory: '🧠' };
 
 // Stable, friendly avatar colors derived from the player's name.
 const AVATAR_COLORS = ['#4361EE', '#F72585', '#22C55E', '#FB923C', '#7C3AED', '#06B6D4', '#EC4899'];
@@ -58,6 +58,7 @@ export default function LeaderboardScreen({ navigation }: Props) {
     { key: 'math', label: t.subjectMath, icon: MODE_EMOJI.math },
     { key: 'vocab', label: t.subjectVocab, icon: MODE_EMOJI.vocab },
     { key: 'color', label: t.subjectColor, icon: MODE_EMOJI.color },
+    { key: 'memory', label: t.subjectMemory, icon: MODE_EMOJI.memory },
   ];
 
   const top3 = entries.slice(0, 3);

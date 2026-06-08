@@ -25,6 +25,12 @@ import ColorResultScreen from './src/screens/ColorResultScreen';
 import ColorBattleSetupScreen from './src/screens/ColorBattleSetupScreen';
 import ColorBattleGameScreen from './src/screens/ColorBattleGameScreen';
 import ColorBattleResultScreen from './src/screens/ColorBattleResultScreen';
+import MemorySetupScreen from './src/screens/MemorySetupScreen';
+import MemoryGameScreen from './src/screens/MemoryGameScreen';
+import MemoryResultScreen from './src/screens/MemoryResultScreen';
+import MemoryBattleSetupScreen from './src/screens/MemoryBattleSetupScreen';
+import MemoryBattleGameScreen from './src/screens/MemoryBattleGameScreen';
+import MemoryBattleResultScreen from './src/screens/MemoryBattleResultScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
 import LeaderboardScreen from './src/screens/LeaderboardScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
@@ -68,6 +74,12 @@ export default function App() {
           <Stack.Screen name="ColorBattleSetup" component={ColorBattleSetupScreen} />
           <Stack.Screen name="ColorBattleGame" component={ColorBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="ColorBattleResult" component={ColorBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="MemorySetup" component={MemorySetupScreen} />
+          <Stack.Screen name="MemoryGame" component={MemoryGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="MemoryResult" component={MemoryResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="MemoryBattleSetup" component={MemoryBattleSetupScreen} />
+          <Stack.Screen name="MemoryBattleGame" component={MemoryBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="MemoryBattleResult" component={MemoryBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} />
           <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />

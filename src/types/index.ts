@@ -68,13 +68,19 @@ export type RootStackParamList = {
   ColorBattleSetup: undefined;
   ColorBattleGame: undefined;
   ColorBattleResult: undefined;
+  MemorySetup: undefined;
+  MemoryGame: undefined;
+  MemoryResult: undefined;
+  MemoryBattleSetup: undefined;
+  MemoryBattleGame: undefined;
+  MemoryBattleResult: undefined;
   Feedback: undefined;
   Leaderboard: undefined;
   Profile: undefined;
 };
 
 // Which game a leaderboard score came from.
-export type GameMode = 'math' | 'vocab' | 'color';
+export type GameMode = 'math' | 'vocab' | 'color' | 'memory';
 
 // A single score row as stored in / read from Supabase (`leaderboard` table).
 export interface LeaderboardEntry {

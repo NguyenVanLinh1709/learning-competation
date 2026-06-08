@@ -106,6 +106,19 @@ export interface Translations {
   colorBattleSetup: string;
   startColorBattle: string;
 
+  // Memory Flash
+  subjectMemory: string;
+  subjectMemoryDesc: string;
+  memorySetup: string;
+  memoryTagline: string;
+  memoryWatch: string;
+  memoryRepeat: string;
+  memoryStepsHint: string;
+  startMemoryPractice: string;
+  memorySoloComplete: string;
+  memoryBattleSetup: string;
+  startMemoryBattle: string;
+
   // Leaderboard
   leaderboardBtn: string;
   leaderboardTitle: string;
@@ -242,6 +255,18 @@ const en: Translations = {
   colorBattleSetup: 'Color Battle Setup',
   startColorBattle: '🎨  START COLOR BATTLE',
 
+  subjectMemory: 'Memory Flash',
+  subjectMemoryDesc: 'Watch & repeat the lights · No reading needed',
+  memorySetup: 'Memory Practice',
+  memoryTagline: 'WATCH, REMEMBER, REPEAT',
+  memoryWatch: 'Watch! 👀',
+  memoryRepeat: 'Your turn!',
+  memoryStepsHint: 'steps',
+  startMemoryPractice: '🧠  START MEMORY PRACTICE',
+  memorySoloComplete: 'Memory Practice Complete!',
+  memoryBattleSetup: 'Memory Battle Setup',
+  startMemoryBattle: '🧠  START MEMORY BATTLE',
+
   leaderboardBtn: 'Leaderboard',
   leaderboardTitle: 'Leaderboard',
   lbPlayer: 'player',
@@ -375,6 +400,18 @@ const vi: Translations = {
   colorBattleSetup: 'Thiết lập đấu màu sắc',
   startColorBattle: '🎨  BẮT ĐẦU ĐẤU MÀU SẮC',
 
+  subjectMemory: 'Trí nhớ ánh sáng',
+  subjectMemoryDesc: 'Xem & lặp lại ánh sáng · Không cần biết chữ',
+  memorySetup: 'Luyện trí nhớ',
+  memoryTagline: 'XEM, GHI NHỚ, LẶP LẠI',
+  memoryWatch: 'Nhìn nhé! 👀',
+  memoryRepeat: 'Lượt của bạn!',
+  memoryStepsHint: 'bước',
+  startMemoryPractice: '🧠  BẮT ĐẦU LUYỆN TRÍ NHỚ',
+  memorySoloComplete: 'Hoàn thành luyện trí nhớ!',
+  memoryBattleSetup: 'Thiết lập đấu trí nhớ',
+  startMemoryBattle: '🧠  BẮT ĐẦU ĐẤU TRÍ NHỚ',
+
   leaderboardBtn: 'Bảng xếp hạng',
   leaderboardTitle: 'Bảng xếp hạng',
   lbPlayer: 'người chơi',
@@ -507,6 +544,18 @@ const zh: Translations = {
   colorSoloComplete: '色彩练习完成！',
   colorBattleSetup: '色彩对战设置',
   startColorBattle: '🎨  开始色彩对战',
+
+  subjectMemory: '记忆闪光',
+  subjectMemoryDesc: '观看并重复亮灯顺序 · 无需识字',
+  memorySetup: '记忆练习',
+  memoryTagline: '观看、记住、重复',
+  memoryWatch: '看好！👀',
+  memoryRepeat: '该你了！',
+  memoryStepsHint: '步',
+  startMemoryPractice: '🧠  开始记忆练习',
+  memorySoloComplete: '记忆练习完成！',
+  memoryBattleSetup: '记忆对战设置',
+  startMemoryBattle: '🧠  开始记忆对战',
 
   leaderboardBtn: '排行榜',
   leaderboardTitle: '排行榜',
