@@ -160,6 +160,7 @@ export interface Translations {
   profileSave: string;
   profileSaving: string;
   profileNoCountry: string;
+
 }
 
 const en: Translations = {

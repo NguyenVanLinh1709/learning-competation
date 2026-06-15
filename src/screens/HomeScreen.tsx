@@ -69,6 +69,15 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.topBarRight}>
+          {/* Feedback */}
+          <TouchableOpacity
+            style={[styles.feedbackTopBtn, { backgroundColor: C.surface, borderColor: C.border }]}
+            onPress={() => { tap(); navigation.navigate('Feedback'); }}
+            activeOpacity={0.75}
+          >
+            <Text style={styles.feedbackTopIcon}>💬</Text>
+          </TouchableOpacity>
+
           {/* Profile */}
           <TouchableOpacity
             style={[styles.profileBtn, { borderColor: C.p1Primary, backgroundColor: C.surface }]}
@@ -97,14 +106,12 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <Text style={styles.logo}>⚡</Text>
         <Text style={[styles.title, { color: C.text }]}>Learning Battle</Text>
-        <Text style={[styles.tagline, { color: C.textMuted }]}>{t.appTagline}</Text>
       </Animated.View>
 
       {/* Subject cards */}
       <Animated.View
         style={[styles.cardList, { opacity: cardsOpacity, transform: [{ translateY: cardsY }] }]}
       >
-        <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.selectSubject}</Text>
 
         {/* Mathematics — active */}
         <LinearGradient
@@ -117,7 +124,6 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.cardEmoji}>🔢</Text>
             <View style={styles.cardText}>
               <Text style={styles.cardName}>{t.subjectMath}</Text>
-              <Text style={styles.cardDesc}>{t.subjectMathDesc}</Text>
             </View>
           </View>
           <View style={styles.modeBtnRow}>
@@ -149,7 +155,6 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.cardEmoji}>📖</Text>
             <View style={styles.cardText}>
               <Text style={styles.cardName}>{t.subjectVocab}</Text>
-              <Text style={styles.cardDesc}>{t.subjectVocabDesc}</Text>
             </View>
           </View>
           <View style={styles.modeBtnRow}>
@@ -170,7 +175,7 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </LinearGradient>
 
-        {/* Color Sense — active, solo only */}
+        {/* Color Sense */}
         <LinearGradient
           colors={['#7C3AED', '#A855F7']}
           style={[styles.cardActive, { shadowColor: '#7C3AED' }]}
@@ -181,7 +186,6 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.cardEmoji}>🎨</Text>
             <View style={styles.cardText}>
               <Text style={styles.cardName}>{t.subjectColor}</Text>
-              <Text style={styles.cardDesc}>{t.subjectColorDesc}</Text>
             </View>
           </View>
           <View style={styles.modeBtnRow}>
@@ -202,7 +206,7 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </LinearGradient>
 
-        {/* Memory Flash — active, no reading needed (pre-alphabet kids) */}
+        {/* Memory Flash */}
         <LinearGradient
           colors={['#6366F1', '#818CF8']}
           style={[styles.cardActive, { shadowColor: '#6366F1' }]}
@@ -213,7 +217,6 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.cardEmoji}>🧠</Text>
             <View style={styles.cardText}>
               <Text style={styles.cardName}>{t.subjectMemory}</Text>
-              <Text style={styles.cardDesc}>{t.subjectMemoryDesc}</Text>
             </View>
           </View>
           <View style={styles.modeBtnRow}>
@@ -255,17 +258,6 @@ export default function HomeScreen({ navigation }: Props) {
         </TouchableOpacity>
       </Animated.View>
 
-      <View style={styles.footerRow}>
-        <Text style={[styles.footer, { color: C.textMuted }]}>{t.homeFooter}</Text>
-        <View style={styles.footerLinks}>
-          <TouchableOpacity
-            onPress={() => { tap(); navigation.navigate('Feedback'); }}
-            activeOpacity={0.75}
-          >
-            <Text style={[styles.feedbackLink, { color: C.textMuted }]}>{t.feedbackBtn}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </LinearGradient>
   );
 }
@@ -374,8 +366,13 @@ const styles = StyleSheet.create({
   leaderboardText: { flex: 1, color: '#78350F', fontSize: 16, fontWeight: '900', letterSpacing: 0.5 },
   leaderboardChevron: { color: '#78350F', fontSize: 26, fontWeight: '900', marginTop: -2 },
 
-  footerRow: { alignItems: 'center', gap: 8 },
-  footerLinks: { flexDirection: 'row', gap: 18 },
-  footer: { fontSize: 11, textAlign: 'center', letterSpacing: 0.5 },
-  feedbackLink: { fontSize: 11, letterSpacing: 0.5, textDecorationLine: 'underline' },
+  feedbackTopBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  feedbackTopIcon: { fontSize: 18 },
 });

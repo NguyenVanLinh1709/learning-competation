@@ -40,7 +40,6 @@ import type { RootStackParamList } from './src/types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  // Load (or create) the stable device identity used for leaderboard ranking.
   useEffect(() => {
     useProfileStore.getState().init();
   }, []);

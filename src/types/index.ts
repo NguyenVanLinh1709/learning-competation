@@ -112,7 +112,9 @@ export type VocabCategory =
   | 'animals' | 'fruits' | 'colors' | 'school'
   | 'actions' | 'family' | 'body'   | 'food'
   | 'places'  | 'transport' | 'weather' | 'verbs'
-  | 'adjectives';
+  | 'adjectives' | 'sports' | 'jobs' | 'clothing'
+  | 'furniture' | 'technology' | 'nature' | 'space'
+  | 'music' | 'emotions' | 'countries' | 'vegetables';
 
 export type VocabDirection = 'en_to_vi' | 'vi_to_en';
 
