@@ -31,6 +31,12 @@ import MemoryResultScreen from './src/screens/MemoryResultScreen';
 import MemoryBattleSetupScreen from './src/screens/MemoryBattleSetupScreen';
 import MemoryBattleGameScreen from './src/screens/MemoryBattleGameScreen';
 import MemoryBattleResultScreen from './src/screens/MemoryBattleResultScreen';
+import FlagBattleSetupScreen from './src/screens/FlagBattleSetupScreen';
+import FlagBattleGameScreen from './src/screens/FlagBattleGameScreen';
+import FlagBattleResultScreen from './src/screens/FlagBattleResultScreen';
+import FlagSoloSetupScreen from './src/screens/FlagSoloSetupScreen';
+import FlagSoloGameScreen from './src/screens/FlagSoloGameScreen';
+import FlagSoloResultScreen from './src/screens/FlagSoloResultScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
 import LeaderboardScreen from './src/screens/LeaderboardScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
@@ -79,6 +85,12 @@ export default function App() {
           <Stack.Screen name="MemoryBattleSetup" component={MemoryBattleSetupScreen} />
           <Stack.Screen name="MemoryBattleGame" component={MemoryBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="MemoryBattleResult" component={MemoryBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="FlagBattleSetup" component={FlagBattleSetupScreen} />
+          <Stack.Screen name="FlagBattleGame" component={FlagBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="FlagBattleResult" component={FlagBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="FlagSoloSetup" component={FlagSoloSetupScreen} />
+          <Stack.Screen name="FlagSoloGame" component={FlagSoloGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="FlagSoloResult" component={FlagSoloResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} />
           <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />

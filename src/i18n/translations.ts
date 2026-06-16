@@ -119,6 +119,16 @@ export interface Translations {
   memoryBattleSetup: string;
   startMemoryBattle: string;
 
+  // Flag Battle & Solo
+  subjectFlag: string;
+  subjectFlagDesc: string;
+  flagBattleSetup: string;
+  startFlagBattle: string;
+  flagSoloSetup: string;
+  flagSoloTagline: string;
+  startFlagPractice: string;
+  flagSoloComplete: string;
+
   // Leaderboard
   leaderboardBtn: string;
   leaderboardTitle: string;
@@ -268,6 +278,15 @@ const en: Translations = {
   memoryBattleSetup: 'Memory Battle Setup',
   startMemoryBattle: '🧠  START MEMORY BATTLE',
 
+  subjectFlag: 'Flag Quiz',
+  subjectFlagDesc: 'Identify the flag of each nation',
+  flagBattleSetup: 'Flag Battle Setup',
+  startFlagBattle: '🏳️  START FLAG BATTLE',
+  flagSoloSetup: 'Flag Practice',
+  flagSoloTagline: 'PRACTICE ALONE · LEARN EVERY FLAG',
+  startFlagPractice: '🏳️  START FLAG PRACTICE',
+  flagSoloComplete: 'Flag Practice Complete!',
+
   leaderboardBtn: 'Leaderboard',
   leaderboardTitle: 'Leaderboard',
   lbPlayer: 'player',
@@ -413,6 +432,15 @@ const vi: Translations = {
   memoryBattleSetup: 'Thiết lập đấu trí nhớ',
   startMemoryBattle: '🧠  BẮT ĐẦU ĐẤU TRÍ NHỚ',
 
+  subjectFlag: 'Câu đố Quốc kỳ',
+  subjectFlagDesc: 'Nhận biết quốc kỳ các quốc gia',
+  flagBattleSetup: 'Thiết lập đấu quốc kỳ',
+  startFlagBattle: '🏳️  BẮT ĐẦU ĐẤU QUỐC KỲ',
+  flagSoloSetup: 'Luyện quốc kỳ',
+  flagSoloTagline: 'LUYỆN TẬP · HỌC THUỘC MỌI QUỐC KỲ',
+  startFlagPractice: '🏳️  BẮT ĐẦU LUYỆN QUỐC KỲ',
+  flagSoloComplete: 'Hoàn thành luyện quốc kỳ!',
+
   leaderboardBtn: 'Bảng xếp hạng',
   leaderboardTitle: 'Bảng xếp hạng',
   lbPlayer: 'người chơi',
@@ -557,6 +585,15 @@ const zh: Translations = {
   memorySoloComplete: '记忆练习完成！',
   memoryBattleSetup: '记忆对战设置',
   startMemoryBattle: '🧠  开始记忆对战',
+
+  subjectFlag: '国旗测验',
+  subjectFlagDesc: '识别各国国旗',
+  flagBattleSetup: '国旗对战设置',
+  startFlagBattle: '🏳️  开始国旗对战',
+  flagSoloSetup: '国旗练习',
+  flagSoloTagline: '独自练习 · 学会所有国旗',
+  startFlagPractice: '🏳️  开始国旗练习',
+  flagSoloComplete: '国旗练习完成！',
 
   leaderboardBtn: '排行榜',
   leaderboardTitle: '排行榜',

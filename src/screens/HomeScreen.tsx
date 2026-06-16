@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Animated, Image, Platform, StyleSheet, Text, TouchableOpacity, View,
+  Animated, Image, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity,
+  useWindowDimensions, View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -10,6 +11,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useLanguageStore } from '../store/languageStore';
 import { useProfileStore } from '../store/profileStore';
 import { LangCode, TRANSLATIONS } from '../i18n/translations';
+import { makeResponsive } from '../utils/responsive';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Home'> };
 
@@ -19,6 +21,31 @@ export default function HomeScreen({ navigation }: Props) {
   const { C, G, isDark, toggle } = useTheme();
   const { lang, t, setLanguage } = useLanguageStore();
   const { displayName, avatarUrl } = useProfileStore();
+  const { width } = useWindowDimensions();
+
+  const { scale: s, mscale: ms, isTablet, isLargeTablet, hPad, contentWidth } = useMemo(
+    () => makeResponsive(width),
+    [width],
+  );
+
+  // Language dropdown
+  const [langOpen, setLangOpen] = useState(false);
+  const langBtnRef = useRef<View>(null);
+  const [dropdownPos, setDropdownPos] = useState({ x: 0, y: 0, w: 0 });
+
+  const openLangDropdown = () => {
+    tap();
+    langBtnRef.current?.measureInWindow((x, y, btnW, btnH) => {
+      setDropdownPos({ x, y: y + btnH + 6, w: Math.max(btnW, s(130)) });
+      setLangOpen(true);
+    });
+  };
+
+  // Two-column card layout on tablets
+  const cardGap = isTablet ? s(12) : 0;
+  const twoColWidth = (contentWidth - cardGap) / 2;
+  const cardWidth = (isLast = false): number | '100%' =>
+    isTablet ? (isLast ? '100%' : twoColWidth) : '100%';
 
   const titleY = useRef(new Animated.Value(-40)).current;
   const titleOpacity = useRef(new Animated.Value(0)).current;
@@ -40,339 +67,332 @@ export default function HomeScreen({ navigation }: Props) {
   const tap = (style: Haptics.ImpactFeedbackStyle = Haptics.ImpactFeedbackStyle.Light) =>
     Haptics.impactAsync(style);
 
-  return (
-    <LinearGradient colors={G.home} style={styles.container}>
-      {/* Decorative blobs — subtler in light mode */}
-      <View style={[styles.blob, styles.blob1, { backgroundColor: C.p1Primary }]} />
-      <View style={[styles.blob, styles.blob2, { backgroundColor: C.p2Primary }]} />
+  const cardRowStyle = { paddingHorizontal: s(14), paddingVertical: s(9), gap: s(12) };
+  const cardLeftStyle = { gap: s(3) };
+  const cardDividerStyle = { height: s(42) };
+  const cardRightStyle = { gap: s(5) };
+  const modeBtnStyle = { borderRadius: s(12), paddingVertical: s(6) };
+  const modeBtnTextStyle = { fontSize: ms(12) };
+  const cardEmojiStyle = { fontSize: ms(26) };
+  const cardNameStyle = { fontSize: ms(12) };
+  const cardActiveBase = { borderRadius: s(16), marginBottom: s(8) };
 
-      {/* Top bar: language + theme toggle */}
-      <View style={styles.topBar}>
-        <View style={styles.langRow}>
-          {LANG_ORDER.map((code) => (
+  const iconBtnStyle = {
+    backgroundColor: C.surface,
+    borderColor: C.border,
+    width: s(36),
+    height: s(36),
+    borderRadius: s(18),
+  };
+
+  return (
+    <LinearGradient
+      colors={G.home}
+      style={[
+        styles.container,
+        { paddingHorizontal: hPad, paddingTop: Platform.OS === 'ios' ? s(60) : s(44) },
+      ]}
+    >
+      {/* Decorative blobs */}
+      <View style={[styles.blob, styles.blob1, { backgroundColor: C.p1Primary, width: s(280), height: s(280) }]} />
+      <View style={[styles.blob, styles.blob2, { backgroundColor: C.p2Primary, width: s(200), height: s(200) }]} />
+
+      {/* Content wrapper — caps width on large tablets */}
+      <View style={[styles.contentWrapper, isLargeTablet && { maxWidth: 720, alignSelf: 'center', width: '100%' }]}>
+
+        {/* ── Top bar ── */}
+        <View style={[styles.topBar, { marginBottom: s(16) }]}>
+
+          {/* Language dropdown trigger */}
+          <TouchableOpacity
+            ref={langBtnRef}
+            style={[styles.langDropdownBtn, { backgroundColor: C.surface, borderColor: C.border }]}
+            onPress={openLangDropdown}
+            activeOpacity={0.8}
+          >
+            <Text style={{ fontSize: s(14) }}>{TRANSLATIONS[lang].langFlag}</Text>
+            <Text style={[styles.langDropdownCode, { color: C.text, fontSize: ms(12) }]}>
+              {lang.toUpperCase()}
+            </Text>
+            <Text style={[styles.langChevron, { color: C.textMuted, fontSize: s(10) }]}>▾</Text>
+          </TouchableOpacity>
+
+          {/* Right icons */}
+          <View style={styles.topBarRight}>
+            {/* Leaderboard */}
             <TouchableOpacity
-              key={code}
-              style={[
-                styles.langBtn,
-                { backgroundColor: C.surface, borderColor: 'transparent' },
-                lang === code && { borderColor: C.p1Primary, backgroundColor: isDark ? 'rgba(67,97,238,0.2)' : 'rgba(67,97,238,0.1)' },
-              ]}
-              onPress={() => { tap(); setLanguage(code); }}
+              style={[styles.topIconBtn, iconBtnStyle]}
+              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Leaderboard'); }}
               activeOpacity={0.75}
             >
-              <Text style={styles.langFlag}>{TRANSLATIONS[code].langFlag}</Text>
-              <Text style={[styles.langCode, { color: lang === code ? C.text : C.textMuted }]}>
-                {code.toUpperCase()}
-              </Text>
+              <Text style={{ fontSize: s(17) }}>🏆</Text>
             </TouchableOpacity>
-          ))}
+
+            {/* Feedback */}
+            <TouchableOpacity
+              style={[styles.topIconBtn, iconBtnStyle]}
+              onPress={() => { tap(); navigation.navigate('Feedback'); }}
+              activeOpacity={0.75}
+            >
+              <Text style={{ fontSize: s(17) }}>💬</Text>
+            </TouchableOpacity>
+
+            {/* Profile */}
+            <TouchableOpacity
+              style={[styles.profileBtn, { borderColor: C.p1Primary, backgroundColor: C.surface, width: s(36), height: s(36), borderRadius: s(18) }]}
+              onPress={() => { tap(); navigation.navigate('Profile'); }}
+              activeOpacity={0.75}
+            >
+              {avatarUrl
+                ? <Image source={{ uri: avatarUrl }} style={styles.profileAvatar} />
+                : <Text style={[styles.profileIcon, { color: C.text, fontSize: ms(16) }]}>
+                    {displayName ? displayName.trim()[0].toUpperCase() : '👤'}
+                  </Text>}
+            </TouchableOpacity>
+
+            {/* Theme toggle */}
+            <TouchableOpacity
+              style={[styles.topIconBtn, iconBtnStyle]}
+              onPress={() => { tap(); toggle(); }}
+              activeOpacity={0.75}
+            >
+              <Text style={{ fontSize: s(17) }}>{isDark ? '☀️' : '🌙'}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.topBarRight}>
-          {/* Feedback */}
-          <TouchableOpacity
-            style={[styles.feedbackTopBtn, { backgroundColor: C.surface, borderColor: C.border }]}
-            onPress={() => { tap(); navigation.navigate('Feedback'); }}
-            activeOpacity={0.75}
-          >
-            <Text style={styles.feedbackTopIcon}>💬</Text>
-          </TouchableOpacity>
+        {/* ── Scrollable content ── */}
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-          {/* Profile */}
-          <TouchableOpacity
-            style={[styles.profileBtn, { borderColor: C.p1Primary, backgroundColor: C.surface }]}
-            onPress={() => { tap(); navigation.navigate('Profile'); }}
-            activeOpacity={0.75}
-          >
-            {avatarUrl
-              ? <Image source={{ uri: avatarUrl }} style={styles.profileAvatar} />
-              : <Text style={[styles.profileIcon, { color: C.text }]}>{displayName ? displayName.trim()[0].toUpperCase() : '👤'}</Text>}
-          </TouchableOpacity>
+          {/* Title */}
+          <Animated.View style={[styles.titleBlock, { marginBottom: s(16), opacity: titleOpacity, transform: [{ translateY: titleY }] }]}>
+            <Text style={{ fontSize: ms(44), marginBottom: 4 }}>⚡</Text>
+            <Text style={[styles.title, { color: C.text, fontSize: ms(34) }]}>Learning Battle</Text>
+          </Animated.View>
 
-          {/* Light / dark toggle */}
-          <TouchableOpacity
-            style={[styles.themeBtn, { backgroundColor: C.surface, borderColor: C.border }]}
-            onPress={() => { tap(); toggle(); }}
-            activeOpacity={0.75}
-          >
-            <Text style={styles.themeIcon}>{isDark ? '☀️' : '🌙'}</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Subject cards */}
+          <Animated.View style={{ opacity: cardsOpacity, transform: [{ translateY: cardsY }] }}>
+            <View style={isTablet ? { flexDirection: 'row', flexWrap: 'wrap', gap: cardGap } : undefined}>
+
+              {/* Mathematics */}
+              <LinearGradient colors={G.p1Button} style={[styles.cardActive, cardActiveBase, { shadowColor: C.p1Primary, width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <View style={[styles.cardRow, cardRowStyle]}>
+                  <View style={[styles.cardLeft, cardLeftStyle]}>
+                    <Text style={cardEmojiStyle}>🔢</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectMath}</Text>
+                  </View>
+                  <View style={[styles.cardDivider, cardDividerStyle]} />
+                  <View style={[styles.cardRight, cardRightStyle]}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Setup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('SoloSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </LinearGradient>
+
+              {/* English Vocabulary */}
+              <LinearGradient colors={['#059669', '#10B981']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#059669', width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <View style={[styles.cardRow, cardRowStyle]}>
+                  <View style={[styles.cardLeft, cardLeftStyle]}>
+                    <Text style={cardEmojiStyle}>📖</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectVocab}</Text>
+                  </View>
+                  <View style={[styles.cardDivider, cardDividerStyle]} />
+                  <View style={[styles.cardRight, cardRightStyle]}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSoloSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </LinearGradient>
+
+              {/* Color Sense */}
+              <LinearGradient colors={['#7C3AED', '#A855F7']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#7C3AED', width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <View style={[styles.cardRow, cardRowStyle]}>
+                  <View style={[styles.cardLeft, cardLeftStyle]}>
+                    <Text style={cardEmojiStyle}>🎨</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectColor}</Text>
+                  </View>
+                  <View style={[styles.cardDivider, cardDividerStyle]} />
+                  <View style={[styles.cardRight, cardRightStyle]}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('ColorBattleSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('ColorSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </LinearGradient>
+
+              {/* Memory Flash */}
+              <LinearGradient colors={['#6366F1', '#818CF8']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#6366F1', width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <View style={[styles.cardRow, cardRowStyle]}>
+                  <View style={[styles.cardLeft, cardLeftStyle]}>
+                    <Text style={cardEmojiStyle}>🧠</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectMemory}</Text>
+                  </View>
+                  <View style={[styles.cardDivider, cardDividerStyle]} />
+                  <View style={[styles.cardRight, cardRightStyle]}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemoryBattleSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemorySetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </LinearGradient>
+
+              {/* Flag Quiz — spans full width on tablet */}
+              <LinearGradient colors={['#0F766E', '#14B8A6']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#0F766E', width: cardWidth(true) }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <View style={[styles.cardRow, cardRowStyle]}>
+                  <View style={[styles.cardLeft, cardLeftStyle]}>
+                    <Text style={cardEmojiStyle}>🏳️</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectFlag}</Text>
+                  </View>
+                  <View style={[styles.cardDivider, cardDividerStyle]} />
+                  <View style={[styles.cardRight, cardRightStyle]}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('FlagBattleSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('FlagSoloSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </LinearGradient>
+
+            </View>
+          </Animated.View>
+        </ScrollView>
       </View>
 
-      {/* Title */}
-      <Animated.View
-        style={[styles.titleBlock, { opacity: titleOpacity, transform: [{ translateY: titleY }] }]}
+      {/* ── Language dropdown Modal ── */}
+      <Modal
+        transparent
+        visible={langOpen}
+        animationType="fade"
+        onRequestClose={() => setLangOpen(false)}
       >
-        <Text style={styles.logo}>⚡</Text>
-        <Text style={[styles.title, { color: C.text }]}>Learning Battle</Text>
-      </Animated.View>
-
-      {/* Subject cards */}
-      <Animated.View
-        style={[styles.cardList, { opacity: cardsOpacity, transform: [{ translateY: cardsY }] }]}
-      >
-
-        {/* Mathematics — active */}
-        <LinearGradient
-          colors={G.p1Button}
-          style={[styles.cardActive, { shadowColor: C.p1Primary }]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.cardInner}>
-            <Text style={styles.cardEmoji}>🔢</Text>
-            <View style={styles.cardText}>
-              <Text style={styles.cardName}>{t.subjectMath}</Text>
-            </View>
-          </View>
-          <View style={styles.modeBtnRow}>
-            <TouchableOpacity
-              style={styles.modeBtn}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Setup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modeBtn, styles.modeBtnSolo]}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('SoloSetup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-
-        {/* English Vocabulary — active */}
-        <LinearGradient
-          colors={['#059669', '#10B981']}
-          style={[styles.cardActive, { shadowColor: '#059669' }]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.cardInner}>
-            <Text style={styles.cardEmoji}>📖</Text>
-            <View style={styles.cardText}>
-              <Text style={styles.cardName}>{t.subjectVocab}</Text>
-            </View>
-          </View>
-          <View style={styles.modeBtnRow}>
-            <TouchableOpacity
-              style={styles.modeBtn}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSetup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modeBtn, styles.modeBtnSolo]}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSoloSetup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-
-        {/* Color Sense */}
-        <LinearGradient
-          colors={['#7C3AED', '#A855F7']}
-          style={[styles.cardActive, { shadowColor: '#7C3AED' }]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.cardInner}>
-            <Text style={styles.cardEmoji}>🎨</Text>
-            <View style={styles.cardText}>
-              <Text style={styles.cardName}>{t.subjectColor}</Text>
-            </View>
-          </View>
-          <View style={styles.modeBtnRow}>
-            <TouchableOpacity
-              style={styles.modeBtn}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('ColorBattleSetup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modeBtn, styles.modeBtnSolo]}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('ColorSetup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-
-        {/* Memory Flash */}
-        <LinearGradient
-          colors={['#6366F1', '#818CF8']}
-          style={[styles.cardActive, { shadowColor: '#6366F1' }]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.cardInner}>
-            <Text style={styles.cardEmoji}>🧠</Text>
-            <View style={styles.cardText}>
-              <Text style={styles.cardName}>{t.subjectMemory}</Text>
-            </View>
-          </View>
-          <View style={styles.modeBtnRow}>
-            <TouchableOpacity
-              style={styles.modeBtn}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemoryBattleSetup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>⚔️ {t.battle}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modeBtn, styles.modeBtnSolo]}
-              onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemorySetup'); }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modeBtnText}>🎯 {t.solo}</Text>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-      </Animated.View>
-
-      {/* Prominent leaderboard call-to-action */}
-      <Animated.View style={{ opacity: cardsOpacity, transform: [{ translateY: cardsY }] }}>
-        <TouchableOpacity
-          style={styles.leaderboardBtn}
-          onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Leaderboard'); }}
-          activeOpacity={0.85}
-        >
-          <LinearGradient
-            colors={['#FDE68A', '#F59E0B']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.leaderboardGrad}
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setLangOpen(false)}>
+          <View
+            style={[
+              styles.dropdown,
+              {
+                top: dropdownPos.y,
+                left: dropdownPos.x,
+                minWidth: dropdownPos.w,
+                backgroundColor: isDark ? '#1E1E2E' : '#FFFFFF',
+                borderColor: C.border,
+              },
+            ]}
           >
-            <Text style={styles.leaderboardIcon}>🏆</Text>
-            <Text style={styles.leaderboardText}>{t.leaderboardBtn}</Text>
-            <Text style={styles.leaderboardChevron}>›</Text>
-          </LinearGradient>
+            {LANG_ORDER.map((code, i) => (
+              <TouchableOpacity
+                key={code}
+                style={[
+                  styles.dropdownItem,
+                  i < LANG_ORDER.length - 1 && { borderBottomWidth: 1, borderBottomColor: C.border },
+                  lang === code && { backgroundColor: isDark ? 'rgba(67,97,238,0.18)' : 'rgba(67,97,238,0.08)' },
+                ]}
+                onPress={() => { tap(); setLanguage(code); setLangOpen(false); }}
+                activeOpacity={0.75}
+              >
+                <Text style={{ fontSize: 18 }}>{TRANSLATIONS[code].langFlag}</Text>
+                <Text style={[styles.dropdownItemText, { color: lang === code ? C.p1Primary : C.text }]}>
+                  {TRANSLATIONS[code].langName ?? code.toUpperCase()}
+                </Text>
+                {lang === code && <Text style={[styles.dropdownCheck, { color: C.p1Primary }]}>✓</Text>}
+              </TouchableOpacity>
+            ))}
+          </View>
         </TouchableOpacity>
-      </Animated.View>
-
+      </Modal>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: Platform.OS === 'ios' ? 60 : 44,
-    paddingHorizontal: 20,
-    paddingBottom: 28,
-  },
+  container: { flex: 1 },
+  contentWrapper: { flex: 1 },
+  scroll: { flex: 1 },
+  scrollContent: { paddingBottom: 28 },
   blob: { position: 'absolute', borderRadius: 999, opacity: 0.07 },
-  blob1: { width: 280, height: 280, top: -80, right: -80 },
-  blob2: { width: 200, height: 200, bottom: 120, left: -70 },
+  blob1: { top: -80, right: -80 },
+  blob2: { bottom: 120, left: -70 },
 
   // Top bar
-  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
-  langRow: { flexDirection: 'row', gap: 6 },
-  langBtn: {
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  langDropdownBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderRadius: 20,
     borderWidth: 1,
   },
-  langFlag: { fontSize: 14 },
-  langCode: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
+  langDropdownCode: { fontWeight: '700', letterSpacing: 0.5 },
+  langChevron: { fontWeight: '700' },
   topBarRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  profileBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
+  topIconBtn: { borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  profileBtn: { borderWidth: 2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   profileAvatar: { width: '100%', height: '100%' },
-  profileIcon: { fontSize: 16, fontWeight: '800' },
-  themeBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  themeIcon: { fontSize: 18 },
+  profileIcon: { fontWeight: '800' },
 
   // Title
-  titleBlock: { alignItems: 'center', marginBottom: 24 },
-  logo: { fontSize: 52, marginBottom: 6 },
-  title: { fontSize: 40, fontWeight: '900', letterSpacing: -1 },
-  tagline: { fontSize: 10, letterSpacing: 2, marginTop: 6, fontWeight: '700', textAlign: 'center' },
+  titleBlock: { alignItems: 'center' },
+  title: { fontWeight: '900', letterSpacing: -1 },
 
   // Cards
-  cardList: { flex: 1 },
-  sectionLabel: { fontSize: 11, letterSpacing: 3, fontWeight: '700', marginBottom: 12 },
   cardActive: {
-    borderRadius: 18,
-    marginBottom: 12,
     overflow: 'hidden',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.45,
     shadowRadius: 12,
     elevation: 8,
   },
-  cardInner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10, gap: 12 },
-  modeBtnRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingBottom: 14 },
+  cardRow: { flexDirection: 'row', alignItems: 'center' },
+  cardLeft: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
+  cardDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
+  cardRight: { flexDirection: 'column', width: '50%' },
   modeBtn: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    borderRadius: 12,
-    paddingVertical: 8,
+    backgroundColor: 'rgba(255,255,255,0.22)',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.25)',
+    borderColor: 'rgba(255,255,255,0.35)',
   },
-  modeBtnSolo: { backgroundColor: 'rgba(255,255,255,0.12)' },
-  modeBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: '800', letterSpacing: 0.5 },
-  cardEmoji: { fontSize: 30, width: 40, textAlign: 'center' },
-  cardText: { flex: 1 },
-  cardName: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
-  cardDesc: { color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2 },
-  // Leaderboard call-to-action
-  leaderboardBtn: {
-    borderRadius: 16,
-    marginBottom: 14,
-    shadowColor: '#F59E0B',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 8,
+  modeBtnSolo: { backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.18)' },
+  modeBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 0.8 },
+  cardName: { color: '#FFFFFF', fontWeight: '800', textAlign: 'center' },
+
+  // Language dropdown Modal
+  modalOverlay: { flex: 1 },
+  dropdown: {
+    position: 'absolute',
+    borderRadius: 14,
+    borderWidth: 1,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
   },
-  leaderboardGrad: {
+  dropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
-  leaderboardIcon: { fontSize: 24 },
-  leaderboardText: { flex: 1, color: '#78350F', fontSize: 16, fontWeight: '900', letterSpacing: 0.5 },
-  leaderboardChevron: { color: '#78350F', fontSize: 26, fontWeight: '900', marginTop: -2 },
-
-  feedbackTopBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  feedbackTopIcon: { fontSize: 18 },
+  dropdownItemText: { flex: 1, fontSize: 14, fontWeight: '700' },
+  dropdownCheck: { fontSize: 14, fontWeight: '900' },
 });

@@ -74,6 +74,12 @@ export type RootStackParamList = {
   MemoryBattleSetup: undefined;
   MemoryBattleGame: undefined;
   MemoryBattleResult: undefined;
+  FlagBattleSetup: undefined;
+  FlagBattleGame: undefined;
+  FlagBattleResult: undefined;
+  FlagSoloSetup: undefined;
+  FlagSoloGame: undefined;
+  FlagSoloResult: undefined;
   Feedback: undefined;
   Leaderboard: undefined;
   Profile: undefined;
@@ -103,6 +109,30 @@ export interface LeaderboardEntry {
 
 // What a Result screen submits (the DB fills id + created_at).
 export type NewLeaderboardEntry = Omit<LeaderboardEntry, 'id' | 'created_at'>;
+
+// ─── Flag Battle ─────────────────────────────────────────────────────────────
+
+export interface FlagQuestion {
+  id: string;
+  countryName: string;
+  choices: string[]; // 4 flag emojis
+  correctIndex: number;
+}
+
+export interface FlagBattleConfig {
+  player1Name: string;
+  player2Name: string;
+  difficulty: DifficultyLevel;
+  totalQuestions: number;
+  timeLimitMs: number;
+}
+
+export interface FlagSoloConfig {
+  playerName: string;
+  difficulty: DifficultyLevel;
+  totalQuestions: number;
+  timeLimitMs: number; // 0 = unlimited
+}
 
 // ─── Vocabulary Battle ───────────────────────────────────────────────────────
 

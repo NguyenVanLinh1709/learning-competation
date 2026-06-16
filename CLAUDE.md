@@ -2,7 +2,7 @@
 
 # MathBattle / "Learning Battle"
 
-A 2-player (and solo) educational mini-game app built with **Expo 54 / React Native 0.81 / React 19**. Two players share one phone — the screen is split top/bottom, and player 2's half is rotated 180° so they sit across from each other. There are three game families (Math, Vocabulary, Color perception), each with a 2-player "battle" and a solo mode.
+A 2-player (and solo) educational mini-game app built with **Expo 54 / React Native 0.81 / React 19**. Two players share one phone — the screen is split top/bottom, and player 2's half is rotated 180° so they sit across from each other. There are five game families (Math, Vocabulary, Color perception, Memory, Flag Quiz), each with a 2-player "battle" and a solo mode.
 
 > ⚠️ **Expo has changed.** This is Expo SDK 54 with the new architecture enabled (`newArchEnabled: true`). Read the versioned docs at https://docs.expo.dev/versions/v54.0.0/ before writing any native/Expo code — do not rely on older SDK patterns.
 
@@ -24,7 +24,8 @@ There is no test suite, no linter config, and no build/CI scripts — verify cha
 - **State** — Zustand (`src/store/*.ts`). One store per game mode plus shared stores. Stores hold config + live game state and expose action methods (`setConfig`, `initGame`, `submitAnswer`, `nextQuestion`, `resetGame`, …). State is in-memory only (no persistence); `resetGame` clears it between sessions.
 - **Screens** — `src/screens/`. Each game mode is a 3-screen flow: **Setup → (Countdown) → Game → Result**.
 - **Components** — small reusable pieces in `src/components/` (`AnswerButton`, `PlayerPanel`, `TimerBar`, and Vocab variants).
-- **Question generation** — pure functions in `src/utils/*Generator.ts` produce the question arrays; `src/data/vocabularyData.ts` is the vocab word bank.
+- **Question generation** — pure functions in `src/utils/*Generator.ts` produce the question arrays. Data files live in `src/data/` (`vocabularyData.ts`, `flagData.ts`, `countries.ts`).
+- **Backend** — Supabase client at `src/lib/supabase.ts`. Used for leaderboard persistence (`leaderboardStore`) and player profiles (`profileStore`, initialized in `App.tsx` via `useProfileStore.getState().init()`). Avatar utilities in `src/lib/avatar.ts`.
 
 ### Game modes (and their stores)
 
@@ -33,8 +34,10 @@ There is no test suite, no linter config, and no build/CI scripts — verify cha
 | Math | `gameStore` | `soloStore` | `*`, `Solo*` |
 | Vocabulary | `vocabStore` | `vocabSoloStore` | `Vocab*`, `VocabSolo*` |
 | Color perception | `colorBattleStore` | `colorPerceptionStore` | `ColorBattle*`, `Color*` |
+| Memory | `memoryBattleStore` | `memoryStore` | `MemoryBattle*`, `Memory*` |
+| Flag Quiz | `flagBattleStore` | `flagSoloStore` | `FlagBattle*`, `FlagSolo*` |
 
-(The Math battle screens are the unprefixed `Setup/Countdown/Game/Result`. `HomeScreen` is the launcher; `FeedbackScreen` is reachable from Home.)
+The Math battle screens use the unprefixed names `Setup/Countdown/Game/Result`. Utility screens reachable from `HomeScreen`: `FeedbackScreen`, `LeaderboardScreen`, `ProfileScreen`.
 
 ### Theming
 
