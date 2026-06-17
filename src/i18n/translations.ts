@@ -49,6 +49,7 @@ export interface Translations {
   convertOp: string;
   fractionOp: string;
   sequenceOp: string;
+  countOp: string;
   questionsLabel: string;
   startBattle: string;
 
@@ -93,6 +94,14 @@ export interface Translations {
   vocabSoloTagline: string;
   startVocabPractice: string;
   vocabSoloComplete: string;
+
+  // Vocab mode selector
+  vocabModeLabel: string;
+  vocabModeVocab: string;
+  vocabModeVocabDesc: string;
+  vocabModeOddOneOut: string;
+  vocabModeOddOneOutDesc: string;
+  oddOneOutQuestion: string;
 
   // Color perception
   subjectColor: string;
@@ -216,6 +225,7 @@ const en: Translations = {
   convertOp: 'Convert',
   fractionOp: 'Fraction',
   sequenceOp: 'Sequence',
+  countOp: 'Count',
   questionsLabel: 'QUESTIONS',
   startBattle: '⚔️  START BATTLE',
 
@@ -254,6 +264,13 @@ const en: Translations = {
   vocabSoloTagline: 'PRACTICE ALONE · BUILD YOUR VOCAB',
   startVocabPractice: '📖  START VOCAB PRACTICE',
   vocabSoloComplete: 'Vocab Practice Complete!',
+
+  vocabModeLabel: 'MODE',
+  vocabModeVocab: 'Vocab',
+  vocabModeVocabDesc: 'Translate words',
+  vocabModeOddOneOut: 'Odd One Out',
+  vocabModeOddOneOutDesc: 'Find the different word',
+  oddOneOutQuestion: 'Which word doesn\'t belong?',
 
   subjectColor: 'Color Sense',
   subjectColorDesc: 'Find the different shade · Train your vision',
@@ -370,6 +387,7 @@ const vi: Translations = {
   convertOp: 'Đổi đơn vị',
   fractionOp: 'Phân số',
   sequenceOp: 'Dãy số',
+  countOp: 'Đếm',
   questionsLabel: 'SỐ CÂU HỎI',
   startBattle: '⚔️  BẮT ĐẦU TRẬN',
 
@@ -408,6 +426,13 @@ const vi: Translations = {
   vocabSoloTagline: 'LUYỆN TẬP · MỞ RỘNG VỐN TỪ',
   startVocabPractice: '📖  BẮT ĐẦU LUYỆN TỪ VỰNG',
   vocabSoloComplete: 'Hoàn thành luyện từ vựng!',
+
+  vocabModeLabel: 'CHẾ ĐỘ',
+  vocabModeVocab: 'Từ vựng',
+  vocabModeVocabDesc: 'Dịch từ tiếng Anh',
+  vocabModeOddOneOut: 'Tìm từ khác',
+  vocabModeOddOneOutDesc: 'Tìm từ không cùng nhóm',
+  oddOneOutQuestion: 'Từ nào không thuộc nhóm?',
 
   subjectColor: 'Cảm nhận màu sắc',
   subjectColorDesc: 'Tìm màu khác biệt · Rèn thị giác',
@@ -524,6 +549,7 @@ const zh: Translations = {
   convertOp: '单位换算',
   fractionOp: '分数',
   sequenceOp: '数列',
+  countOp: '计数',
   questionsLabel: '题目数量',
   startBattle: '⚔️  开始对战',
 
@@ -562,6 +588,13 @@ const zh: Translations = {
   vocabSoloTagline: '独自练习 · 积累词汇',
   startVocabPractice: '📖  开始词汇练习',
   vocabSoloComplete: '词汇练习完成！',
+
+  vocabModeLabel: '模式',
+  vocabModeVocab: '词汇',
+  vocabModeVocabDesc: '翻译单词',
+  vocabModeOddOneOut: '找不同',
+  vocabModeOddOneOutDesc: '找出不属于同类的词',
+  oddOneOutQuestion: '哪个词不属于同类？',
 
   subjectColor: '色彩感知',
   subjectColorDesc: '找出不同的色调 · 训练视觉',

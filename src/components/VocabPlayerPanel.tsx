@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { VocabAnswerButton } from './VocabAnswerButton';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguageStore } from '../store/languageStore';
 import type { AnswerButtonState, GamePhase, PlayerState, VocabQuestion } from '../types';
 
 interface Props {
@@ -37,6 +38,7 @@ function getButtonState(
 
 export function VocabPlayerPanel({ player, question, isRotated, onAnswer, phase }: Props) {
   const { C } = useTheme();
+  const { t } = useLanguageStore();
   const isP1 = player.position === 'bottom';
   const accent = isP1 ? C.p1Primary : C.p2Primary;
   const panelBg = isP1 ? C.p1PanelBg : C.p2PanelBg;
@@ -74,16 +76,22 @@ export function VocabPlayerPanel({ player, question, isRotated, onAnswer, phase 
         </View>
       </View>
 
-      {/* Direction badge */}
+      {/* Direction / mode badge */}
       <View style={styles.dirRow}>
         <View style={[styles.dirBadge, { borderColor: accent }]}>
-          <Text style={[styles.dirText, { color: accent }]}>{DIR_LABEL[question.direction]}</Text>
+          <Text style={[styles.dirText, { color: accent }]}>
+            {question.type === 'odd_one_out' ? '🔍 ODD ONE OUT' : DIR_LABEL[question.direction]}
+          </Text>
         </View>
       </View>
 
       {/* Question: emoji + word */}
       <View style={styles.questionContainer}>
-        {question.emoji ? (
+        {question.type === 'odd_one_out' ? (
+          <Text style={[styles.questionTextLarge, { color: C.text }]} adjustsFontSizeToFit numberOfLines={2}>
+            {t.oddOneOutQuestion}
+          </Text>
+        ) : question.emoji ? (
           <>
             <View style={[styles.emojiCard, { backgroundColor: C.surface, borderColor: C.border }]}>
               <Text style={styles.emojiText}>{question.emoji}</Text>

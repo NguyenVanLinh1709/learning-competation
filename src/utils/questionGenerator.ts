@@ -27,19 +27,41 @@ function rand(min: number, max: number) {
 interface ExprResult {
   text: string;
   answer: number | string;
-  /**
-   * Canonical dedup key.
-   * Commutative ops (add, mul) use sorted operands so
-   * "3 × 4" and "4 × 3" share the same key and won't both appear.
-   */
   key: string;
-  /**
-   * Pre-built answer choices. Provided by question types whose distractors
-   * need custom logic (unit conversions, time-of-day, sequences). When
-   * omitted, generateQuestions derives numeric choices via generateChoices().
-   */
   choices?: string[];
   correctIndex?: number;
+  countIcons?: string[];
+}
+
+// ─── Count icons ─────────────────────────────────────────────────────────────
+
+const COUNT_EMOJIS = [
+  '☀️', '🌙', '⭐', '❤️', '🔥', '💧', '🌸', '🍎', '🍌', '🚗',
+  '✈️', '🏠', '🎈', '⚽', '🎵', '🐶', '🐱', '🐸', '🦋', '🌻',
+  '🍕', '🎁', '💡', '🌊', '🍀', '🎲', '🌈', '🦁', '🐘', '🚀',
+];
+
+const COUNT_CFG: Record<DifficultyLevel, { min: number; max: number }> = {
+  easy:   { min: 2,  max: 10 },
+  medium: { min: 5,  max: 15 },
+  hard:   { min: 8,  max: 20 },
+};
+
+function buildCount(difficulty: DifficultyLevel): ExprResult {
+  const cfg = COUNT_CFG[difficulty];
+  const count = rand(cfg.min, cfg.max);
+  const emoji = COUNT_EMOJIS[rand(0, COUNT_EMOJIS.length - 1)];
+  const icons = Array(count).fill(emoji);
+  const wrongs = generateChoices(count);
+  const correctIndex = wrongs.indexOf(String(count));
+  return {
+    text: '__count__',
+    answer: count,
+    key: `count_${emoji}_${count}`,
+    choices: wrongs,
+    correctIndex,
+    countIcons: icons,
+  };
 }
 
 function buildExpression(op: MathOperation, p: DifficultyParams, difficulty: DifficultyLevel): ExprResult {
@@ -73,6 +95,8 @@ function buildExpression(op: MathOperation, p: DifficultyParams, difficulty: Dif
       return buildFraction(difficulty);
     case 'sequence':
       return buildSequence(difficulty);
+    case 'count':
+      return buildCount(difficulty);
     default:
       return buildExpression('addition', p, difficulty);
   }
@@ -312,6 +336,7 @@ export function generateQuestions(
       correctIndex,
       difficulty,
       operation: op,
+      ...(expr.countIcons && { countIcons: expr.countIcons }),
     });
   }
 

@@ -10,7 +10,7 @@ import { useVocabSoloStore } from '../store/vocabSoloStore';
 import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
-import type { RootStackParamList, VocabDifficulty } from '../types';
+import type { RootStackParamList, VocabDifficulty, VocabMode } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabSoloSetup'> };
 
@@ -36,6 +36,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
   const [playerName, setPlayerName] = useState(displayName || 'Player');
   // Sync once the persisted profile name finishes loading.
   useEffect(() => { if (displayName) setPlayerName(displayName); }, [displayName]);
+  const [vocabMode, setVocabMode] = useState<VocabMode>('vocab');
   const [difficulty, setDifficulty] = useState<VocabDifficulty>('medium');
   const [questionCount, setQuestionCount] = useState(20);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);
@@ -53,7 +54,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
     if (!canStart) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setDisplayName(playerName.trim());
-    setConfig({ playerName: playerName.trim(), difficulty, totalQuestions: questionCount, timeLimitMs });
+    setConfig({ playerName: playerName.trim(), difficulty, totalQuestions: questionCount, timeLimitMs, vocabMode });
     navigation.navigate('VocabSoloGame');
   };
 
@@ -91,6 +92,34 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
               returnKeyType="done"
               autoFocus
             />
+          </View>
+
+          {/* Mode */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.vocabModeLabel}</Text>
+            <View style={styles.modeRow}>
+              {([
+                { value: 'vocab' as VocabMode, label: t.vocabModeVocab, desc: t.vocabModeVocabDesc, emoji: '📖' },
+                { value: 'odd_one_out' as VocabMode, label: t.vocabModeOddOneOut, desc: t.vocabModeOddOneOutDesc, emoji: '🔍' },
+              ]).map((m) => {
+                const selected = vocabMode === m.value;
+                return (
+                  <TouchableOpacity
+                    key={m.value}
+                    style={[
+                      styles.modeBtn,
+                      { backgroundColor: C.surface, borderColor: C.border },
+                      selected && { borderColor: ACCENT, backgroundColor: 'rgba(5,150,105,0.15)' },
+                    ]}
+                    onPress={() => { tap(); setVocabMode(m.value); }}
+                  >
+                    <Text style={styles.modeEmoji}>{m.emoji}</Text>
+                    <Text style={[styles.modeLabel, { color: selected ? C.text : C.textMuted }]}>{m.label}</Text>
+                    <Text style={[styles.modeDesc, { color: C.textMuted }]} numberOfLines={2}>{m.desc}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
 
           {/* Difficulty */}
@@ -195,6 +224,12 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1.5, borderRadius: 14, padding: 14, fontSize: 17, fontWeight: '700' },
 
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
+
+  modeRow: { flexDirection: 'row', gap: 8 },
+  modeBtn: { flex: 1, borderWidth: 1.5, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 },
+  modeEmoji: { fontSize: 22 },
+  modeLabel: { fontSize: 14, fontWeight: '800' },
+  modeDesc: { fontSize: 10, textAlign: 'center', letterSpacing: 0.2 },
 
   diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   diffBtn: { width: '48%', borderWidth: 1.5, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 },

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { generateVocabQuestions } from '../utils/vocabQuestionGenerator';
+import { generateVocabQuestions, generateOddOneOutQuestions } from '../utils/vocabQuestionGenerator';
 import type { SoloPhase, VocabQuestion, VocabSoloConfig } from '../types';
 
 interface VocabSoloStore {
@@ -39,7 +39,9 @@ export const useVocabSoloStore = create<VocabSoloStore>((set, get) => ({
   initGame: () => {
     const { config } = get();
     if (!config) return;
-    const questions = generateVocabQuestions(config.totalQuestions, config.difficulty);
+    const questions = config.vocabMode === 'odd_one_out'
+      ? generateOddOneOutQuestions(config.totalQuestions, config.difficulty)
+      : generateVocabQuestions(config.totalQuestions, config.difficulty);
     set({
       questions,
       currentIndex: 0,

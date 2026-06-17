@@ -235,7 +235,7 @@ export default function VocabSoloGameScreen({ navigation }: Props) {
               <Text style={styles.questionEmoji}>{question.emoji}</Text>
             ) : null}
             <Text style={[styles.questionText, { color: C.text }]} adjustsFontSizeToFit numberOfLines={3}>
-              {question.text}
+              {question.type === 'odd_one_out' ? t.oddOneOutQuestion : question.text}
             </Text>
           </View>
 

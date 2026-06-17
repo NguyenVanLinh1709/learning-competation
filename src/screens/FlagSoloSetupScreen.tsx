@@ -14,7 +14,7 @@ import type { DifficultyLevel, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'FlagSoloSetup'> };
 
-const QUESTION_COUNTS = [10, 20, 30];
+const QUESTION_COUNTS = [10, 20, 30, 50];
 const TIME_LIMITS = [
   { label: '5s',  value: 5000 },
   { label: '10s', value: 10000 },

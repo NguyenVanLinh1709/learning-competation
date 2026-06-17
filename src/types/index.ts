@@ -1,7 +1,7 @@
 export type DifficultyLevel = 'easy' | 'medium' | 'hard';
 export type MathOperation =
   | 'addition' | 'subtraction' | 'multiplication' | 'division' | 'mixed'
-  | 'conversion' | 'fraction' | 'sequence';
+  | 'conversion' | 'fraction' | 'sequence' | 'count';
 export type GamePhase = 'idle' | 'active' | 'resolved' | 'finished';
 export type PlayerPosition = 'bottom' | 'top';
 export type AnswerButtonState = 'idle' | 'correct' | 'wrong' | 'disabled';
@@ -13,6 +13,7 @@ export interface Question {
   correctIndex: number;
   difficulty: DifficultyLevel;
   operation: MathOperation;
+  countIcons?: string[]; // icon array for 'count' operation
 }
 
 export interface PlayerState {
@@ -137,6 +138,7 @@ export interface FlagSoloConfig {
 // ─── Vocabulary Battle ───────────────────────────────────────────────────────
 
 export type VocabDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
+export type VocabMode = 'vocab' | 'odd_one_out';
 
 export type VocabCategory =
   | 'animals' | 'fruits' | 'colors' | 'school'
@@ -167,6 +169,7 @@ export interface VocabQuestion {
   wordId: string;
   category: VocabCategory;
   difficulty: 1 | 2 | 3 | 4;
+  type?: 'translation' | 'odd_one_out';
 }
 
 export interface VocabGameConfig {
@@ -175,6 +178,7 @@ export interface VocabGameConfig {
   difficulty: VocabDifficulty;
   player1Name: string;
   player2Name: string;
+  vocabMode?: VocabMode;
 }
 
 export interface VocabSoloConfig {
@@ -182,4 +186,5 @@ export interface VocabSoloConfig {
   difficulty: VocabDifficulty;
   totalQuestions: number;
   timeLimitMs: number; // 0 = unlimited
+  vocabMode?: VocabMode;
 }

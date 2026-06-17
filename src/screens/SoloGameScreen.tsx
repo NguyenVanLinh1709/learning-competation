@@ -234,9 +234,17 @@ export default function SoloGameScreen({ navigation }: Props) {
 
           {/* Question */}
           <View style={styles.questionArea}>
-            <Text style={[styles.questionText, { color: C.text }]} adjustsFontSizeToFit numberOfLines={2}>
-              {question.text}
-            </Text>
+            {question.operation === 'count' && question.countIcons ? (
+              <View style={styles.iconsWrap}>
+                {question.countIcons.map((icon, i) => (
+                  <Text key={i} style={styles.countIcon}>{icon}</Text>
+                ))}
+              </View>
+            ) : (
+              <Text style={[styles.questionText, { color: C.text }]} adjustsFontSizeToFit numberOfLines={2}>
+                {question.text}
+              </Text>
+            )}
           </View>
 
           {/* Answers */}
@@ -310,6 +318,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   questionText: { fontSize: 36, fontWeight: '900', textAlign: 'center', letterSpacing: -0.5 },
+  iconsWrap: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 4 },
+  countIcon: { fontSize: 28 },
 
   answersGrid: {
     flexDirection: 'row',

@@ -59,6 +59,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
     { emoji: '📏', label: t.convertOp,  value: 'conversion' as MathOperation },
     { emoji: '½',  label: t.fractionOp, value: 'fraction'   as MathOperation },
     { emoji: '🔢', label: t.sequenceOp, value: 'sequence'   as MathOperation },
+    { emoji: '🧮', label: t.countOp,    value: 'count'      as MathOperation },
   ];
 
   const handleStart = () => {

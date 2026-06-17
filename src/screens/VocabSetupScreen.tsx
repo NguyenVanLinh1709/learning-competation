@@ -9,7 +9,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useVocabStore } from '../store/vocabStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
-import type { RootStackParamList, VocabDifficulty } from '../types';
+import type { RootStackParamList, VocabDifficulty, VocabMode } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabSetup'> };
 
@@ -22,6 +22,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
 
   const [p1Name, setP1Name] = useState('Player A');
   const [p2Name, setP2Name] = useState('Player B');
+  const [vocabMode, setVocabMode] = useState<VocabMode>('vocab');
   const [difficulty, setDifficulty] = useState<VocabDifficulty>('medium');
   const [questionCount, setQuestionCount] = useState(20);
 
@@ -45,6 +46,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
       difficulty,
       totalQuestions: questionCount,
       timeLimitMs: 15000,
+      vocabMode,
     });
     navigation.navigate('VocabCountdown');
   };
@@ -99,6 +101,34 @@ export default function VocabSetupScreen({ navigation }: Props) {
               maxLength={16}
               returnKeyType="done"
             />
+          </View>
+
+          {/* Mode */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.vocabModeLabel}</Text>
+            <View style={styles.modeRow}>
+              {([
+                { value: 'vocab' as VocabMode, label: t.vocabModeVocab, desc: t.vocabModeVocabDesc, emoji: '📖' },
+                { value: 'odd_one_out' as VocabMode, label: t.vocabModeOddOneOut, desc: t.vocabModeOddOneOutDesc, emoji: '🔍' },
+              ]).map((m) => {
+                const selected = vocabMode === m.value;
+                return (
+                  <TouchableOpacity
+                    key={m.value}
+                    style={[
+                      styles.modeBtn,
+                      { backgroundColor: C.surface, borderColor: C.border },
+                      selected && { borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.15)' },
+                    ]}
+                    onPress={() => { tap(); setVocabMode(m.value); }}
+                  >
+                    <Text style={styles.modeEmoji}>{m.emoji}</Text>
+                    <Text style={[styles.modeLabel, { color: selected ? C.text : C.textMuted }]}>{m.label}</Text>
+                    <Text style={[styles.modeDesc, { color: C.textMuted }]} numberOfLines={2}>{m.desc}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
 
           {/* Difficulty */}
@@ -190,6 +220,12 @@ const styles = StyleSheet.create({
 
   section: { marginBottom: 20 },
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
+
+  modeRow: { flexDirection: 'row', gap: 8 },
+  modeBtn: { flex: 1, borderWidth: 1.5, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 },
+  modeEmoji: { fontSize: 22 },
+  modeLabel: { fontSize: 14, fontWeight: '800' },
+  modeDesc: { fontSize: 10, textAlign: 'center', letterSpacing: 0.2 },
 
   diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   diffBtn: { width: '48%', borderWidth: 1.5, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 },

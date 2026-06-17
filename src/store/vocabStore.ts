@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { GamePhase, PlayerPosition, PlayerState, VocabGameConfig, VocabQuestion } from '../types';
-import { generateVocabQuestions } from '../utils/vocabQuestionGenerator';
+import { generateVocabQuestions, generateOddOneOutQuestions } from '../utils/vocabQuestionGenerator';
 
 interface VocabStore {
   config: VocabGameConfig | null;
@@ -48,7 +48,9 @@ export const useVocabStore = create<VocabStore>((set, get) => ({
   initGame: () => {
     const { config } = get();
     if (!config) return;
-    const questions = generateVocabQuestions(config.totalQuestions, config.difficulty);
+    const questions = config.vocabMode === 'odd_one_out'
+      ? generateOddOneOutQuestions(config.totalQuestions, config.difficulty)
+      : generateVocabQuestions(config.totalQuestions, config.difficulty);
     set({
       questions,
       currentIndex: 0,

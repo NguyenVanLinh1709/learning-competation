@@ -86,9 +86,17 @@ export function PlayerPanel({ player, question, isRotated, onAnswer, phase }: Pr
 
       {/* Question */}
       <View style={styles.questionContainer}>
-        <Text style={[styles.questionText, { color: C.text }]} adjustsFontSizeToFit numberOfLines={2}>
-          {question.text}
-        </Text>
+        {question.operation === 'count' && question.countIcons ? (
+          <View style={styles.iconsWrap}>
+            {question.countIcons.map((icon, i) => (
+              <Text key={i} style={styles.countIcon}>{icon}</Text>
+            ))}
+          </View>
+        ) : (
+          <Text style={[styles.questionText, { color: C.text }]} adjustsFontSizeToFit numberOfLines={2}>
+            {question.text}
+          </Text>
+        )}
       </View>
 
       {/* Answers */}
@@ -141,6 +149,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   questionText: { fontSize: 30, fontWeight: '900', textAlign: 'center', letterSpacing: -0.5 },
+  iconsWrap: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 2 },
+  countIcon: { fontSize: 22 },
   answersGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',

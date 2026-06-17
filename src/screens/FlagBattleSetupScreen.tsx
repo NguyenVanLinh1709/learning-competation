@@ -13,7 +13,7 @@ import type { DifficultyLevel, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'FlagBattleSetup'> };
 
-const QUESTION_COUNTS = [10, 20, 30];
+const QUESTION_COUNTS = [10, 20, 30, 50];
 const FLAG_ACCENT = '#0F766E';
 const FLAG_ACCENT_LIGHT = '#14B8A6';
 
