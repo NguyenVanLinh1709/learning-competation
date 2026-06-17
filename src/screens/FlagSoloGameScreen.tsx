@@ -329,8 +329,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  flagEmojiWrapper: { alignItems: 'center', justifyContent: 'center' },
-  flagEmoji: { fontSize: 56, includeFontPadding: false, lineHeight: 56 },
+  flagEmojiWrapper: { flex: 1, alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch' },
+  flagEmoji: { fontSize: 56, includeFontPadding: false, lineHeight: 64, textAlignVertical: 'center' },
   flagCheck: {
     position: 'absolute', top: 6, right: 10,
     fontSize: 20, fontWeight: '900', color: '#16A34A',

@@ -402,8 +402,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  flagEmojiWrapper: { alignItems: 'center', justifyContent: 'center' },
-  flagEmoji: { fontSize: 52, includeFontPadding: false, lineHeight: 52 },
+  flagEmojiWrapper: { flex: 1, alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch' },
+  flagEmoji: { fontSize: 52, includeFontPadding: false, lineHeight: 60, textAlignVertical: 'center' },
   flagOverlay: {
     position: 'absolute', top: 4, right: 8,
     fontSize: 20, fontWeight: '900', color: '#16A34A',
