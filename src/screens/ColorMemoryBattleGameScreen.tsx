@@ -124,7 +124,7 @@ function PlayerHalf({
           {round.choices.map((hex) => {
             const isSelected = player.selectedHex === hex;
             const isCorrectReveal = isResolved && hex === round.correctHex;
-            const isWrongSelected = isResolved && isSelected && !isCorrectReveal;
+            const isWrongSelected = isSelected && hex !== round.correctHex;
             let borderColor = 'rgba(255,255,255,0.15)';
             let bgColor = 'rgba(255,255,255,0.08)';
             if (isCorrectReveal) { borderColor = '#22C55E'; bgColor = 'rgba(34,197,94,0.2)'; }
@@ -140,6 +140,16 @@ function PlayerHalf({
               >
                 <View style={[styles.swatch, { backgroundColor: hex }]} />
                 <Text style={styles.choiceLabel}>{colorName(hex)}</Text>
+                {isWrongSelected && (
+                  <View style={[styles.choiceMark, styles.choiceMarkWrong]}>
+                    <Text style={styles.choiceMarkText}>✕</Text>
+                  </View>
+                )}
+                {isCorrectReveal && (
+                  <View style={[styles.choiceMark, styles.choiceMarkCorrect]}>
+                    <Text style={styles.choiceMarkText}>✓</Text>
+                  </View>
+                )}
               </TouchableOpacity>
             );
           })}
@@ -426,9 +436,19 @@ const styles = StyleSheet.create({
   choiceBtn: {
     width: '47%', flexDirection: 'row', alignItems: 'center', gap: 6,
     backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: 6,
+    position: 'relative',
   },
   swatch: { width: 28, height: 28, borderRadius: 6 },
   choiceLabel: { color: '#FFFFFF', fontSize: 11, fontWeight: '700', flex: 1 },
+  choiceMark: {
+    position: 'absolute', top: -8, right: -8,
+    width: 22, height: 22, borderRadius: 11,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1.5, borderColor: '#FFFFFF',
+  },
+  choiceMarkWrong: { backgroundColor: '#EF4444' },
+  choiceMarkCorrect: { backgroundColor: '#22C55E' },
+  choiceMarkText: { color: '#FFFFFF', fontSize: 13, fontWeight: '900', lineHeight: 16 },
 
   correctMark: { fontSize: 26, textAlign: 'center', marginTop: 8 },
 });
