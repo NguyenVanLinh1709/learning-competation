@@ -128,6 +128,16 @@ export interface Translations {
   memoryBattleSetup: string;
   startMemoryBattle: string;
 
+  // Color Memory
+  subjectColorMemory: string;
+  subjectColorMemoryDesc: string;
+  colorMemorySetup: string;
+  colorMemoryTagline: string;
+  colorMemoryWatch: string;
+  colorMemoryQuestion: (pos: number) => string;
+  startColorMemoryPractice: string;
+  colorMemorySoloComplete: string;
+
   // Flag Battle & Solo
   subjectFlag: string;
   subjectFlagDesc: string;
@@ -295,6 +305,15 @@ const en: Translations = {
   memoryBattleSetup: 'Memory Battle Setup',
   startMemoryBattle: '🧠  START MEMORY BATTLE',
 
+  subjectColorMemory: 'Color Memory',
+  subjectColorMemoryDesc: 'Remember colors by position · Test your visual memory',
+  colorMemorySetup: 'Color Memory',
+  colorMemoryTagline: 'MEMORIZE · THEN RECALL',
+  colorMemoryWatch: 'Memorize! 🎨',
+  colorMemoryQuestion: (pos) => `What color was at position ${pos}?`,
+  startColorMemoryPractice: '🎨  START COLOR MEMORY',
+  colorMemorySoloComplete: 'Color Memory Complete!',
+
   subjectFlag: 'Flag Quiz',
   subjectFlagDesc: 'Identify the flag of each nation',
   flagBattleSetup: 'Flag Battle Setup',
@@ -457,6 +476,15 @@ const vi: Translations = {
   memoryBattleSetup: 'Thiết lập đấu trí nhớ',
   startMemoryBattle: '🧠  BẮT ĐẦU ĐẤU TRÍ NHỚ',
 
+  subjectColorMemory: 'Ghi nhớ màu sắc',
+  subjectColorMemoryDesc: 'Nhớ màu theo vị trí · Kiểm tra trí nhớ thị giác',
+  colorMemorySetup: 'Ghi nhớ màu sắc',
+  colorMemoryTagline: 'GHI NHỚ · RỒI TRẢ LỜI',
+  colorMemoryWatch: 'Ghi nhớ nhé! 🎨',
+  colorMemoryQuestion: (pos) => `Màu nào ở vị trí ${pos}?`,
+  startColorMemoryPractice: '🎨  BẮT ĐẦU GHI NHỚ MÀU SẮC',
+  colorMemorySoloComplete: 'Hoàn thành ghi nhớ màu sắc!',
+
   subjectFlag: 'Câu đố Quốc kỳ',
   subjectFlagDesc: 'Nhận biết quốc kỳ các quốc gia',
   flagBattleSetup: 'Thiết lập đấu quốc kỳ',
@@ -618,6 +646,15 @@ const zh: Translations = {
   memorySoloComplete: '记忆练习完成！',
   memoryBattleSetup: '记忆对战设置',
   startMemoryBattle: '🧠  开始记忆对战',
+
+  subjectColorMemory: '颜色记忆',
+  subjectColorMemoryDesc: '按位置记忆颜色 · 测试视觉记忆',
+  colorMemorySetup: '颜色记忆',
+  colorMemoryTagline: '记住颜色 · 然后回忆',
+  colorMemoryWatch: '记住！🎨',
+  colorMemoryQuestion: (pos) => `第 ${pos} 位是什么颜色？`,
+  startColorMemoryPractice: '🎨  开始颜色记忆',
+  colorMemorySoloComplete: '颜色记忆完成！',
 
   subjectFlag: '国旗测验',
   subjectFlagDesc: '识别各国国旗',

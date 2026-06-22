@@ -370,6 +370,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.35)',
   },
   modeBtnSolo: { backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.18)' },
+  modeBtnColor: { backgroundColor: 'rgba(249,115,22,0.28)', borderColor: 'rgba(249,115,22,0.55)' },
   modeBtnText: { color: '#FFFFFF', fontWeight: '900', letterSpacing: 0.8 },
   cardName: { color: '#FFFFFF', fontWeight: '800', textAlign: 'center' },
 

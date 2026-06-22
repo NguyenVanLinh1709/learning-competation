@@ -31,6 +31,11 @@ import MemoryResultScreen from './src/screens/MemoryResultScreen';
 import MemoryBattleSetupScreen from './src/screens/MemoryBattleSetupScreen';
 import MemoryBattleGameScreen from './src/screens/MemoryBattleGameScreen';
 import MemoryBattleResultScreen from './src/screens/MemoryBattleResultScreen';
+import ColorMemorySetupScreen from './src/screens/ColorMemorySetupScreen';
+import ColorMemoryGameScreen from './src/screens/ColorMemoryGameScreen';
+import ColorMemoryResultScreen from './src/screens/ColorMemoryResultScreen';
+import ColorMemoryBattleGameScreen from './src/screens/ColorMemoryBattleGameScreen';
+import ColorMemoryBattleResultScreen from './src/screens/ColorMemoryBattleResultScreen';
 import FlagBattleSetupScreen from './src/screens/FlagBattleSetupScreen';
 import FlagBattleGameScreen from './src/screens/FlagBattleGameScreen';
 import FlagBattleResultScreen from './src/screens/FlagBattleResultScreen';
@@ -85,6 +90,11 @@ export default function App() {
           <Stack.Screen name="MemoryBattleSetup" component={MemoryBattleSetupScreen} />
           <Stack.Screen name="MemoryBattleGame" component={MemoryBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="MemoryBattleResult" component={MemoryBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorMemorySetup" component={ColorMemorySetupScreen} />
+          <Stack.Screen name="ColorMemoryGame" component={ColorMemoryGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorMemoryResult" component={ColorMemoryResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorMemoryBattleGame" component={ColorMemoryBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="ColorMemoryBattleResult" component={ColorMemoryBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="FlagBattleSetup" component={FlagBattleSetupScreen} />
           <Stack.Screen name="FlagBattleGame" component={FlagBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="FlagBattleResult" component={FlagBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />

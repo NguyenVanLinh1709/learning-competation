@@ -75,6 +75,11 @@ export type RootStackParamList = {
   MemoryBattleSetup: undefined;
   MemoryBattleGame: undefined;
   MemoryBattleResult: undefined;
+  ColorMemorySetup: undefined;
+  ColorMemoryGame: undefined;
+  ColorMemoryResult: undefined;
+  ColorMemoryBattleGame: undefined;
+  ColorMemoryBattleResult: undefined;
   FlagBattleSetup: undefined;
   FlagBattleGame: undefined;
   FlagBattleResult: undefined;
