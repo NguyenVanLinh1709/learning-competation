@@ -50,6 +50,9 @@ export interface Translations {
   fractionOp: string;
   sequenceOp: string;
   countOp: string;
+  comparisonOp: string;
+  compareLargest: string;
+  compareSmallest: string;
   questionsLabel: string;
   startBattle: string;
 
@@ -236,6 +239,9 @@ const en: Translations = {
   fractionOp: 'Fraction',
   sequenceOp: 'Sequence',
   countOp: 'Count',
+  comparisonOp: 'Compare',
+  compareLargest: 'Choose the largest',
+  compareSmallest: 'Choose the smallest',
   questionsLabel: 'QUESTIONS',
   startBattle: '⚔️  START BATTLE',
 
@@ -407,6 +413,9 @@ const vi: Translations = {
   fractionOp: 'Phân số',
   sequenceOp: 'Dãy số',
   countOp: 'Đếm',
+  comparisonOp: 'So sánh',
+  compareLargest: 'Chọn số lớn nhất',
+  compareSmallest: 'Chọn số nhỏ nhất',
   questionsLabel: 'SỐ CÂU HỎI',
   startBattle: '⚔️  BẮT ĐẦU TRẬN',
 
@@ -578,6 +587,9 @@ const zh: Translations = {
   fractionOp: '分数',
   sequenceOp: '数列',
   countOp: '计数',
+  comparisonOp: '比较',
+  compareLargest: '选择最大的数',
+  compareSmallest: '选择最小的数',
   questionsLabel: '题目数量',
   startBattle: '⚔️  开始对战',
 

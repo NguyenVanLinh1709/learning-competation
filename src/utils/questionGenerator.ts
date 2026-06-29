@@ -64,6 +64,71 @@ function buildCount(difficulty: DifficultyLevel): ExprResult {
   };
 }
 
+// ─── Number comparison ───────────────────────────────────────────────────────
+
+// Markers swapped for a localized prompt at render time.
+export const CMP_MAX = '__cmp_max__';
+export const CMP_MIN = '__cmp_min__';
+
+const CMP_DIGITS: Record<DifficultyLevel, number> = { easy: 3, medium: 4, hard: 5 };
+
+/** Resolve a question's displayed prompt, swapping comparison markers for localized text. */
+export function questionPrompt(
+  text: string,
+  t: { compareLargest: string; compareSmallest: string },
+): string {
+  if (text === CMP_MAX) return t.compareLargest;
+  if (text === CMP_MIN) return t.compareSmallest;
+  return text;
+}
+
+function shuffleInPlace<T>(a: T[]): T[] {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = rand(0, i);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/** Four similar-looking numbers (digit permutations); pick the largest or smallest. */
+function buildComparison(difficulty: DifficultyLevel): ExprResult {
+  const len = CMP_DIGITS[difficulty];
+
+  // Build a digit multiset (first digit non-zero) and derive 4 distinct
+  // permutations of it, so the numbers look alike and force a careful read.
+  let numbers: number[] = [];
+  for (let outer = 0; outer < 40 && numbers.length < 4; outer++) {
+    const base = [rand(1, 9), ...Array.from({ length: len - 1 }, () => rand(0, 9))];
+    const seen = new Set<string>();
+    for (let inner = 0; inner < 60 && seen.size < 4; inner++) {
+      const perm = shuffleInPlace([...base]);
+      if (perm[0] === 0) continue;            // keep it a true `len`-digit number
+      seen.add(perm.join(''));
+    }
+    if (seen.size >= 4) numbers = [...seen].slice(0, 4).map(Number);
+  }
+
+  // Fallback (rare): plain distinct numbers in the right digit range.
+  if (numbers.length < 4) {
+    const lo = 10 ** (len - 1);
+    const hi = 10 ** len - 1;
+    const set = new Set<number>();
+    while (set.size < 4) set.add(rand(lo, hi));
+    numbers = [...set];
+  }
+
+  const wantMax = Math.random() < 0.5;
+  const correct = wantMax ? Math.max(...numbers) : Math.min(...numbers);
+  const wrongs = numbers.filter((n) => n !== correct).map(String);
+  const sortedKey = [...numbers].sort((a, b) => a - b).join('_');
+  return finalizeStringChoices(
+    wantMax ? CMP_MAX : CMP_MIN,
+    String(correct),
+    wrongs,
+    `cmp_${wantMax ? 'max' : 'min'}_${sortedKey}`,
+  );
+}
+
 function buildExpression(op: MathOperation, p: DifficultyParams, difficulty: DifficultyLevel): ExprResult {
   switch (op) {
     case 'addition': {
@@ -97,6 +162,8 @@ function buildExpression(op: MathOperation, p: DifficultyParams, difficulty: Dif
       return buildSequence(difficulty);
     case 'count':
       return buildCount(difficulty);
+    case 'comparison':
+      return buildComparison(difficulty);
     default:
       return buildExpression('addition', p, difficulty);
   }

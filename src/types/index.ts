@@ -1,7 +1,7 @@
 export type DifficultyLevel = 'easy' | 'medium' | 'hard';
 export type MathOperation =
   | 'addition' | 'subtraction' | 'multiplication' | 'division' | 'mixed'
-  | 'conversion' | 'fraction' | 'sequence' | 'count';
+  | 'conversion' | 'fraction' | 'sequence' | 'count' | 'comparison';
 export type GamePhase = 'idle' | 'active' | 'resolved' | 'finished';
 export type PlayerPosition = 'bottom' | 'top';
 export type AnswerButtonState = 'idle' | 'correct' | 'wrong' | 'disabled';

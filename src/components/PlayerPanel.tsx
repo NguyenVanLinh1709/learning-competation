@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { AnswerButton } from './AnswerButton';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguageStore } from '../store/languageStore';
+import { questionPrompt } from '../utils/questionGenerator';
 import type { AnswerButtonState, GamePhase, PlayerState, Question } from '../types';
 
 interface Props {
@@ -32,6 +34,7 @@ function getButtonState(
 
 export function PlayerPanel({ player, question, isRotated, onAnswer, phase }: Props) {
   const { C } = useTheme();
+  const { t } = useLanguageStore();
   const isP1 = player.position === 'bottom';
   const accent = isP1 ? C.p1Primary : C.p2Primary;
   const panelBg = isP1 ? C.p1PanelBg : C.p2PanelBg;
@@ -94,7 +97,7 @@ export function PlayerPanel({ player, question, isRotated, onAnswer, phase }: Pr
           </View>
         ) : (
           <Text style={[styles.questionText, { color: C.text }]} adjustsFontSizeToFit numberOfLines={2}>
-            {question.text}
+            {questionPrompt(question.text, t)}
           </Text>
         )}
       </View>

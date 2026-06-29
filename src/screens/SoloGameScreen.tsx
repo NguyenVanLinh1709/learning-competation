@@ -7,6 +7,7 @@ import { useSoloStore } from '../store/soloStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { AnswerButton } from '../components/AnswerButton';
+import { questionPrompt } from '../utils/questionGenerator';
 import type { AnswerButtonState, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'SoloGame'> };
@@ -242,7 +243,7 @@ export default function SoloGameScreen({ navigation }: Props) {
               </View>
             ) : (
               <Text style={[styles.questionText, { color: C.text }]} adjustsFontSizeToFit numberOfLines={2}>
-                {question.text}
+                {questionPrompt(question.text, t)}
               </Text>
             )}
           </View>

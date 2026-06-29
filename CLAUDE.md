@@ -39,6 +39,14 @@ There is no test suite, no linter config, and no build/CI scripts — verify cha
 
 The Math battle screens use the unprefixed names `Setup/Countdown/Game/Result`. Utility screens reachable from `HomeScreen`: `FeedbackScreen`, `LeaderboardScreen`, `ProfileScreen`.
 
+### Math operations
+
+The Math family's `MathOperation` union (`src/types/index.ts`) is: `addition`, `subtraction`, `multiplication`, `division`, `mixed`, `conversion`, `fraction`, `sequence`, `count`, `comparison`. All are produced by `generateQuestions()` in `src/utils/questionGenerator.ts` via per-op `build*` helpers, and selected in `SetupScreen` / `SoloSetupScreen` (the `operations` + `modes` arrays). To add one: extend the union, add a `build*` helper + a `case` in `buildExpression`, add an entry to both setup screens' `modes` array, and add its i18n label.
+
+A `Question` always renders as `text` (prompt) + 4 `choices` with a `correctIndex`. Two ops need special rendering and use a **marker string** in `text` that the render layer swaps out:
+- `count` → `text: '__count__'` plus a `countIcons` array; `PlayerPanel` / `SoloGameScreen` render the icons instead of the text.
+- `comparison` → `text` is `CMP_MAX` (`'__cmp_max__'`) or `CMP_MIN` (`'__cmp_min__'`); the 4 numbers are the `choices`. Render layers call `questionPrompt(text, t)` (exported from `questionGenerator.ts`) to resolve the marker to the localized "choose largest/smallest" prompt.
+
 ### Theming
 
 - `useTheme()` (`src/hooks/useTheme.ts`) is the single entry point. It returns `{ isDark, C, G, toggle }` where `C` = colors and `G` = gradients, selected from `src/constants/theme.ts` (`DARK_*` / `LIGHT_*`).

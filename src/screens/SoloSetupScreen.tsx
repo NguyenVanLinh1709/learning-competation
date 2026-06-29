@@ -60,6 +60,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
     { emoji: '½',  label: t.fractionOp, value: 'fraction'   as MathOperation },
     { emoji: '🔢', label: t.sequenceOp, value: 'sequence'   as MathOperation },
     { emoji: '🧮', label: t.countOp,    value: 'count'      as MathOperation },
+    { emoji: '⚖️', label: t.comparisonOp, value: 'comparison' as MathOperation },
   ];
 
   const handleStart = () => {
