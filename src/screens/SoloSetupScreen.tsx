@@ -10,6 +10,7 @@ import { useSoloStore } from '../store/soloStore';
 import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import BackButton from '../components/BackButton';
 import type { DifficultyLevel, MathOperation, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'SoloSetup'> };
@@ -80,9 +81,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
 
           {/* Header */}
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={[styles.backText, { color: C.textMuted }]}>{t.back}</Text>
-            </TouchableOpacity>
+            <BackButton onPress={() => navigation.goBack()} />
             <View style={styles.titleBlock}>
               <Text style={[styles.title, { color: C.text }]}>{t.soloSetup}</Text>
               <Text style={[styles.tagline, { color: C.textMuted }]}>{t.soloTagline}</Text>
@@ -119,7 +118,12 @@ export default function SoloSetupScreen({ navigation }: Props) {
                   onPress={() => { tap(); setDifficulty(d.value); }}
                 >
                   <Text style={styles.optionEmoji}>{d.emoji}</Text>
-                  <Text style={[styles.optionLabel, { color: difficulty === d.value ? C.text : C.textMuted }]}>
+                  <Text
+                    style={[styles.optionLabel, { color: difficulty === d.value ? C.text : C.textMuted }]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
+                  >
                     {d.label}
                   </Text>
                 </TouchableOpacity>
@@ -153,7 +157,12 @@ export default function SoloSetupScreen({ navigation }: Props) {
                   onPress={() => { tap(); setOperation(m.value); }}
                 >
                   <Text style={styles.optionEmoji}>{m.emoji}</Text>
-                  <Text style={[styles.optionLabel, { color: operation === m.value ? C.text : C.textMuted }]}>
+                  <Text
+                    style={[styles.optionLabel, { color: operation === m.value ? C.text : C.textMuted }]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
+                  >
                     {m.label}
                   </Text>
                 </TouchableOpacity>

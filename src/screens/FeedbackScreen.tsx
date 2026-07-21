@@ -19,6 +19,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguageStore } from '../store/languageStore';
+import BackButton from '../components/BackButton';
 
 const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1507051395604414677/1C1aMKWM6KTz4PCZyE7fFLRcItC4VQDG328oYNhOalHpuxPZ-IX08Ma6Q1Fqah6v2Aw4';
 
@@ -147,13 +148,7 @@ export default function FeedbackScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.container}>
       {/* Back button */}
       <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? 60 : 44 }]}>
-        <TouchableOpacity
-          style={[styles.backBtn, { backgroundColor: C.surface, borderColor: C.border }]}
-          onPress={() => navigation.goBack()}
-          activeOpacity={0.75}
-        >
-          <Text style={[styles.backText, { color: C.text }]}>{t.back}</Text>
-        </TouchableOpacity>
+        <BackButton onPress={() => navigation.goBack()} />
       </View>
 
       <KeyboardAvoidingView

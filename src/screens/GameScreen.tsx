@@ -37,6 +37,9 @@ export default function GameScreen({ navigation }: Props) {
     questionStartRef.current = Date.now();
     setRemainingMs(config.timeLimitMs);
 
+    // timeLimitMs === 0 means unlimited — no countdown, question never times out.
+    if (config.timeLimitMs <= 0) return;
+
     timerRef.current = setInterval(() => {
       const left = Math.max(0, config.timeLimitMs - (Date.now() - questionStartRef.current));
       setRemainingMs(left);

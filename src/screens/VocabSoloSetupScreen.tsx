@@ -10,6 +10,7 @@ import { useVocabSoloStore } from '../store/vocabSoloStore';
 import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import BackButton from '../components/BackButton';
 import type { RootStackParamList, VocabDifficulty, VocabMode } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabSoloSetup'> };
@@ -67,9 +68,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
 
           {/* Header */}
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={[styles.backText, { color: C.textMuted }]}>{t.back}</Text>
-            </TouchableOpacity>
+            <BackButton onPress={() => navigation.goBack()} />
             <View style={styles.titleBlock}>
               <Text style={[styles.title, { color: C.text }]}>{t.vocabSoloSetup}</Text>
               <Text style={[styles.tagline, { color: C.textMuted }]}>{t.vocabSoloTagline}</Text>
@@ -115,7 +114,6 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
                   >
                     <Text style={styles.modeEmoji}>{m.emoji}</Text>
                     <Text style={[styles.modeLabel, { color: selected ? C.text : C.textMuted }]}>{m.label}</Text>
-                    <Text style={[styles.modeDesc, { color: C.textMuted }]} numberOfLines={2}>{m.desc}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -140,7 +138,6 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
                   >
                     <Text style={styles.diffEmoji}>{d.emoji}</Text>
                     <Text style={[styles.diffLabel, { color: selected ? C.text : C.textMuted }]}>{d.label}</Text>
-                    <Text style={[styles.diffDesc, { color: C.textMuted }]} numberOfLines={2}>{d.desc}</Text>
                   </TouchableOpacity>
                 );
               })}

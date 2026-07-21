@@ -11,6 +11,7 @@ import type { ColorMemoryDifficulty } from '../store/colorMemoryStore';
 import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import BackButton from '../components/BackButton';
 import type { RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorMemorySetup'> };
@@ -57,9 +58,7 @@ export default function ColorMemorySetupScreen({ navigation }: Props) {
         >
           {/* Header */}
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={[styles.backText, { color: C.textMuted }]}>{t.back}</Text>
-            </TouchableOpacity>
+            <BackButton onPress={() => navigation.goBack()} />
             <View style={styles.titleBlock}>
               <Text style={[styles.title, { color: C.text }]}>{t.colorMemorySetup}</Text>
               <Text style={[styles.tagline, { color: C.textMuted }]}>{t.colorMemoryTagline}</Text>
@@ -103,7 +102,6 @@ export default function ColorMemorySetupScreen({ navigation }: Props) {
                   <Text style={[styles.optionLabel, { color: difficulty === d.value ? C.text : C.textMuted }]}>
                     {d.label}
                   </Text>
-                  <Text style={[styles.optionHint, { color: C.textMuted }]}>{d.hint}</Text>
                 </TouchableOpacity>
               ))}
             </View>

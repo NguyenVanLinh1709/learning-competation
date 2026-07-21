@@ -314,9 +314,11 @@ const styles = StyleSheet.create({
   questionText: { fontSize: 28, fontWeight: '900', textAlign: 'center', letterSpacing: -0.5 },
 
   answersGrid: {
+    flex: 2,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    alignContent: 'center',
     paddingHorizontal: 16,
     paddingBottom: 24,
   },

@@ -10,6 +10,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import BackButton from '../components/BackButton';
 import { uploadAvatar } from '../lib/avatar';
 import { COUNTRIES, countryName, flagForCountry } from '../data/countries';
 import type { RootStackParamList } from '../types';
@@ -91,17 +92,11 @@ export default function ProfileScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.outer}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => { tap(); navigation.goBack(); }}
-          style={[styles.backBtn, { backgroundColor: C.surface, borderColor: C.border }]}
-          activeOpacity={0.75}
-        >
-          <Text style={[styles.backIcon, { color: C.text }]}>←</Text>
-        </TouchableOpacity>
+        <BackButton onPress={() => navigation.goBack()} />
         <View style={styles.titleWrap}>
           <Text style={[styles.title, { color: C.text }]}>👤 {t.profileTitle}</Text>
         </View>
-        <View style={styles.backBtn} />
+        <View style={{ width: 70 }} />
       </View>
 
       <KeyboardAvoidingView

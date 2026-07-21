@@ -119,14 +119,14 @@ export default function HomeScreen({ navigation }: Props) {
 
           {/* Right icons */}
           <View style={styles.topBarRight}>
-            {/* Leaderboard */}
-            <TouchableOpacity
+            {/* Leaderboard — tạm ẩn: tính năng chưa hoạt động tốt (không xoá) */}
+            {/* <TouchableOpacity
               style={[styles.topIconBtn, iconBtnStyle]}
               onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Leaderboard'); }}
               activeOpacity={0.75}
             >
               <Text style={{ fontSize: s(17) }}>🏆</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* Feedback */}
             <TouchableOpacity

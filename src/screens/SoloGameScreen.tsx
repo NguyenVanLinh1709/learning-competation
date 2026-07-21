@@ -323,9 +323,11 @@ const styles = StyleSheet.create({
   countIcon: { fontSize: 28 },
 
   answersGrid: {
+    flex: 2,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    alignContent: 'center',
     paddingHorizontal: 16,
     paddingBottom: 24,
   },

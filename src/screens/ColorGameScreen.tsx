@@ -339,13 +339,16 @@ const styles = StyleSheet.create({
   timerFill: { height: '100%', borderRadius: 4 },
   timerText: { fontSize: 13, fontWeight: '800', minWidth: 32, textAlign: 'right' },
 
-  instructionArea: { alignItems: 'center', marginBottom: 24 },
+  instructionArea: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   instructionText: { fontSize: 22, fontWeight: '900', letterSpacing: -0.3 },
   instructionSub: { fontSize: 12, fontWeight: '600', marginTop: 4, letterSpacing: 0.3 },
 
   tilesGrid: {
+    flex: 2,
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignContent: 'center',
   },
   tile: {
     borderRadius: 16,

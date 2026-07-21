@@ -377,11 +377,11 @@ const styles = StyleSheet.create({
   timerFill: { height: '100%', borderRadius: 4 },
   timerText: { fontSize: 13, fontWeight: '800', minWidth: 32, textAlign: 'right' },
 
-  instructionArea: { alignItems: 'center', marginBottom: 20, paddingHorizontal: 20 },
+  instructionArea: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
   instructionText: { fontSize: 22, fontWeight: '900', textAlign: 'center', letterSpacing: -0.2 },
   instructionSub: { fontSize: 13, fontWeight: '700', marginTop: 4, letterSpacing: 0.3 },
 
-  gridArea: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  gridArea: { flex: 2, alignItems: 'center', justifyContent: 'center' },
   revealHint: { fontSize: 13, fontWeight: '700', marginTop: 14, letterSpacing: 0.3 },
   gridRow: { flexDirection: 'row' },
   colorTile: {

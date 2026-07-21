@@ -9,6 +9,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useLeaderboardStore } from '../store/leaderboardStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import BackButton from '../components/BackButton';
 import { flagForCountry } from '../data/countries';
 import type { GameMode, LeaderboardEntry, RootStackParamList } from '../types';
 
@@ -187,20 +188,14 @@ export default function LeaderboardScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.outer}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => { tap(); navigation.goBack(); }}
-          style={[styles.backBtn, { backgroundColor: C.surface, borderColor: C.border }]}
-          activeOpacity={0.75}
-        >
-          <Text style={[styles.backIcon, { color: C.text }]}>←</Text>
-        </TouchableOpacity>
+        <BackButton onPress={() => navigation.goBack()} />
         <View style={styles.titleWrap}>
           <Text style={[styles.title, { color: C.text }]}>🏆 {t.leaderboardTitle}</Text>
           {entries.length > 0 && (
             <Text style={[styles.subtitle, { color: C.textMuted }]}>{entries.length} {entries.length === 1 ? t.lbPlayer : t.lbPlayers}</Text>
           )}
         </View>
-        <View style={styles.backBtn} />
+        <View style={{ width: 70 }} />
       </View>
 
       {/* Filter tabs */}

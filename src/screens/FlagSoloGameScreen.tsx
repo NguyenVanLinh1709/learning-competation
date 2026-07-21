@@ -307,19 +307,23 @@ const styles = StyleSheet.create({
 
   centerArea: {
     flex: 1,
-    justifyContent: 'center',
   },
   questionArea: {
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 24,
-    marginBottom: 20,
   },
   questionText: { fontSize: 36, fontWeight: '900', textAlign: 'center', letterSpacing: -0.5 },
 
   flagGrid: {
+    flex: 2,
     flexDirection: 'row', flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignContent: 'center',
     paddingHorizontal: 16,
-    gap: 12,
+    columnGap: 12,
+    rowGap: 8,
   },
   flagBtn: {
     width: '47%',

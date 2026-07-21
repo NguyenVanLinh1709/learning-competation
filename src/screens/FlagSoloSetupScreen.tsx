@@ -10,6 +10,7 @@ import { useFlagSoloStore } from '../store/flagSoloStore';
 import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import BackButton from '../components/BackButton';
 import type { DifficultyLevel, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'FlagSoloSetup'> };
@@ -63,9 +64,7 @@ export default function FlagSoloSetupScreen({ navigation }: Props) {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={[styles.backText, { color: C.textMuted }]}>{t.back}</Text>
-            </TouchableOpacity>
+            <BackButton onPress={() => navigation.goBack()} />
             <View style={styles.titleBlock}>
               <Text style={[styles.title, { color: C.text }]}>{t.flagSoloSetup}</Text>
               <Text style={[styles.tagline, { color: C.textMuted }]}>{t.flagSoloTagline}</Text>
@@ -108,7 +107,6 @@ export default function FlagSoloSetupScreen({ navigation }: Props) {
                   >
                     <Text style={styles.diffEmoji}>{d.emoji}</Text>
                     <Text style={[styles.diffLabel, { color: selected ? C.text : C.textMuted }]}>{d.label}</Text>
-                    <Text style={[styles.diffDesc, { color: C.textMuted }]} numberOfLines={2}>{d.desc}</Text>
                   </TouchableOpacity>
                 );
               })}

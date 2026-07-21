@@ -11,12 +11,14 @@ interface Props {
 
 export function TimerBar({ remainingMs, totalMs, questionNumber, totalQuestions }: Props) {
   const { C } = useTheme();
-  const progress = Math.max(0, remainingMs / totalMs);
+  const isUnlimited = totalMs <= 0;
+  const progress = isUnlimited ? 1 : Math.max(0, remainingMs / totalMs);
   const seconds = Math.ceil(remainingMs / 1000);
   const widthAnim = useRef(new Animated.Value(progress)).current;
 
   const timerColor =
-    progress > 0.5 ? C.timerGreen
+    isUnlimited ? C.timerGreen
+    : progress > 0.5 ? C.timerGreen
     : progress > 0.25 ? C.timerYellow
     : C.timerRed;
 
@@ -49,7 +51,7 @@ export function TimerBar({ remainingMs, totalMs, questionNumber, totalQuestions 
         />
       </View>
 
-      <Text style={[styles.seconds, { color: timerColor }]}>{seconds}s</Text>
+      <Text style={[styles.seconds, { color: timerColor }]}>{isUnlimited ? '∞' : `${seconds}s`}</Text>
     </View>
   );
 }

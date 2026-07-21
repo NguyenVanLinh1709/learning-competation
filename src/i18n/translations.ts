@@ -38,6 +38,8 @@ export interface Translations {
   back: string;
   player1Tag: string;
   player2Tag: string;
+  posTop: string;
+  posBottom: string;
   enterName: string;
   vs: string;
   difficultyLabel: string;
@@ -227,6 +229,8 @@ const en: Translations = {
   back: '‹ Back',
   player1Tag: 'PLAYER 1 — BOTTOM',
   player2Tag: 'PLAYER 2 — TOP',
+  posTop: 'TOP',
+  posBottom: 'BOTTOM',
   enterName: 'Enter name…',
   vs: 'VS',
   difficultyLabel: 'DIFFICULTY',
@@ -401,6 +405,8 @@ const vi: Translations = {
   back: '‹ Quay lại',
   player1Tag: 'NGƯỜI CHƠI 1 — DƯỚI',
   player2Tag: 'NGƯỜI CHƠI 2 — TRÊN',
+  posTop: 'TRÊN',
+  posBottom: 'DƯỚI',
   enterName: 'Nhập tên…',
   vs: 'VS',
   difficultyLabel: 'ĐỘ KHÓ',
@@ -575,6 +581,8 @@ const zh: Translations = {
   back: '‹ 返回',
   player1Tag: '玩家 1 — 下方',
   player2Tag: '玩家 2 — 上方',
+  posTop: '上方',
+  posBottom: '下方',
   enterName: '输入名字…',
   vs: 'VS',
   difficultyLabel: '难度',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
-  Text, TextInput, TouchableOpacity, View,
+  Text, TouchableOpacity, View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -9,6 +9,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorBattleStore } from '../store/colorBattleStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import BackButton from '../components/BackButton';
+import PlayerNames from '../components/PlayerNames';
 import type { RootStackParamList } from '../types';
 import type { ColorDifficulty } from '../utils/colorPerceptionGenerator';
 
@@ -21,7 +23,14 @@ const DIFFICULTIES: { label: string; value: ColorDifficulty; emoji: string; hint
   { label: 'Hard',   value: 'hard',   emoji: '🧠', hint: 'Very subtle' },
   { label: 'Expert', value: 'expert', emoji: '🎯', hint: 'Barely there' },
 ];
-const TIME_LIMITS_MS = 15000;
+const TIME_LIMITS = [
+  { label: '5s',  value: 5000 },
+  { label: '10s', value: 10000 },
+  { label: '15s', value: 15000 },
+  { label: '20s', value: 20000 },
+  { label: '30s', value: 30000 },
+  { label: '∞',   value: 0 },
+];
 
 export default function ColorBattleSetupScreen({ navigation }: Props) {
   const { setConfig } = useColorBattleStore();
@@ -32,6 +41,7 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
   const [p2Name, setP2Name] = useState('Player B');
   const [difficulty, setDifficulty] = useState<ColorDifficulty>('medium');
   const [questionCount, setQuestionCount] = useState(10);
+  const [timeLimitMs, setTimeLimitMs] = useState(15000);
 
   const canStart = p1Name.trim().length > 0 && p2Name.trim().length > 0;
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -44,7 +54,7 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
       player2Name: p2Name.trim(),
       difficulty,
       totalQuestions: questionCount,
-      timeLimitMs: TIME_LIMITS_MS,
+      timeLimitMs,
     });
     navigation.navigate('ColorBattleGame');
   };
@@ -59,50 +69,13 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
         >
           {/* Header */}
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={[styles.backText, { color: C.textMuted }]}>{t.back}</Text>
-            </TouchableOpacity>
+            <BackButton onPress={() => navigation.goBack()} />
             <Text style={[styles.title, { color: C.text }]}>{t.colorBattleSetup}</Text>
             <View style={{ width: 70 }} />
           </View>
 
-          {/* Player 2 */}
-          <View style={styles.playerSection}>
-            <View style={[styles.playerTag, { backgroundColor: C.p2Primary }]}>
-              <Text style={styles.playerTagText}>{t.player2Tag}</Text>
-            </View>
-            <TextInput
-              style={[styles.input, { borderColor: C.p2Primary, backgroundColor: C.surface, color: C.text }]}
-              placeholder={t.enterName}
-              placeholderTextColor={C.textMuted}
-              value={p2Name}
-              onChangeText={setP2Name}
-              maxLength={16}
-              returnKeyType="next"
-            />
-          </View>
-
-          <View style={styles.dividerRow}>
-            <View style={[styles.dividerLine, { backgroundColor: C.border }]} />
-            <Text style={[styles.dividerText, { color: C.textMuted }]}>{t.vs}</Text>
-            <View style={[styles.dividerLine, { backgroundColor: C.border }]} />
-          </View>
-
-          {/* Player 1 */}
-          <View style={styles.playerSection}>
-            <View style={[styles.playerTag, { backgroundColor: C.p1Primary }]}>
-              <Text style={styles.playerTagText}>{t.player1Tag}</Text>
-            </View>
-            <TextInput
-              style={[styles.input, { borderColor: C.p1Primary, backgroundColor: C.surface, color: C.text }]}
-              placeholder={t.enterName}
-              placeholderTextColor={C.textMuted}
-              value={p1Name}
-              onChangeText={setP1Name}
-              maxLength={16}
-              returnKeyType="done"
-            />
-          </View>
+          {/* Player names */}
+          <PlayerNames p1Name={p1Name} p2Name={p2Name} setP1Name={setP1Name} setP2Name={setP2Name} />
 
           {/* Difficulty */}
           <View style={styles.section}>
@@ -123,7 +96,6 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
                   <Text style={[styles.optionLabel, { color: difficulty === d.value ? C.text : C.textMuted }]}>
                     {d.label}
                   </Text>
-                  <Text style={[styles.optionHint, { color: C.textMuted }]}>{d.hint}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -144,6 +116,25 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
                   onPress={() => { tap(); setQuestionCount(n); }}
                 >
                   <Text style={[styles.optionLabel, { color: questionCount === n ? C.text : C.textMuted }]}>{n}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Time per question */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.timeLimitLabel}</Text>
+            <View style={styles.timeLimitRow}>
+              {TIME_LIMITS.map((tl) => (
+                <TouchableOpacity
+                  key={tl.value}
+                  style={[styles.timeLimitBtn, { backgroundColor: C.surface, borderColor: C.border },
+                    timeLimitMs === tl.value && { borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.12)' }]}
+                  onPress={() => { tap(); setTimeLimitMs(tl.value); }}
+                >
+                  <Text style={[styles.timeLimitLabel, { color: timeLimitMs === tl.value ? C.text : C.textMuted }]}>
+                    {tl.label}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -181,19 +172,14 @@ const styles = StyleSheet.create({
   backText: { fontSize: 17, fontWeight: '600' },
   title: { fontSize: 18, fontWeight: '900', textAlign: 'center', flex: 1 },
 
-  playerSection: { marginBottom: 10 },
-  playerTag: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, marginBottom: 8 },
-  playerTagText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800', letterSpacing: 1.5 },
-  input: { borderWidth: 1.5, borderRadius: 14, padding: 14, fontSize: 17, fontWeight: '700' },
-
-  dividerRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 16, gap: 12 },
-  dividerLine: { flex: 1, height: 1 },
-  dividerText: { fontSize: 13, fontWeight: '800', letterSpacing: 2 },
 
   section: { marginBottom: 20 },
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
   optionRow: { flexDirection: 'row', gap: 8 },
   optionBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 12, alignItems: 'center', gap: 2 },
+  timeLimitRow: { flexDirection: 'row', gap: 6 },
+  timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  timeLimitLabel: { fontSize: 13, fontWeight: '800' },
   diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   diffBtn: { flex: 0, width: '23%', paddingVertical: 10, paddingHorizontal: 2 },
   optionEmoji: { fontSize: 20 },

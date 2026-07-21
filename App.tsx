@@ -43,7 +43,7 @@ import FlagSoloSetupScreen from './src/screens/FlagSoloSetupScreen';
 import FlagSoloGameScreen from './src/screens/FlagSoloGameScreen';
 import FlagSoloResultScreen from './src/screens/FlagSoloResultScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
-import LeaderboardScreen from './src/screens/LeaderboardScreen';
+// import LeaderboardScreen from './src/screens/LeaderboardScreen'; // tạm ẩn Leaderboard (không xoá)
 import ProfileScreen from './src/screens/ProfileScreen';
 import { useProfileStore } from './src/store/profileStore';
 import type { RootStackParamList } from './src/types';
@@ -102,7 +102,7 @@ export default function App() {
           <Stack.Screen name="FlagSoloGame" component={FlagSoloGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="FlagSoloResult" component={FlagSoloResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} />
-          <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+          {/* <Stack.Screen name="Leaderboard" component={LeaderboardScreen} /> */}{/* tạm ẩn Leaderboard (không xoá) */}
           <Stack.Screen name="Profile" component={ProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>
