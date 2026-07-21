@@ -3,6 +3,7 @@ import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -10,6 +11,8 @@ import { useColorBattleStore } from '../store/colorBattleStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
+import InfoButton from '../components/InfoButton';
+import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
 import type { RootStackParamList } from '../types';
 import type { ColorDifficulty } from '../utils/colorPerceptionGenerator';
@@ -36,6 +39,8 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
   const { setConfig } = useColorBattleStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [howToOpen, setHowToOpen] = useState(false);
 
   const [p1Name, setP1Name] = useState('Player A');
   const [p2Name, setP2Name] = useState('Player B');
@@ -63,7 +68,7 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -71,7 +76,7 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
           <View style={styles.topRow}>
             <BackButton onPress={() => navigation.goBack()} />
             <Text style={[styles.title, { color: C.text }]}>{t.colorBattleSetup}</Text>
-            <View style={{ width: 70 }} />
+            <InfoButton onPress={() => setHowToOpen(true)} />
           </View>
 
           {/* Player names */}
@@ -158,6 +163,13 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <HowToPlayModal
+        visible={howToOpen}
+        onClose={() => setHowToOpen(false)}
+        title={t.howToPlayTitle}
+        body={t.colorBattleHowTo}
+      />
     </LinearGradient>
   );
 }

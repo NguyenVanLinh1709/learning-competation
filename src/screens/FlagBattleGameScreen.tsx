@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useFlagBattleStore } from '../store/flagBattleStore';
@@ -175,6 +176,7 @@ export default function FlagBattleGameScreen({ navigation }: Props) {
 
   const { t } = useLanguageStore();
   const { C } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);
@@ -304,7 +306,7 @@ export default function FlagBattleGameScreen({ navigation }: Props) {
 
       {countdownDone && (
         <>
-          <View style={styles.half}>
+          <View style={[styles.half, { paddingTop: insets.top }]}>
             <FlagPlayerPanel
               player={player2}
               question={question}
@@ -338,7 +340,7 @@ export default function FlagBattleGameScreen({ navigation }: Props) {
             <View style={[styles.centerLine, { backgroundColor: C.divider }]} />
           </View>
 
-          <View style={styles.half}>
+          <View style={[styles.half, { paddingBottom: insets.bottom }]}>
             <FlagPlayerPanel
               player={player1}
               question={question}

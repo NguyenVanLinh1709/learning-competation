@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemoryBattleStore } from '../store/memoryBattleStore';
@@ -102,6 +103,7 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
 
   const { t } = useLanguageStore();
   const { C } = useTheme();
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   const difficulty = config?.difficulty ?? 'easy';
@@ -291,7 +293,7 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
       {countdownDone && (
         <>
           {/* Player 2 (top, rotated) */}
-          <View style={styles.half}>
+          <View style={[styles.half, { paddingTop: insets.top }]}>
             <MemoryGrid
               gridSize={gridSize}
               cols={cols}
@@ -333,7 +335,7 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
           </View>
 
           {/* Player 1 (bottom) */}
-          <View style={styles.half}>
+          <View style={[styles.half, { paddingBottom: insets.bottom }]}>
             <MemoryGrid
               gridSize={gridSize}
               cols={cols}

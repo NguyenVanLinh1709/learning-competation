@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -65,6 +66,7 @@ export default function VocabResultScreen({ navigation }: Props) {
   const { player1, player2, config, resetGame, initGame } = useVocabStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const isDraw = player1.score === player2.score;
   const p1Wins = player1.score > player2.score;
@@ -106,7 +108,7 @@ export default function VocabResultScreen({ navigation }: Props) {
 
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 40 }]} showsVerticalScrollIndicator={false}>
 
         <Animated.View style={[styles.banner, { transform: [{ scale: bannerScale }] }]}>
           <Text style={styles.trophy}>{isDraw ? '🤝' : '🏆'}</Text>

@@ -3,6 +3,7 @@ import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,6 +12,8 @@ import { useProfileStore } from '../store/profileStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
+import InfoButton from '../components/InfoButton';
+import HowToPlayModal from '../components/HowToPlayModal';
 import type { DifficultyLevel, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'FlagSoloSetup'> };
@@ -32,6 +35,8 @@ export default function FlagSoloSetupScreen({ navigation }: Props) {
   const { displayName, setDisplayName } = useProfileStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [howToOpen, setHowToOpen] = useState(false);
 
   const [playerName, setPlayerName] = useState(displayName || 'Player');
   useEffect(() => { if (displayName) setPlayerName(displayName); }, [displayName]);
@@ -61,7 +66,7 @@ export default function FlagSoloSetupScreen({ navigation }: Props) {
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           <View style={styles.topRow}>
             <BackButton onPress={() => navigation.goBack()} />
@@ -69,7 +74,7 @@ export default function FlagSoloSetupScreen({ navigation }: Props) {
               <Text style={[styles.title, { color: C.text }]}>{t.flagSoloSetup}</Text>
               <Text style={[styles.tagline, { color: C.textMuted }]}>{t.flagSoloTagline}</Text>
             </View>
-            <View style={{ width: 70 }} />
+            <InfoButton onPress={() => setHowToOpen(true)} />
           </View>
 
           {/* Player name */}
@@ -174,6 +179,13 @@ export default function FlagSoloSetupScreen({ navigation }: Props) {
 
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <HowToPlayModal
+        visible={howToOpen}
+        onClose={() => setHowToOpen(false)}
+        title={t.howToPlayTitle}
+        body={t.flagSoloHowTo}
+      />
     </LinearGradient>
   );
 }

@@ -195,6 +195,21 @@ export interface Translations {
   profileSaving: string;
   profileNoCountry: string;
 
+  // How to play
+  howToPlayTitle: string;
+  mathBattleHowTo: string;
+  mathSoloHowTo: string;
+  vocabBattleHowTo: string;
+  vocabSoloHowTo: string;
+  colorBattleHowTo: string;
+  colorSoloHowTo: string;
+  memoryFlashBattleHowTo: string;
+  memoryFlashSoloHowTo: string;
+  colorMemoryBattleHowTo: string;
+  colorMemorySoloHowTo: string;
+  flagBattleHowTo: string;
+  flagSoloHowTo: string;
+
 }
 
 const en: Translations = {
@@ -371,6 +386,20 @@ const en: Translations = {
   profileSave: 'Save Profile',
   profileSaving: 'Saving…',
   profileNoCountry: 'Not set',
+
+  howToPlayTitle: 'How to Play',
+  mathBattleHowTo: '• Both players see the same question on their half of the screen.\n• Tap the correct answer out of 4 choices as fast as you can.\n• First correct answer wins the round — most points wins the game!',
+  mathSoloHowTo: '• Tap the correct answer out of 4 choices.\n• Each question has its own timer — answer before time runs out.\n• Score as many correct answers as you can!',
+  vocabBattleHowTo: '• Pick the right meaning of a word, or spot the "odd one out" among 4 words.\n• Both players see the same question — tap the correct answer first.\n• First correct answer wins the round!',
+  vocabSoloHowTo: '• Pick the right meaning of a word, or spot the "odd one out" among 4 words.\n• Answer before each question\'s timer runs out.\n• Score as many correct answers as you can!',
+  colorBattleHowTo: '• 8 color tiles appear — one is a slightly different shade.\n• Both players race to tap the odd tile on their own half.\n• First correct tap wins the round!',
+  colorSoloHowTo: '• 8 color tiles appear — one is a slightly different shade.\n• Tap the odd tile out before time runs out.\n• Score as many rounds as you can!',
+  memoryFlashBattleHowTo: '• Watch a sequence of tiles flash one by one.\n• Tap the tiles back in the exact same order.\n• First to repeat it correctly wins — one wrong tap ends your turn!',
+  memoryFlashSoloHowTo: '• Watch a sequence of tiles flash one by one.\n• Tap the tiles back in the exact same order.\n• A wrong tap or running out of time ends the round!',
+  colorMemoryBattleHowTo: '• A grid of colors is shown for 5 seconds — memorize it!\n• Colors hide, then both players pick the color at the highlighted position.\n• First correct answer wins the round!',
+  colorMemorySoloHowTo: '• A grid of colors is shown for 5 seconds — memorize it!\n• Colors hide — pick the color that was at the highlighted position.\n• Answer before time runs out!',
+  flagBattleHowTo: '• A country name appears — pick its flag from 4 choices.\n• Both players see the same question — tap the correct flag first.\n• First correct answer wins the round!',
+  flagSoloHowTo: '• A country name appears — pick its flag from 4 choices.\n• Answer before each question\'s timer runs out.\n• Score as many correct answers as you can!',
 };
 
 const vi: Translations = {
@@ -547,6 +576,20 @@ const vi: Translations = {
   profileSave: 'Lưu hồ sơ',
   profileSaving: 'Đang lưu…',
   profileNoCountry: 'Chưa đặt',
+
+  howToPlayTitle: 'Cách chơi',
+  mathBattleHowTo: '• Cả hai người chơi cùng thấy một câu hỏi trên nửa màn hình của mình.\n• Chạm đáp án đúng trong 4 lựa chọn nhanh nhất có thể.\n• Ai trả lời đúng trước sẽ ghi điểm — nhiều điểm hơn sẽ thắng!',
+  mathSoloHowTo: '• Chạm đáp án đúng trong 4 lựa chọn.\n• Mỗi câu có thời gian riêng — trả lời trước khi hết giờ.\n• Ghi càng nhiều điểm càng tốt!',
+  vocabBattleHowTo: '• Chọn nghĩa đúng của từ, hoặc tìm từ "khác loại" trong 4 từ.\n• Cả hai người chơi cùng thấy một câu hỏi — ai chạm đúng trước sẽ ghi điểm.\n• Ai trả lời đúng trước thắng ván!',
+  vocabSoloHowTo: '• Chọn nghĩa đúng của từ, hoặc tìm từ "khác loại" trong 4 từ.\n• Trả lời trước khi hết giờ mỗi câu.\n• Ghi càng nhiều điểm càng tốt!',
+  colorBattleHowTo: '• 8 ô màu xuất hiện, một ô có màu hơi khác các ô còn lại.\n• Cả hai người chơi cùng đua tìm ô khác màu trên phần của mình.\n• Ai chạm đúng trước sẽ ghi điểm!',
+  colorSoloHowTo: '• 8 ô màu xuất hiện, một ô có màu hơi khác các ô còn lại.\n• Chạm vào ô khác màu đó trước khi hết giờ.\n• Ghi càng nhiều điểm càng tốt!',
+  memoryFlashBattleHowTo: '• Quan sát các ô sáng lên lần lượt theo thứ tự.\n• Chạm lại đúng thứ tự các ô vừa sáng.\n• Ai hoàn thành đúng trước sẽ thắng — chạm sai là mất lượt ngay!',
+  memoryFlashSoloHowTo: '• Quan sát các ô sáng lên lần lượt theo thứ tự.\n• Chạm lại đúng thứ tự các ô vừa sáng.\n• Chạm sai hoặc hết giờ sẽ kết thúc lượt!',
+  colorMemoryBattleHowTo: '• Một lưới màu hiện ra trong 5 giây — hãy ghi nhớ thật kỹ!\n• Màu biến mất, cả hai chọn đúng màu tại vị trí được hỏi.\n• Ai trả lời đúng trước sẽ ghi điểm!',
+  colorMemorySoloHowTo: '• Một lưới màu hiện ra trong 5 giây — hãy ghi nhớ thật kỹ!\n• Màu biến mất — chọn đúng màu tại vị trí được hỏi.\n• Trả lời trước khi hết giờ!',
+  flagBattleHowTo: '• Tên một quốc gia hiện ra, chọn đúng lá cờ trong 4 lựa chọn.\n• Cả hai người chơi cùng thấy một câu hỏi — ai chạm đúng cờ trước sẽ ghi điểm.\n• Nhiều điểm hơn sẽ thắng!',
+  flagSoloHowTo: '• Tên một quốc gia hiện ra, chọn đúng lá cờ trong 4 lựa chọn.\n• Trả lời trước khi hết giờ mỗi câu.\n• Ghi càng nhiều điểm càng tốt!',
 };
 
 const zh: Translations = {
@@ -723,6 +766,20 @@ const zh: Translations = {
   profileSave: '保存资料',
   profileSaving: '保存中…',
   profileNoCountry: '未设置',
+
+  howToPlayTitle: '玩法说明',
+  mathBattleHowTo: '• 两位玩家在各自的屏幕区域看到相同的题目。\n• 尽快从4个选项中点击正确答案。\n• 最先答对的一方得分，得分多者获胜！',
+  mathSoloHowTo: '• 从4个选项中点击正确答案。\n• 每题都有独立的倒计时，请在时间用完前作答。\n• 尽可能多地答对题目！',
+  vocabBattleHowTo: '• 选出单词的正确释义，或从4个单词中找出"不同类"的一个。\n• 两位玩家看到相同题目，谁先点对谁得分。\n• 先答对的一方赢得该轮！',
+  vocabSoloHowTo: '• 选出单词的正确释义，或从4个单词中找出"不同类"的一个。\n• 请在每题倒计时结束前作答。\n• 尽可能多地答对题目！',
+  colorBattleHowTo: '• 出现8个色块，其中一个颜色略有不同。\n• 两位玩家在各自区域寻找并点击那个不同的色块。\n• 先点对的一方赢得该轮！',
+  colorSoloHowTo: '• 出现8个色块，其中一个颜色略有不同。\n• 请在时间用完前点击那个不同的色块。\n• 尽可能多地答对轮次！',
+  memoryFlashBattleHowTo: '• 观察方块依次闪烁的顺序。\n• 按照相同顺序依次点击方块。\n• 先正确复现顺序的一方获胜，点错即立刻失败！',
+  memoryFlashSoloHowTo: '• 观察方块依次闪烁的顺序。\n• 按照相同顺序依次点击方块。\n• 点错或超时该轮即结束！',
+  colorMemoryBattleHowTo: '• 一组颜色方块会显示5秒，请仔细记住！\n• 颜色隐藏后，双方选出指定位置原本的颜色。\n• 先答对的一方赢得该轮！',
+  colorMemorySoloHowTo: '• 一组颜色方块会显示5秒，请仔细记住！\n• 颜色隐藏后，选出指定位置原本的颜色。\n• 请在时间用完前作答！',
+  flagBattleHowTo: '• 屏幕出现国家名称，从4面旗帜中选出正确的一面。\n• 两位玩家看到相同题目，谁先点对谁得分。\n• 得分多者获胜！',
+  flagSoloHowTo: '• 屏幕出现国家名称，从4面旗帜中选出正确的一面。\n• 请在每题倒计时结束前作答。\n• 尽可能多地答对题目！',
 };
 
 export const TRANSLATIONS: Record<LangCode, Translations> = { en, vi, zh };

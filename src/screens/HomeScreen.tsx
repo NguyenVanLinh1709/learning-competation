@@ -3,6 +3,7 @@ import {
   Animated, Image, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity,
   useWindowDimensions, View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -22,6 +23,7 @@ export default function HomeScreen({ navigation }: Props) {
   const { lang, t, setLanguage } = useLanguageStore();
   const { displayName, avatarUrl } = useProfileStore();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   const { scale: s, mscale: ms, isTablet, isLargeTablet, hPad, contentWidth } = useMemo(
     () => makeResponsive(width),
@@ -90,7 +92,7 @@ export default function HomeScreen({ navigation }: Props) {
       colors={G.home}
       style={[
         styles.container,
-        { paddingHorizontal: hPad, paddingTop: Platform.OS === 'ios' ? s(60) : s(44) },
+        { paddingHorizontal: hPad, paddingTop: insets.top + s(16), paddingBottom: insets.bottom },
       ]}
     >
       {/* Decorative blobs */}

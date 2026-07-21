@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorMemoryBattleStore } from '../store/colorMemoryBattleStore';
@@ -171,6 +172,7 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C } = useTheme();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   const difficulty = config?.difficulty ?? 'easy';
   const { colorCount } = COLOR_MEMORY_SETTINGS[difficulty];
@@ -310,7 +312,7 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
       {countdownDone && (
         <>
           {/* Player 2 — top, rotated */}
-          <View style={styles.halfWrap}>
+          <View style={[styles.halfWrap, { paddingTop: insets.top }]}>
             <PlayerHalf
               player={player2}
               round={round}
@@ -361,7 +363,7 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
           </View>
 
           {/* Player 1 — bottom */}
-          <View style={styles.halfWrap}>
+          <View style={[styles.halfWrap, { paddingBottom: insets.bottom }]}>
             <PlayerHalf
               player={player1}
               round={round}

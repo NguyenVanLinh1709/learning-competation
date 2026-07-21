@@ -3,6 +3,7 @@ import {
   Alert, Animated, Platform, StyleSheet, Text,
   TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -29,6 +30,7 @@ export default function ColorGameScreen({ navigation }: Props) {
 
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   const tileSize = Math.floor((width - TILE_H_PADDING * 2 - TILE_GAP * 3) / 4);
@@ -182,7 +184,7 @@ export default function ColorGameScreen({ navigation }: Props) {
   const isGo = countdownStep === COUNTDOWN_STEPS.length - 1;
 
   return (
-    <LinearGradient colors={G.home} style={styles.outer}>
+    <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 12, paddingBottom: insets.bottom }]}>
 
       {/* Countdown overlay */}
       {!countdownDone && (

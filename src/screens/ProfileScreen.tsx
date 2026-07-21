@@ -3,6 +3,7 @@ import {
   ActivityIndicator, FlatList, Image, KeyboardAvoidingView, Modal, Platform,
   StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
@@ -34,6 +35,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const { userId, displayName, country, avatarUrl, setDisplayName, setCountry, setAvatarUrl } = useProfileStore();
   const { t } = useLanguageStore();
   const { C, G, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [name, setName] = useState(displayName);
   const [pickedCountry, setPickedCountry] = useState(country);
@@ -89,7 +91,7 @@ export default function ProfileScreen({ navigation }: Props) {
   };
 
   return (
-    <LinearGradient colors={G.home} style={styles.outer}>
+    <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 16, paddingBottom: insets.bottom }]}>
       {/* Header */}
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />

@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
@@ -31,6 +32,7 @@ type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Feedba
 export default function FeedbackScreen({ navigation }: Props) {
   const { C, G, isDark } = useTheme();
   const { t } = useLanguageStore();
+  const insets = useSafeAreaInsets();
 
   const [type, setType] = useState<FeedbackType>('feedback');
   const [message, setMessage] = useState('');
@@ -147,7 +149,7 @@ export default function FeedbackScreen({ navigation }: Props) {
   return (
     <LinearGradient colors={G.home} style={styles.container}>
       {/* Back button */}
-      <View style={[styles.topBar, { paddingTop: Platform.OS === 'ios' ? 60 : 44 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top + 16 }]}>
         <BackButton onPress={() => navigation.goBack()} />
       </View>
 
@@ -156,7 +158,7 @@ export default function FeedbackScreen({ navigation }: Props) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 40 + insets.bottom }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >

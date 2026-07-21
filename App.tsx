@@ -31,7 +31,6 @@ import MemoryResultScreen from './src/screens/MemoryResultScreen';
 import MemoryBattleSetupScreen from './src/screens/MemoryBattleSetupScreen';
 import MemoryBattleGameScreen from './src/screens/MemoryBattleGameScreen';
 import MemoryBattleResultScreen from './src/screens/MemoryBattleResultScreen';
-import ColorMemorySetupScreen from './src/screens/ColorMemorySetupScreen';
 import ColorMemoryGameScreen from './src/screens/ColorMemoryGameScreen';
 import ColorMemoryResultScreen from './src/screens/ColorMemoryResultScreen';
 import ColorMemoryBattleGameScreen from './src/screens/ColorMemoryBattleGameScreen';
@@ -90,7 +89,6 @@ export default function App() {
           <Stack.Screen name="MemoryBattleSetup" component={MemoryBattleSetupScreen} />
           <Stack.Screen name="MemoryBattleGame" component={MemoryBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="MemoryBattleResult" component={MemoryBattleResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
-          <Stack.Screen name="ColorMemorySetup" component={ColorMemorySetupScreen} />
           <Stack.Screen name="ColorMemoryGame" component={ColorMemoryGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="ColorMemoryResult" component={ColorMemoryResultScreen} options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="ColorMemoryBattleGame" component={ColorMemoryBattleGameScreen} options={{ animation: 'fade', gestureEnabled: false }} />

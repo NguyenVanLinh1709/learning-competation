@@ -3,6 +3,7 @@ import {
   Alert, Animated, Platform, StyleSheet, Text,
   TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -29,6 +30,7 @@ export default function MemoryGameScreen({ navigation }: Props) {
 
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   const difficulty = config?.difficulty ?? 'easy';
@@ -214,7 +216,7 @@ export default function MemoryGameScreen({ navigation }: Props) {
   const showing = !inputOpen && !isResolved;
 
   return (
-    <LinearGradient colors={G.home} style={styles.outer}>
+    <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 12, paddingBottom: insets.bottom }]}>
 
       {/* Countdown overlay */}
       {!countdownDone && (

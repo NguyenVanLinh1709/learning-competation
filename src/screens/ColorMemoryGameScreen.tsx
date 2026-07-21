@@ -3,6 +3,7 @@ import {
   Alert, Animated, Platform, StyleSheet, Text,
   TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -36,11 +37,12 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
   const {
     config, rounds, currentIndex,
     score, phase, showingColors, lastAnswerCorrect, selectedHex,
-    initGame, hideColors, submitAnswer, nextQuestion, resetGame,
+    initGame, hideColors, submitAnswer, timeoutAnswer, nextQuestion, resetGame,
   } = useColorMemoryStore();
 
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   const difficulty = config?.difficulty ?? 'easy';
@@ -61,6 +63,15 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
 
   const clearReveal = useCallback(() => {
     if (revealTimerRef.current) { clearInterval(revealTimerRef.current); revealTimerRef.current = null; }
+  }, []);
+
+  // Answer timer
+  const [answerLeft, setAnswerLeft] = useState(0);
+  const answerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const answerStartRef = useRef<number>(0);
+
+  const clearAnswerTimer = useCallback(() => {
+    if (answerTimerRef.current) { clearInterval(answerTimerRef.current); answerTimerRef.current = null; }
   }, []);
 
   // Tap flash for choice selection
@@ -123,6 +134,27 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
     return clearReveal;
   }, [showingColors, phase, countdownDone, currentIndex]);
 
+  // Answer timer — fires once colors hide and the player must pick an answer
+  useEffect(() => {
+    if (!countdownDone || showingColors || phase !== 'active') return;
+    if (!config || config.timeLimitMs <= 0) return;
+
+    answerStartRef.current = Date.now();
+    setAnswerLeft(config.timeLimitMs);
+
+    answerTimerRef.current = setInterval(() => {
+      const left = Math.max(0, config.timeLimitMs - (Date.now() - answerStartRef.current));
+      setAnswerLeft(left);
+      if (left <= 0) {
+        clearAnswerTimer();
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        timeoutAnswer();
+      }
+    }, 50);
+
+    return clearAnswerTimer;
+  }, [showingColors, phase, countdownDone, currentIndex, config?.timeLimitMs]);
+
   // Advance after resolve
   useEffect(() => {
     if (phase !== 'resolved') return;
@@ -144,12 +176,13 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
         onPress: () => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           clearReveal();
+          clearAnswerTimer();
           resetGame();
           navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
         },
       },
     ]);
-  }, [t, resetGame, navigation, clearReveal]);
+  }, [t, resetGame, navigation, clearReveal, clearAnswerTimer]);
 
   const handleChoiceTap = useCallback((hex: string) => {
     if (phase !== 'active' || showingColors) return;
@@ -169,6 +202,13 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
   const round = rounds[currentIndex];
   const isResolved = phase === 'resolved' || phase === 'finished';
   const revealProgress = Math.max(0, revealLeft / REVEAL_MS);
+  const isAnswerUnlimited = config.timeLimitMs <= 0;
+  const answerProgress = isAnswerUnlimited ? 1 : Math.max(0, answerLeft / config.timeLimitMs);
+  const answerTimerColor = isAnswerUnlimited
+    ? C.timerGreen
+    : answerProgress > 0.5 ? C.timerGreen
+    : answerProgress > 0.25 ? C.timerYellow
+    : C.timerRed;
 
   const countdownLabel = COUNTDOWN_STEPS[countdownStep];
   const isGo = countdownStep === COUNTDOWN_STEPS.length - 1;
@@ -179,7 +219,7 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
   }
 
   return (
-    <LinearGradient colors={G.home} style={styles.outer}>
+    <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 12, paddingBottom: insets.bottom }]}>
 
       {/* Intro countdown overlay */}
       {!countdownDone && (
@@ -230,9 +270,11 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
             ) : (
               <>
                 <View style={[styles.timerTrack, { backgroundColor: C.surface }]}>
-                  <View style={[styles.timerFill, { backgroundColor: C.timerGreen, width: '100%' }]} />
+                  <View style={[styles.timerFill, { backgroundColor: answerTimerColor, width: `${answerProgress * 100}%` }]} />
                 </View>
-                <Text style={[styles.timerText, { color: C.timerGreen }]}>✓</Text>
+                <Text style={[styles.timerText, { color: answerTimerColor }]}>
+                  {isResolved ? '✓' : isAnswerUnlimited ? '∞' : `${Math.ceil(answerLeft / 1000)}s`}
+                </Text>
               </>
             )}
           </View>

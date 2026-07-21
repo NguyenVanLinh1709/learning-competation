@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -36,6 +37,7 @@ export default function VocabSoloResultScreen({ navigation }: Props) {
   const { userId, avatarUrl, country } = useProfileStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const accuracy = config
     ? Math.round((correctCount / config.totalQuestions) * 100)
@@ -94,7 +96,7 @@ export default function VocabSoloResultScreen({ navigation }: Props) {
 
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
-      <View style={styles.scroll}>
+      <View style={[styles.scroll, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 40 }]}>
 
         {/* Banner */}
         <Animated.View style={[styles.banner, { transform: [{ scale: bannerScale }] }]}>

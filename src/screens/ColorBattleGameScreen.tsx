@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorBattleStore } from '../store/colorBattleStore';
@@ -119,6 +120,7 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C } = useTheme();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   const tileSize = Math.floor((width - 32 - TILE_GAP * 3) / 4);
 
@@ -253,7 +255,7 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
       {countdownDone && (
         <>
           {/* Player 2 (top, rotated) */}
-          <View style={styles.half}>
+          <View style={[styles.half, { paddingTop: insets.top }]}>
             <ColorTileGrid
               tiles={question.tiles}
               oddIndex={question.oddIndex}
@@ -291,7 +293,7 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
           </View>
 
           {/* Player 1 (bottom) */}
-          <View style={styles.half}>
+          <View style={[styles.half, { paddingBottom: insets.bottom }]}>
             <ColorTileGrid
               tiles={question.tiles}
               oddIndex={question.oddIndex}

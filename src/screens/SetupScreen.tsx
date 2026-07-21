@@ -3,6 +3,7 @@ import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -10,6 +11,8 @@ import { useGameStore } from '../store/gameStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
+import InfoButton from '../components/InfoButton';
+import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
 import type { DifficultyLevel, MathOperation, RootStackParamList } from '../types';
 
@@ -30,6 +33,8 @@ export default function SetupScreen({ navigation }: Props) {
   const { setConfig } = useGameStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [howToOpen, setHowToOpen] = useState(false);
 
   const [p1Name, setP1Name] = useState('Player A');
   const [p2Name, setP2Name] = useState('Player B');
@@ -74,13 +79,13 @@ export default function SetupScreen({ navigation }: Props) {
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           {/* Header */}
           <View style={styles.topRow}>
             <BackButton onPress={() => navigation.goBack()} />
             <Text style={[styles.title, { color: C.text }]}>{t.battleSetup}</Text>
-            <View style={{ width: 70 }} />
+            <InfoButton onPress={() => setHowToOpen(true)} />
           </View>
 
           {/* Player names */}
@@ -205,6 +210,13 @@ export default function SetupScreen({ navigation }: Props) {
 
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <HowToPlayModal
+        visible={howToOpen}
+        onClose={() => setHowToOpen(false)}
+        title={t.howToPlayTitle}
+        body={t.mathBattleHowTo}
+      />
     </LinearGradient>
   );
 }

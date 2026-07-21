@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useVocabStore } from '../store/vocabStore';
@@ -21,6 +22,7 @@ export default function VocabGameScreen({ navigation }: Props) {
 
   const { t } = useLanguageStore();
   const { C } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [remainingMs, setRemainingMs] = useState(config?.timeLimitMs ?? 15000);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -110,7 +112,7 @@ export default function VocabGameScreen({ navigation }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: C.screenBg }]}>
-      <View style={styles.half}>
+      <View style={[styles.half, { paddingTop: insets.top }]}>
         <VocabPlayerPanel
           player={player2}
           question={question}
@@ -144,7 +146,7 @@ export default function VocabGameScreen({ navigation }: Props) {
         <View style={[styles.centerLine, { backgroundColor: C.divider }]} />
       </View>
 
-      <View style={styles.half}>
+      <View style={[styles.half, { paddingBottom: insets.bottom }]}>
         <VocabPlayerPanel
           player={player1}
           question={question}

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -34,6 +35,7 @@ export default function FlagSoloResultScreen({ navigation }: Props) {
   const { avatarUrl } = useProfileStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const accuracy = config ? Math.round((correctCount / config.totalQuestions) * 100) : 0;
   const trophyEmoji = accuracy >= 80 ? '🏆' : accuracy >= 60 ? '🎯' : '💪';
@@ -68,7 +70,7 @@ export default function FlagSoloResultScreen({ navigation }: Props) {
 
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
-      <View style={styles.inner}>
+      <View style={[styles.inner, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 40 }]}>
 
         {/* Banner */}
         <Animated.View style={[styles.banner, { transform: [{ scale: bannerScale }] }]}>

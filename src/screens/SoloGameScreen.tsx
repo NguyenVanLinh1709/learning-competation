@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -27,6 +28,7 @@ export default function SoloGameScreen({ navigation }: Props) {
 
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);
@@ -180,7 +182,7 @@ export default function SoloGameScreen({ navigation }: Props) {
   const isGo = countdownStep === COUNTDOWN_STEPS.length - 1;
 
   return (
-    <LinearGradient colors={G.home} style={styles.outer}>
+    <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 12, paddingBottom: insets.bottom }]}>
 
       {/* Countdown overlay */}
       {!countdownDone && (
