@@ -38,7 +38,7 @@ export default function HomeScreen({ navigation }: Props) {
   const openLangDropdown = () => {
     tap();
     langBtnRef.current?.measureInWindow((x, y, btnW, btnH) => {
-      setDropdownPos({ x, y: y + btnH + 6, w: Math.max(btnW, s(130)) });
+      setDropdownPos({ x, y: y + btnH + 6, w: Math.max(btnW, s(180)) });
       setLangOpen(true);
     });
   };
@@ -301,17 +301,21 @@ export default function HomeScreen({ navigation }: Props) {
                 key={code}
                 style={[
                   styles.dropdownItem,
+                  { paddingHorizontal: s(14), paddingVertical: s(12) },
                   i < LANG_ORDER.length - 1 && { borderBottomWidth: 1, borderBottomColor: C.border },
                   lang === code && { backgroundColor: isDark ? 'rgba(67,97,238,0.18)' : 'rgba(67,97,238,0.08)' },
                 ]}
                 onPress={() => { tap(); setLanguage(code); setLangOpen(false); }}
                 activeOpacity={0.75}
               >
-                <Text style={{ fontSize: 18 }}>{TRANSLATIONS[code].langFlag}</Text>
-                <Text style={[styles.dropdownItemText, { color: lang === code ? C.p1Primary : C.text }]}>
+                <Text style={{ fontSize: ms(18) }}>{TRANSLATIONS[code].langFlag}</Text>
+                <Text
+                  style={[styles.dropdownItemText, { fontSize: ms(15), color: lang === code ? C.p1Primary : C.text }]}
+                  numberOfLines={1}
+                >
                   {TRANSLATIONS[code].langName ?? code.toUpperCase()}
                 </Text>
-                {lang === code && <Text style={[styles.dropdownCheck, { color: C.p1Primary }]}>✓</Text>}
+                {lang === code && <Text style={[styles.dropdownCheck, { fontSize: ms(14), color: C.p1Primary }]}>✓</Text>}
               </TouchableOpacity>
             ))}
           </View>
