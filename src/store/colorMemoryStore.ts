@@ -1,13 +1,19 @@
 import { create } from 'zustand';
 import type { SoloPhase } from '../types';
 
-export type ColorMemoryDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
+export type ColorMemoryDifficulty =
+  | 'easy' | 'medium' | 'hard' | 'expert'
+  | 'master' | 'grandmaster' | 'legendary' | 'insane';
 
 export const COLOR_MEMORY_SETTINGS: Record<ColorMemoryDifficulty, { colorCount: number; showMs: number }> = {
-  easy:   { colorCount: 3, showMs: 5000 },
-  medium: { colorCount: 4, showMs: 5000 },
-  hard:   { colorCount: 6, showMs: 5000 },
-  expert: { colorCount: 8, showMs: 5000 },
+  easy:        { colorCount: 3,  showMs: 5000 },
+  medium:      { colorCount: 4,  showMs: 5000 },
+  hard:        { colorCount: 6,  showMs: 5000 },
+  expert:      { colorCount: 8,  showMs: 5000 },
+  master:      { colorCount: 10, showMs: 5000 },
+  grandmaster: { colorCount: 12, showMs: 5000 },
+  legendary:   { colorCount: 14, showMs: 5000 },
+  insane:      { colorCount: 16, showMs: 5000 },
 };
 
 export const COLOR_MEMORY_PALETTE: { hex: string; name: string }[] = [
@@ -22,7 +28,22 @@ export const COLOR_MEMORY_PALETTE: { hex: string; name: string }[] = [
   { hex: '#06B6D4', name: 'Cyan' },
   { hex: '#EAB308', name: 'Yellow' },
   { hex: '#84CC16', name: 'Lime' },
+  { hex: '#6366F1', name: 'Indigo' },
+  { hex: '#D946EF', name: 'Fuchsia' },
+  { hex: '#10B981', name: 'Emerald' },
+  { hex: '#F43F5E', name: 'Rose' },
+  { hex: '#0EA5E9', name: 'Sky' },
+  { hex: '#8B5CF6', name: 'Violet' },
 ];
+
+// Number of grid columns for a given tile count — keeps the on-screen
+// layout compact as harder difficulties add more color tiles.
+export function colorMemoryGridCols(colorCount: number): number {
+  if (colorCount <= 3) return 3;
+  if (colorCount === 4) return 2;
+  if (colorCount <= 6) return 3;
+  return 4;
+}
 
 export interface ColorMemoryRound {
   id: string;

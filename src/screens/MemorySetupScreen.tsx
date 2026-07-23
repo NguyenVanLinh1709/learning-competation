@@ -35,17 +35,25 @@ const TIME_LIMITS = [
 ];
 
 const FLASH_DIFFICULTIES: { label: string; value: MemoryDifficulty; emoji: string; hint: string }[] = [
-  { label: 'Easy',   value: 'easy',   emoji: '🟢', hint: '4 tiles' },
-  { label: 'Medium', value: 'medium', emoji: '🟡', hint: '4 · longer' },
-  { label: 'Hard',   value: 'hard',   emoji: '🟠', hint: '9 tiles' },
-  { label: 'Expert', value: 'expert', emoji: '🔴', hint: '9 · fast' },
+  { label: 'Easy',        value: 'easy',        emoji: '🟢', hint: '4 tiles' },
+  { label: 'Medium',      value: 'medium',      emoji: '🟡', hint: '4 · longer' },
+  { label: 'Hard',        value: 'hard',        emoji: '🟠', hint: '9 tiles' },
+  { label: 'Expert',      value: 'expert',      emoji: '🔴', hint: '9 · fast' },
+  { label: 'Master',      value: 'master',      emoji: '🟣', hint: '16 tiles' },
+  { label: 'Grandmaster', value: 'grandmaster', emoji: '⚫', hint: '16 · faster' },
+  { label: 'Legendary',   value: 'legendary',   emoji: '👑', hint: '25 tiles' },
+  { label: 'Insane',      value: 'insane',      emoji: '💀', hint: '25 · blitz' },
 ];
 
 const COLOR_DIFFICULTIES: { label: string; value: ColorMemoryDifficulty; emoji: string; hint: string }[] = [
-  { label: 'Easy',   value: 'easy',   emoji: '🟢', hint: '3 colors' },
-  { label: 'Medium', value: 'medium', emoji: '🟡', hint: '4 colors' },
-  { label: 'Hard',   value: 'hard',   emoji: '🟠', hint: '6 colors' },
-  { label: 'Expert', value: 'expert', emoji: '🔴', hint: '8 colors' },
+  { label: 'Easy',        value: 'easy',        emoji: '🟢', hint: '3 colors' },
+  { label: 'Medium',      value: 'medium',      emoji: '🟡', hint: '4 colors' },
+  { label: 'Hard',        value: 'hard',        emoji: '🟠', hint: '6 colors' },
+  { label: 'Expert',      value: 'expert',      emoji: '🔴', hint: '8 colors' },
+  { label: 'Master',      value: 'master',      emoji: '🟣', hint: '10 colors' },
+  { label: 'Grandmaster', value: 'grandmaster', emoji: '⚫', hint: '12 colors' },
+  { label: 'Legendary',   value: 'legendary',   emoji: '👑', hint: '14 colors' },
+  { label: 'Insane',      value: 'insane',      emoji: '💀', hint: '16 colors' },
 ];
 
 export default function MemorySetupScreen({ navigation }: Props) {

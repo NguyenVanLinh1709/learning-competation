@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useColorMemoryStore, COLOR_MEMORY_SETTINGS, COLOR_MEMORY_PALETTE } from '../store/colorMemoryStore';
+import { useColorMemoryStore, COLOR_MEMORY_SETTINGS, COLOR_MEMORY_PALETTE, colorMemoryGridCols } from '../store/colorMemoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import type { RootStackParamList } from '../types';
@@ -25,10 +25,10 @@ function colorName(hex: string): string {
 }
 
 function getGridInfo(colorCount: number, screenWidth: number) {
-  const cols = colorCount === 3 ? 3 : colorCount === 4 ? 2 : colorCount === 6 ? 3 : 4;
+  const cols = colorMemoryGridCols(colorCount);
   const GAP = 12;
   const H_PAD = 32;
-  const maxTile = colorCount <= 4 ? 130 : colorCount === 6 ? 110 : 90;
+  const maxTile = colorCount <= 4 ? 130 : colorCount === 6 ? 110 : colorCount === 8 ? 90 : colorCount <= 12 ? 75 : 60;
   const tile = Math.min(Math.floor((screenWidth - H_PAD * 2 - GAP * (cols - 1)) / cols), maxTile);
   return { cols, tile, GAP };
 }

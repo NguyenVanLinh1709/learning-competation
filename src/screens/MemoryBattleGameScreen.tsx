@@ -10,7 +10,7 @@ import type { MemoryBattlePlayerState } from '../store/memoryBattleStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { TimerBar } from '../components/TimerBar';
-import { MEMORY_SETTINGS, TILE_COLORS } from '../utils/memoryShared';
+import { MEMORY_SETTINGS, TILE_COLORS, memoryGridCols } from '../utils/memoryShared';
 import type { PlayerPosition, RootStackParamList } from '../types';
 import { SIZES } from '../constants/theme';
 
@@ -108,9 +108,10 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
 
   const difficulty = config?.difficulty ?? 'easy';
   const { gridSize, flashMs } = MEMORY_SETTINGS[difficulty];
-  const cols = gridSize <= 4 ? 2 : 3;
+  const cols = memoryGridCols(gridSize);
   const rawTile = Math.floor((width - 32 - (cols - 1) * 10) / cols);
-  const tileSize = Math.min(rawTile, gridSize <= 4 ? 96 : 78);
+  const tileSizeCap = gridSize <= 4 ? 96 : gridSize <= 9 ? 78 : gridSize <= 16 ? 58 : 46;
+  const tileSize = Math.min(rawTile, tileSizeCap);
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);

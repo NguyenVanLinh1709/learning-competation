@@ -7,7 +7,7 @@ import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorMemoryBattleStore } from '../store/colorMemoryBattleStore';
 import type { ColorMemoryBattlePlayerState } from '../store/colorMemoryBattleStore';
-import { COLOR_MEMORY_SETTINGS, COLOR_MEMORY_PALETTE } from '../store/colorMemoryStore';
+import { COLOR_MEMORY_SETTINGS, COLOR_MEMORY_PALETTE, colorMemoryGridCols } from '../store/colorMemoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import type { PlayerPosition, RootStackParamList } from '../types';
@@ -26,10 +26,10 @@ function colorName(hex: string): string {
 }
 
 function getGridInfo(colorCount: number, screenWidth: number) {
-  const cols = colorCount === 3 ? 3 : colorCount === 4 ? 2 : colorCount === 6 ? 3 : 4;
+  const cols = colorMemoryGridCols(colorCount);
   const GAP = 8;
   const H_PAD = 24;
-  const maxTile = colorCount <= 4 ? 80 : colorCount === 6 ? 70 : 60;
+  const maxTile = colorCount <= 4 ? 80 : colorCount === 6 ? 70 : colorCount === 8 ? 60 : colorCount <= 12 ? 50 : 42;
   const tile = Math.min(Math.floor((screenWidth - H_PAD * 2 - GAP * (cols - 1)) / cols), maxTile);
   return { cols, tile, GAP };
 }

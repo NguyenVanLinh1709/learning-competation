@@ -318,7 +318,7 @@ const en: Translations = {
   colorBattleSetup: 'Color Battle Setup',
   startColorBattle: '🎨  START COLOR BATTLE',
 
-  subjectMemory: 'Memory Flash',
+  subjectMemory: 'Memory Games',
   subjectMemoryDesc: 'Watch & repeat the lights · No reading needed',
   memorySetup: 'Memory Practice',
   memoryTagline: 'WATCH, REMEMBER, REPEAT',
@@ -508,7 +508,7 @@ const vi: Translations = {
   colorBattleSetup: 'Thiết lập đấu màu sắc',
   startColorBattle: '🎨  BẮT ĐẦU ĐẤU MÀU SẮC',
 
-  subjectMemory: 'Trí nhớ ánh sáng',
+  subjectMemory: 'Trí Nhớ',
   subjectMemoryDesc: 'Xem & lặp lại ánh sáng · Không cần biết chữ',
   memorySetup: 'Luyện trí nhớ',
   memoryTagline: 'XEM, GHI NHỚ, LẶP LẠI',
@@ -698,7 +698,7 @@ const zh: Translations = {
   colorBattleSetup: '色彩对战设置',
   startColorBattle: '🎨  开始色彩对战',
 
-  subjectMemory: '记忆闪光',
+  subjectMemory: '记忆游戏',
   subjectMemoryDesc: '观看并重复亮灯顺序 · 无需识字',
   memorySetup: '记忆练习',
   memoryTagline: '观看、记住、重复',

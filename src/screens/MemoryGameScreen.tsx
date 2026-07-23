@@ -10,7 +10,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemoryStore } from '../store/memoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
-import { MEMORY_SETTINGS, TILE_COLORS } from '../utils/memoryShared';
+import { MEMORY_SETTINGS, TILE_COLORS, memoryGridCols } from '../utils/memoryShared';
 import type { RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'MemoryGame'> };
@@ -35,11 +35,12 @@ export default function MemoryGameScreen({ navigation }: Props) {
 
   const difficulty = config?.difficulty ?? 'easy';
   const { gridSize, flashMs } = MEMORY_SETTINGS[difficulty];
-  const cols = gridSize <= 4 ? 2 : 3;
+  const cols = memoryGridCols(gridSize);
   const GAP = 14;
   const H_PAD = 24;
   const rawTile = Math.floor((width - H_PAD * 2 - GAP * (cols - 1)) / cols);
-  const tileSize = Math.min(rawTile, 150);
+  const tileSizeCap = gridSize <= 4 ? 150 : gridSize <= 9 ? 120 : gridSize <= 16 ? 95 : 75;
+  const tileSize = Math.min(rawTile, tileSizeCap);
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);

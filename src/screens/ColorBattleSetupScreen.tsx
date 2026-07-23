@@ -25,6 +25,8 @@ const DIFFICULTIES: { label: string; value: ColorDifficulty; emoji: string; hint
   { label: 'Medium', value: 'medium', emoji: '🔮', hint: 'Subtle' },
   { label: 'Hard',   value: 'hard',   emoji: '🧠', hint: 'Very subtle' },
   { label: 'Expert', value: 'expert', emoji: '🎯', hint: 'Barely there' },
+  { label: 'Master', value: 'master', emoji: '👁️', hint: 'Nearly identical' },
+  { label: 'Insane', value: 'insane', emoji: '💎', hint: 'Pixel perfect' },
 ];
 const TIME_LIMITS = [
   { label: '5s',  value: 5000 },
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
   timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   timeLimitLabel: { fontSize: 13, fontWeight: '800' },
   diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  diffBtn: { flex: 0, width: '23%', paddingVertical: 10, paddingHorizontal: 2 },
+  diffBtn: { flex: 0, width: '31%', paddingVertical: 10, paddingHorizontal: 2 },
   optionEmoji: { fontSize: 20 },
   optionLabel: { fontSize: 13, fontWeight: '700' },
   optionHint: { fontSize: 10, fontWeight: '500', textAlign: 'center' },

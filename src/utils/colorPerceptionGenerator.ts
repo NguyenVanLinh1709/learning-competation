@@ -1,4 +1,4 @@
-export type ColorDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
+export type ColorDifficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'master' | 'insane';
 
 export interface ColorPerceptionQuestion {
   id: string;
@@ -31,6 +31,8 @@ const DELTA_RANGE: Record<ColorDifficulty, [number, number]> = {
   medium: [28, 42],
   hard:   [10, 18],
   expert: [7, 9],
+  master: [5, 6],
+  insane: [3, 4],
 };
 
 function clamp(v: number): number {
