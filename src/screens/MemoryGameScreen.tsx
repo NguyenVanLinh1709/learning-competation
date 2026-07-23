@@ -10,7 +10,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemoryStore } from '../store/memoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
-import { MEMORY_SETTINGS, TILE_COLORS, memoryGridCols } from '../utils/memoryShared';
+import { memoryFlashMs, tileColor } from '../utils/memoryShared';
 import type { RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'MemoryGame'> };
@@ -33,13 +33,14 @@ export default function MemoryGameScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const difficulty = config?.difficulty ?? 'easy';
-  const { gridSize, flashMs } = MEMORY_SETTINGS[difficulty];
-  const cols = memoryGridCols(gridSize);
-  const GAP = 14;
+  const gridDim = config?.gridDim ?? 2;
+  const gridSize = gridDim * gridDim;
+  const flashMs = memoryFlashMs(gridDim, config?.steps ?? 2);
+  const cols = gridDim;
+  const GAP = gridDim <= 5 ? 14 : gridDim <= 8 ? 8 : 5;
   const H_PAD = 24;
   const rawTile = Math.floor((width - H_PAD * 2 - GAP * (cols - 1)) / cols);
-  const tileSizeCap = gridSize <= 4 ? 150 : gridSize <= 9 ? 120 : gridSize <= 16 ? 95 : 75;
+  const tileSizeCap = Math.max(28, Math.min(150, Math.round(300 / gridDim)));
   const tileSize = Math.min(rawTile, tileSizeCap);
 
   const [countdownStep, setCountdownStep] = useState(0);
@@ -168,7 +169,7 @@ export default function MemoryGameScreen({ navigation }: Props) {
         onPress: () => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           resetGame();
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemorySetup' }] });
         },
       },
     ]);
@@ -284,7 +285,7 @@ export default function MemoryGameScreen({ navigation }: Props) {
           <View style={[styles.gridArea]}>
             <View style={[styles.grid, { width: cols * tileSize + (cols - 1) * GAP, gap: GAP }]}>
               {Array.from({ length: gridSize }, (_, idx) => {
-                const color = TILE_COLORS[idx];
+                const color = tileColor(idx);
                 const lit = flashTile === idx || tapFlash === idx;
                 const isWrong = isResolved && wrongTile === idx;
                 return (

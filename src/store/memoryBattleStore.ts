@@ -1,12 +1,13 @@
 import { create } from 'zustand';
-import { generateMemoryRounds, MEMORY_SETTINGS } from '../utils/memoryGenerator';
-import type { MemoryRound, MemoryDifficulty } from '../utils/memoryGenerator';
+import { generateMemoryRounds } from '../utils/memoryGenerator';
+import type { MemoryRound } from '../utils/memoryGenerator';
 import type { GamePhase, PlayerPosition } from '../types';
 
 export interface MemoryBattleConfig {
   player1Name: string;
   player2Name: string;
-  difficulty: MemoryDifficulty;
+  gridDim: number;      // grid is gridDim x gridDim tiles (2..11)
+  steps: number;         // longest sequence length reached (2..21)
   totalQuestions: number;
   timeLimitMs: number;
 }
@@ -66,7 +67,7 @@ export const useMemoryBattleStore = create<MemoryBattleStore>((set, get) => ({
 
   gridSize: () => {
     const { config } = get();
-    return config ? MEMORY_SETTINGS[config.difficulty].gridSize : 4;
+    return config ? config.gridDim * config.gridDim : 4;
   },
 
   setConfig: (config) => set({ config }),
@@ -74,7 +75,7 @@ export const useMemoryBattleStore = create<MemoryBattleStore>((set, get) => ({
   initGame: () => {
     const { config } = get();
     if (!config) return;
-    const rounds = generateMemoryRounds(config.totalQuestions, config.difficulty);
+    const rounds = generateMemoryRounds(config.totalQuestions, config.gridDim * config.gridDim, config.steps);
     set({
       rounds,
       currentIndex: 0,

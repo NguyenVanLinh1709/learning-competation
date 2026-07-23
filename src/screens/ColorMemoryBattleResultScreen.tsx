@@ -99,7 +99,7 @@ export default function ColorMemoryBattleResultScreen({ navigation }: Props) {
           <Text style={styles.trophy}>{isDraw ? '🤝' : '🏆'}</Text>
           <Text style={[styles.winnerText, { color: isDraw ? C.timerYellow : C.text }]}>{winnerText}</Text>
           <Text style={[styles.subText, { color: C.textMuted }]}>
-            {config?.totalQuestions}q · {config?.difficulty} · 🎨
+            {config?.totalQuestions}q · {config?.gridDim}×{config?.gridDim} · 🎨
           </Text>
         </Animated.View>
 

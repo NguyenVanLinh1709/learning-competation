@@ -139,7 +139,7 @@ export default function FlagSoloGameScreen({ navigation }: Props) {
         onPress: () => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           resetGame();
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'FlagSoloSetup' }] });
         },
       },
     ]);

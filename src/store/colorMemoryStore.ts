@@ -1,20 +1,9 @@
 import { create } from 'zustand';
 import type { SoloPhase } from '../types';
 
-export type ColorMemoryDifficulty =
-  | 'easy' | 'medium' | 'hard' | 'expert'
-  | 'master' | 'grandmaster' | 'legendary' | 'insane';
-
-export const COLOR_MEMORY_SETTINGS: Record<ColorMemoryDifficulty, { colorCount: number; showMs: number }> = {
-  easy:        { colorCount: 3,  showMs: 5000 },
-  medium:      { colorCount: 4,  showMs: 5000 },
-  hard:        { colorCount: 6,  showMs: 5000 },
-  expert:      { colorCount: 8,  showMs: 5000 },
-  master:      { colorCount: 10, showMs: 5000 },
-  grandmaster: { colorCount: 12, showMs: 5000 },
-  legendary:   { colorCount: 14, showMs: 5000 },
-  insane:      { colorCount: 16, showMs: 5000 },
-};
+// User-facing bounds for the Color Memory grid-size slider (grid is N×N).
+export const COLOR_MEMORY_GRID_DIM_MIN = 2;
+export const COLOR_MEMORY_GRID_DIM_MAX = 11;
 
 export const COLOR_MEMORY_PALETTE: { hex: string; name: string }[] = [
   { hex: '#EF4444', name: 'Red' },
@@ -36,15 +25,6 @@ export const COLOR_MEMORY_PALETTE: { hex: string; name: string }[] = [
   { hex: '#8B5CF6', name: 'Violet' },
 ];
 
-// Number of grid columns for a given tile count — keeps the on-screen
-// layout compact as harder difficulties add more color tiles.
-export function colorMemoryGridCols(colorCount: number): number {
-  if (colorCount <= 3) return 3;
-  if (colorCount === 4) return 2;
-  if (colorCount <= 6) return 3;
-  return 4;
-}
-
 export interface ColorMemoryRound {
   id: string;
   colors: string[];         // hex color at each position (0-indexed)
@@ -55,7 +35,7 @@ export interface ColorMemoryRound {
 
 export interface ColorMemoryConfig {
   playerName: string;
-  difficulty: ColorMemoryDifficulty;
+  gridDim: number; // grid is gridDim x gridDim tiles (2..11)
   totalQuestions: number;
   timeLimitMs: number; // answer time per question after colors hide (0 = unlimited)
 }
@@ -69,11 +49,14 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function generateRounds(count: number, difficulty: ColorMemoryDifficulty): ColorMemoryRound[] {
-  const { colorCount } = COLOR_MEMORY_SETTINGS[difficulty];
+// colorCount can exceed the palette size (up to 121 for an 11x11 grid), so
+// tiles are sampled with replacement — colors may repeat across the grid.
+function generateRounds(count: number, colorCount: number): ColorMemoryRound[] {
   return Array.from({ length: count }, (_, i) => {
-    const selected = shuffle(COLOR_MEMORY_PALETTE).slice(0, colorCount);
-    const colors = selected.map(c => c.hex);
+    const colors = Array.from(
+      { length: colorCount },
+      () => COLOR_MEMORY_PALETTE[Math.floor(Math.random() * COLOR_MEMORY_PALETTE.length)].hex,
+    );
     const questionPosition = Math.floor(Math.random() * colorCount);
     const correctHex = colors[questionPosition];
     const others = shuffle(COLOR_MEMORY_PALETTE.filter(c => c.hex !== correctHex));
@@ -122,7 +105,7 @@ export const useColorMemoryStore = create<ColorMemoryStore>((set, get) => ({
   initGame: () => {
     const { config } = get();
     if (!config) return;
-    const rounds = generateRounds(config.totalQuestions, config.difficulty);
+    const rounds = generateRounds(config.totalQuestions, config.gridDim * config.gridDim);
     set({
       rounds,
       currentIndex: 0,

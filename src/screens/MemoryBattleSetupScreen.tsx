@@ -6,10 +6,11 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+import Slider from '@react-native-community/slider';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemoryBattleStore } from '../store/memoryBattleStore';
 import { useColorMemoryBattleStore } from '../store/colorMemoryBattleStore';
-import type { ColorMemoryDifficulty } from '../store/colorMemoryStore';
+import { COLOR_MEMORY_GRID_DIM_MIN, COLOR_MEMORY_GRID_DIM_MAX } from '../store/colorMemoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
@@ -17,7 +18,9 @@ import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
 import type { RootStackParamList } from '../types';
-import type { MemoryDifficulty } from '../utils/memoryGenerator';
+import {
+  MEMORY_GRID_DIM_MIN, MEMORY_GRID_DIM_MAX, MEMORY_STEPS_MIN, MEMORY_STEPS_MAX,
+} from '../utils/memoryGenerator';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'MemoryBattleSetup'> };
 type GameMode = 'flash' | 'color';
@@ -34,28 +37,6 @@ const TIME_LIMITS = [
   { label: '∞',   value: 0 },
 ];
 
-const FLASH_DIFFICULTIES: { label: string; value: MemoryDifficulty; emoji: string; hint: string }[] = [
-  { label: 'Easy',        value: 'easy',        emoji: '🟢', hint: '4 tiles' },
-  { label: 'Medium',      value: 'medium',      emoji: '🟡', hint: '4 · longer' },
-  { label: 'Hard',        value: 'hard',        emoji: '🟠', hint: '9 tiles' },
-  { label: 'Expert',      value: 'expert',      emoji: '🔴', hint: '9 · fast' },
-  { label: 'Master',      value: 'master',      emoji: '🟣', hint: '16 tiles' },
-  { label: 'Grandmaster', value: 'grandmaster', emoji: '⚫', hint: '16 · faster' },
-  { label: 'Legendary',   value: 'legendary',   emoji: '👑', hint: '25 tiles' },
-  { label: 'Insane',      value: 'insane',      emoji: '💀', hint: '25 · blitz' },
-];
-
-const COLOR_DIFFICULTIES: { label: string; value: ColorMemoryDifficulty; emoji: string; hint: string }[] = [
-  { label: 'Easy',        value: 'easy',        emoji: '🟢', hint: '3 colors' },
-  { label: 'Medium',      value: 'medium',      emoji: '🟡', hint: '4 colors' },
-  { label: 'Hard',        value: 'hard',        emoji: '🟠', hint: '6 colors' },
-  { label: 'Expert',      value: 'expert',      emoji: '🔴', hint: '8 colors' },
-  { label: 'Master',      value: 'master',      emoji: '🟣', hint: '10 colors' },
-  { label: 'Grandmaster', value: 'grandmaster', emoji: '⚫', hint: '12 colors' },
-  { label: 'Legendary',   value: 'legendary',   emoji: '👑', hint: '14 colors' },
-  { label: 'Insane',      value: 'insane',      emoji: '💀', hint: '16 colors' },
-];
-
 export default function MemoryBattleSetupScreen({ navigation }: Props) {
   const { setConfig: setFlashConfig } = useMemoryBattleStore();
   const { setConfig: setColorConfig } = useColorMemoryBattleStore();
@@ -67,8 +48,9 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
   const [p1Name, setP1Name] = useState('Player A');
   const [p2Name, setP2Name] = useState('Player B');
   const [mode, setMode] = useState<GameMode>('flash');
-  const [flashDifficulty, setFlashDifficulty] = useState<MemoryDifficulty>('easy');
-  const [colorDifficulty, setColorDifficulty] = useState<ColorMemoryDifficulty>('easy');
+  const [gridDim, setGridDim] = useState(4);
+  const [steps, setSteps] = useState(3);
+  const [colorGridDim, setColorGridDim] = useState(4);
   const [questionCount, setQuestionCount] = useState(10);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);
 
@@ -86,7 +68,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
       setColorConfig({
         player1Name: p1Name.trim(),
         player2Name: p2Name.trim(),
-        difficulty: colorDifficulty,
+        gridDim: colorGridDim,
         totalQuestions: questionCount,
       });
       navigation.navigate('ColorMemoryBattleGame');
@@ -94,7 +76,8 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
       setFlashConfig({
         player1Name: p1Name.trim(),
         player2Name: p2Name.trim(),
-        difficulty: flashDifficulty,
+        gridDim,
+        steps,
         totalQuestions: questionCount,
         timeLimitMs,
       });
@@ -161,33 +144,63 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
           </View>
 
           {/* Difficulty */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.difficultyLabel}</Text>
-            <View style={styles.diffGrid}>
-              {(isColor ? COLOR_DIFFICULTIES : FLASH_DIFFICULTIES).map((d) => {
-                const active = isColor ? colorDifficulty === d.value : flashDifficulty === d.value;
-                return (
-                  <TouchableOpacity
-                    key={d.value}
-                    style={[
-                      styles.optionBtn,
-                      styles.diffBtn,
-                      { backgroundColor: C.surface, borderColor: C.border },
-                      active && { borderColor: accentColor, backgroundColor: accentBg },
-                    ]}
-                    onPress={() => {
-                      tap();
-                      if (isColor) setColorDifficulty(d.value as ColorMemoryDifficulty);
-                      else setFlashDifficulty(d.value as MemoryDifficulty);
-                    }}
-                  >
-                    <Text style={styles.optionEmoji}>{d.emoji}</Text>
-                    <Text style={[styles.optionLabel, { color: active ? C.text : C.textMuted }]}>{d.label}</Text>
-                  </TouchableOpacity>
-                );
-              })}
+          {isColor ? (
+            <View style={styles.section}>
+              <View style={styles.sliderHeaderRow}>
+                <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.memoryGridSizeLabel}</Text>
+                <Text style={[styles.sliderValue, { color: accentColor }]}>{colorGridDim}×{colorGridDim}</Text>
+              </View>
+              <Slider
+                style={styles.slider}
+                minimumValue={COLOR_MEMORY_GRID_DIM_MIN}
+                maximumValue={COLOR_MEMORY_GRID_DIM_MAX}
+                step={1}
+                value={colorGridDim}
+                minimumTrackTintColor={accentColor}
+                maximumTrackTintColor={C.border}
+                thumbTintColor={accentColor}
+                onValueChange={(v) => { if (v !== colorGridDim) { Haptics.selectionAsync(); setColorGridDim(v); } }}
+              />
             </View>
-          </View>
+          ) : (
+            <>
+              <View style={styles.section}>
+                <View style={styles.sliderHeaderRow}>
+                  <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.memoryGridSizeLabel}</Text>
+                  <Text style={[styles.sliderValue, { color: accentColor }]}>{gridDim}×{gridDim}</Text>
+                </View>
+                <Slider
+                  style={styles.slider}
+                  minimumValue={MEMORY_GRID_DIM_MIN}
+                  maximumValue={MEMORY_GRID_DIM_MAX}
+                  step={1}
+                  value={gridDim}
+                  minimumTrackTintColor={accentColor}
+                  maximumTrackTintColor={C.border}
+                  thumbTintColor={accentColor}
+                  onValueChange={(v) => { if (v !== gridDim) { Haptics.selectionAsync(); setGridDim(v); } }}
+                />
+              </View>
+
+              <View style={styles.section}>
+                <View style={styles.sliderHeaderRow}>
+                  <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.memoryStepsLabel}</Text>
+                  <Text style={[styles.sliderValue, { color: accentColor }]}>{steps}</Text>
+                </View>
+                <Slider
+                  style={styles.slider}
+                  minimumValue={MEMORY_STEPS_MIN}
+                  maximumValue={MEMORY_STEPS_MAX}
+                  step={1}
+                  value={steps}
+                  minimumTrackTintColor={accentColor}
+                  maximumTrackTintColor={C.border}
+                  thumbTintColor={accentColor}
+                  onValueChange={(v) => { if (v !== steps) { Haptics.selectionAsync(); setSteps(v); } }}
+                />
+              </View>
+            </>
+          )}
 
           {/* Question count */}
           <View style={styles.section}>
@@ -273,6 +286,10 @@ const styles = StyleSheet.create({
 
   section: { marginBottom: 20, marginTop: 10 },
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
+
+  sliderHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
+  sliderValue: { fontSize: 15, fontWeight: '800' },
+  slider: { width: '100%', height: 40 },
 
   modeRow: { flexDirection: 'row', gap: 10 },
   modeBtn: { flex: 1, borderWidth: 1.5, borderRadius: 14, paddingVertical: 12, alignItems: 'center', gap: 3 },

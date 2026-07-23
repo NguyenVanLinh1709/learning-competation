@@ -1,53 +1,48 @@
-export type MemoryDifficulty =
-  | 'easy' | 'medium' | 'hard' | 'expert'
-  | 'master' | 'grandmaster' | 'legendary' | 'insane';
-
 export interface MemoryRound {
   id: string;
   sequence: number[];   // tile indices to light up, in order
-  difficulty: MemoryDifficulty;
 }
 
-// gridSize = number of tiles; baseLen = starting sequence length;
-// flashMs = how long each tile stays lit while showing the sequence;
-// maxLen = longest sequence the round-by-round ramp is allowed to reach.
-export const MEMORY_SETTINGS: Record<MemoryDifficulty, { gridSize: number; baseLen: number; flashMs: number; maxLen: number }> = {
-  easy:        { gridSize: 4, baseLen: 2, flashMs: 650, maxLen: 7 },
-  medium:      { gridSize: 4, baseLen: 3, flashMs: 520, maxLen: 7 },
-  hard:        { gridSize: 9, baseLen: 3, flashMs: 430, maxLen: 7 },
-  expert:      { gridSize: 9, baseLen: 4, flashMs: 340, maxLen: 7 },
-  master:      { gridSize: 16, baseLen: 5, flashMs: 280, maxLen: 9 },
-  grandmaster: { gridSize: 16, baseLen: 6, flashMs: 230, maxLen: 10 },
-  legendary:   { gridSize: 25, baseLen: 7, flashMs: 190, maxLen: 12 },
-  insane:      { gridSize: 25, baseLen: 8, flashMs: 160, maxLen: 14 },
-};
+// User-facing bounds for the two Memory Flash sliders (grid dimension is N×N).
+export const MEMORY_GRID_DIM_MIN = 2;
+export const MEMORY_GRID_DIM_MAX = 11;
+export const MEMORY_STEPS_MIN = 2;
+export const MEMORY_STEPS_MAX = 21;
+
+const FLASH_MS_MAX = 700; // shown at the easiest setting (2x2 grid, 2 steps)
+const FLASH_MS_MIN = 160; // shown at the hardest setting (11x11 grid, 21 steps)
+
+// How long each tile stays lit while the sequence plays — derived from the
+// user's chosen grid dimension and step count so the ramp scales smoothly
+// across the whole slider range instead of a handful of fixed tiers.
+export function memoryFlashMs(gridDim: number, steps: number): number {
+  const gridT = (gridDim - MEMORY_GRID_DIM_MIN) / (MEMORY_GRID_DIM_MAX - MEMORY_GRID_DIM_MIN);
+  const stepsT = (steps - MEMORY_STEPS_MIN) / (MEMORY_STEPS_MAX - MEMORY_STEPS_MIN);
+  const t = (gridT + stepsT) / 2;
+  return Math.round(FLASH_MS_MAX - t * (FLASH_MS_MAX - FLASH_MS_MIN));
+}
 
 function rand(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// The sequence grows every other round so the difficulty ramps up smoothly.
-function lengthForRound(roundIndex: number, baseLen: number, maxLen: number): number {
-  return Math.min(baseLen + Math.floor(roundIndex / 2), maxLen);
-}
-
+// Every round uses exactly the user-chosen step count as its sequence length.
 export function generateMemoryRounds(
   count: number,
-  difficulty: MemoryDifficulty,
+  gridSize: number,
+  steps: number,
 ): MemoryRound[] {
-  const { gridSize, baseLen, maxLen } = MEMORY_SETTINGS[difficulty];
   const rounds: MemoryRound[] = [];
 
   for (let i = 0; i < count; i++) {
-    const len = lengthForRound(i, baseLen, maxLen);
     const sequence: number[] = [];
-    for (let j = 0; j < len; j++) {
+    for (let j = 0; j < steps; j++) {
       let tile = rand(0, gridSize - 1);
       // Avoid an immediate repeat — a tile flashing twice in a row is confusing.
       if (j > 0 && tile === sequence[j - 1]) tile = (tile + 1) % gridSize;
       sequence.push(tile);
     }
-    rounds.push({ id: `mem-${i}-${Date.now() + i}`, sequence, difficulty });
+    rounds.push({ id: `mem-${i}-${Date.now() + i}`, sequence });
   }
 
   return rounds;

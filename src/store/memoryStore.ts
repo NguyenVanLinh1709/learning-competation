@@ -1,11 +1,12 @@
 import { create } from 'zustand';
-import { generateMemoryRounds, MEMORY_SETTINGS } from '../utils/memoryGenerator';
-import type { MemoryRound, MemoryDifficulty } from '../utils/memoryGenerator';
+import { generateMemoryRounds } from '../utils/memoryGenerator';
+import type { MemoryRound } from '../utils/memoryGenerator';
 import type { SoloPhase } from '../types';
 
 export interface MemoryConfig {
   playerName: string;
-  difficulty: MemoryDifficulty;
+  gridDim: number;      // grid is gridDim x gridDim tiles (2..11)
+  steps: number;         // longest sequence length reached (2..21)
   totalQuestions: number;
   timeLimitMs: number; // input time per round (0 = unlimited)
 }
@@ -48,7 +49,7 @@ export const useMemoryStore = create<MemoryStore>((set, get) => ({
 
   gridSize: () => {
     const { config } = get();
-    return config ? MEMORY_SETTINGS[config.difficulty].gridSize : 4;
+    return config ? config.gridDim * config.gridDim : 4;
   },
 
   setConfig: (config) => set({ config }),
@@ -56,7 +57,7 @@ export const useMemoryStore = create<MemoryStore>((set, get) => ({
   initGame: () => {
     const { config } = get();
     if (!config) return;
-    const rounds = generateMemoryRounds(config.totalQuestions, config.difficulty);
+    const rounds = generateMemoryRounds(config.totalQuestions, config.gridDim * config.gridDim, config.steps);
     set({
       rounds,
       currentIndex: 0,

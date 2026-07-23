@@ -10,7 +10,7 @@ import type { MemoryBattlePlayerState } from '../store/memoryBattleStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { TimerBar } from '../components/TimerBar';
-import { MEMORY_SETTINGS, TILE_COLORS, memoryGridCols } from '../utils/memoryShared';
+import { memoryFlashMs, tileColor } from '../utils/memoryShared';
 import type { PlayerPosition, RootStackParamList } from '../types';
 import { SIZES } from '../constants/theme';
 
@@ -27,6 +27,7 @@ function MemoryGrid({
   gridSize,
   cols,
   tileSize,
+  gap,
   flashTile,
   tapFlash,
   player,
@@ -39,6 +40,7 @@ function MemoryGrid({
   gridSize: number;
   cols: number;
   tileSize: number;
+  gap: number;
   flashTile: number | null;
   tapFlash: number | null;
   player: MemoryBattlePlayerState;
@@ -61,7 +63,7 @@ function MemoryGrid({
       </View>
 
       <View style={styles.gridWrap}>
-        <View style={[styles.grid, { width: cols * tileSize + (cols - 1) * 10, gap: 10 }]}>
+        <View style={[styles.grid, { width: cols * tileSize + (cols - 1) * gap, gap }]}>
           {Array.from({ length: gridSize }, (_, idx) => {
             const lit = flashTile === idx || tapFlash === idx;
             const isWrong = isResolved && player.wrongTile === idx;
@@ -76,7 +78,7 @@ function MemoryGrid({
                   {
                     width: tileSize,
                     height: tileSize,
-                    backgroundColor: TILE_COLORS[idx],
+                    backgroundColor: tileColor(idx),
                     opacity: lit ? 1 : 0.26,
                     borderColor: isWrong ? '#DC2626' : lit ? '#FFFFFF' : 'transparent',
                   },
@@ -106,11 +108,13 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const difficulty = config?.difficulty ?? 'easy';
-  const { gridSize, flashMs } = MEMORY_SETTINGS[difficulty];
-  const cols = memoryGridCols(gridSize);
-  const rawTile = Math.floor((width - 32 - (cols - 1) * 10) / cols);
-  const tileSizeCap = gridSize <= 4 ? 96 : gridSize <= 9 ? 78 : gridSize <= 16 ? 58 : 46;
+  const gridDim = config?.gridDim ?? 2;
+  const gridSize = gridDim * gridDim;
+  const flashMs = memoryFlashMs(gridDim, config?.steps ?? 2);
+  const cols = gridDim;
+  const gap = gridDim <= 5 ? 10 : gridDim <= 8 ? 6 : 3;
+  const rawTile = Math.floor((width - 32 - (cols - 1) * gap) / cols);
+  const tileSizeCap = Math.max(20, Math.min(96, Math.round(190 / gridDim)));
   const tileSize = Math.min(rawTile, tileSizeCap);
 
   const [countdownStep, setCountdownStep] = useState(0);
@@ -253,7 +257,7 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
         onPress: () => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           resetGame();
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemoryBattleSetup' }] });
         },
       },
     ]);
@@ -299,6 +303,7 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
               gridSize={gridSize}
               cols={cols}
               tileSize={tileSize}
+              gap={gap}
               flashTile={flashTile}
               tapFlash={tapP2}
               player={player2}
@@ -341,6 +346,7 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
               gridSize={gridSize}
               cols={cols}
               tileSize={tileSize}
+              gap={gap}
               flashTile={flashTile}
               tapFlash={tapP1}
               player={player1}

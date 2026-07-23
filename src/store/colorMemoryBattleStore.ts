@@ -1,12 +1,12 @@
 import { create } from 'zustand';
-import { COLOR_MEMORY_SETTINGS, COLOR_MEMORY_PALETTE } from './colorMemoryStore';
-import type { ColorMemoryDifficulty, ColorMemoryRound } from './colorMemoryStore';
+import { COLOR_MEMORY_PALETTE } from './colorMemoryStore';
+import type { ColorMemoryRound } from './colorMemoryStore';
 import type { GamePhase, PlayerPosition } from '../types';
 
 export interface ColorMemoryBattleConfig {
   player1Name: string;
   player2Name: string;
-  difficulty: ColorMemoryDifficulty;
+  gridDim: number; // grid is gridDim x gridDim tiles (2..11)
   totalQuestions: number;
 }
 
@@ -63,11 +63,14 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function generateRounds(count: number, difficulty: ColorMemoryDifficulty): ColorMemoryRound[] {
-  const { colorCount } = COLOR_MEMORY_SETTINGS[difficulty];
+// colorCount can exceed the palette size (up to 121 for an 11x11 grid), so
+// tiles are sampled with replacement — colors may repeat across the grid.
+function generateRounds(count: number, colorCount: number): ColorMemoryRound[] {
   return Array.from({ length: count }, (_, i) => {
-    const selected = shuffle(COLOR_MEMORY_PALETTE).slice(0, colorCount);
-    const colors = selected.map(c => c.hex);
+    const colors = Array.from(
+      { length: colorCount },
+      () => COLOR_MEMORY_PALETTE[Math.floor(Math.random() * COLOR_MEMORY_PALETTE.length)].hex,
+    );
     const questionPosition = Math.floor(Math.random() * colorCount);
     const correctHex = colors[questionPosition];
     const others = shuffle(COLOR_MEMORY_PALETTE.filter(c => c.hex !== correctHex));
@@ -90,7 +93,7 @@ export const useColorMemoryBattleStore = create<ColorMemoryBattleStore>((set, ge
   initGame: () => {
     const { config } = get();
     if (!config) return;
-    const rounds = generateRounds(config.totalQuestions, config.difficulty);
+    const rounds = generateRounds(config.totalQuestions, config.gridDim * config.gridDim);
     set({
       rounds,
       currentIndex: 0,

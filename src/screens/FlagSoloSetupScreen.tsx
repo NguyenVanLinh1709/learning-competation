@@ -90,7 +90,6 @@ export default function FlagSoloSetupScreen({ navigation }: Props) {
               onChangeText={setPlayerName}
               maxLength={16}
               returnKeyType="done"
-              autoFocus
             />
           </View>
 

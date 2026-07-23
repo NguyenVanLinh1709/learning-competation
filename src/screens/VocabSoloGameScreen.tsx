@@ -126,7 +126,7 @@ export default function VocabSoloGameScreen({ navigation }: Props) {
     setQuitVisible(false);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     resetGame();
-    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+    navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'VocabSoloSetup' }] });
   }, [resetGame, navigation]);
 
   const handleAnswer = useCallback(

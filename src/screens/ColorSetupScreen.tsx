@@ -96,7 +96,6 @@ export default function ColorSetupScreen({ navigation }: Props) {
               onChangeText={setPlayerName}
               maxLength={16}
               returnKeyType="done"
-              autoFocus
             />
           </View>
 

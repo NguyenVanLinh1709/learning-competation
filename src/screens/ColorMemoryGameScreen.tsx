@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useColorMemoryStore, COLOR_MEMORY_SETTINGS, COLOR_MEMORY_PALETTE, colorMemoryGridCols } from '../store/colorMemoryStore';
+import { useColorMemoryStore, COLOR_MEMORY_PALETTE } from '../store/colorMemoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import type { RootStackParamList } from '../types';
@@ -24,11 +24,11 @@ function colorName(hex: string): string {
   return COLOR_MEMORY_PALETTE.find(c => c.hex === hex)?.name ?? '';
 }
 
-function getGridInfo(colorCount: number, screenWidth: number) {
-  const cols = colorMemoryGridCols(colorCount);
-  const GAP = 12;
+function getGridInfo(gridDim: number, screenWidth: number) {
+  const cols = gridDim;
+  const GAP = gridDim <= 5 ? 12 : gridDim <= 8 ? 7 : 4;
   const H_PAD = 32;
-  const maxTile = colorCount <= 4 ? 130 : colorCount === 6 ? 110 : colorCount === 8 ? 90 : colorCount <= 12 ? 75 : 60;
+  const maxTile = Math.max(28, Math.min(130, Math.round(280 / gridDim)));
   const tile = Math.min(Math.floor((screenWidth - H_PAD * 2 - GAP * (cols - 1)) / cols), maxTile);
   return { cols, tile, GAP };
 }
@@ -45,9 +45,9 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const difficulty = config?.difficulty ?? 'easy';
-  const { colorCount } = COLOR_MEMORY_SETTINGS[difficulty];
-  const { cols, tile, GAP } = getGridInfo(colorCount, width);
+  const gridDim = config?.gridDim ?? 2;
+  const colorCount = gridDim * gridDim;
+  const { cols, tile, GAP } = getGridInfo(gridDim, width);
 
   // Intro countdown
   const [countdownStep, setCountdownStep] = useState(0);
@@ -178,7 +178,7 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
           clearReveal();
           clearAnswerTimer();
           resetGame();
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemorySetup' }] });
         },
       },
     ]);
@@ -323,11 +323,11 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
                         ]}
                       >
                         {isQuestionTile ? (
-                          <Text style={styles.tileMark}>?</Text>
+                          <Text style={[styles.tileMark, { fontSize: Math.max(14, Math.min(36, Math.floor(tile * 0.55))) }]}>?</Text>
                         ) : (
-                          <View style={[styles.posLabel, { backgroundColor: 'rgba(0,0,0,0.35)' }]}>
-                            <Text style={styles.posLabelText}>{posIdx + 1}</Text>
-                          </View>
+                          <Text style={[styles.posLabelText, { fontSize: Math.max(9, Math.min(15, Math.floor(tile * 0.32))) }]}>
+                            {posIdx + 1}
+                          </Text>
                         )}
                       </View>
                     );
@@ -432,12 +432,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  posLabel: {
-    position: 'absolute', bottom: 6, right: 8,
-    borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2,
-  },
-  posLabelText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800' },
-  tileMark: { fontSize: 36, fontWeight: '900', color: '#FFFFFF' },
+  posLabelText: { color: '#FFFFFF', fontWeight: '800' },
+  tileMark: { fontWeight: '900', color: '#FFFFFF' },
 
   choicesArea: { paddingHorizontal: 20, marginBottom: 12 },
   choiceGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },

@@ -59,7 +59,7 @@ export default function ColorMemoryResultScreen({ navigation }: Props) {
         score,
         total: config.totalQuestions,
         mode: 'memory',
-        difficulty: config.difficulty,
+        difficulty: `${config.gridDim}x${config.gridDim}`,
         accuracy,
         avg_time_ms: responseTimes.length
           ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
@@ -98,7 +98,7 @@ export default function ColorMemoryResultScreen({ navigation }: Props) {
           <Text style={styles.trophy}>{trophyEmoji}</Text>
           <Text style={[styles.completeText, { color: C.text }]}>{t.colorMemorySoloComplete}</Text>
           <Text style={[styles.subText, { color: C.textMuted }]}>
-            {config?.totalQuestions}q · {config?.difficulty}
+            {config?.totalQuestions}q · {config?.gridDim}×{config?.gridDim}
           </Text>
         </Animated.View>
 

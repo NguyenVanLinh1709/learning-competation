@@ -125,6 +125,8 @@ export interface Translations {
   subjectMemoryDesc: string;
   memorySetup: string;
   memoryTagline: string;
+  memoryGridSizeLabel: string;
+  memoryStepsLabel: string;
   memoryWatch: string;
   memoryRepeat: string;
   memoryStepsHint: string;
@@ -322,6 +324,8 @@ const en: Translations = {
   subjectMemoryDesc: 'Watch & repeat the lights · No reading needed',
   memorySetup: 'Memory Practice',
   memoryTagline: 'WATCH, REMEMBER, REPEAT',
+  memoryGridSizeLabel: 'GRID SIZE',
+  memoryStepsLabel: 'STEPS',
   memoryWatch: 'Watch! 👀',
   memoryRepeat: 'Your turn!',
   memoryStepsHint: 'steps',
@@ -512,6 +516,8 @@ const vi: Translations = {
   subjectMemoryDesc: 'Xem & lặp lại ánh sáng · Không cần biết chữ',
   memorySetup: 'Luyện trí nhớ',
   memoryTagline: 'XEM, GHI NHỚ, LẶP LẠI',
+  memoryGridSizeLabel: 'KÍCH THƯỚC LƯỚI',
+  memoryStepsLabel: 'SỐ BƯỚC',
   memoryWatch: 'Nhìn nhé! 👀',
   memoryRepeat: 'Lượt của bạn!',
   memoryStepsHint: 'bước',
@@ -702,6 +708,8 @@ const zh: Translations = {
   subjectMemoryDesc: '观看并重复亮灯顺序 · 无需识字',
   memorySetup: '记忆练习',
   memoryTagline: '观看、记住、重复',
+  memoryGridSizeLabel: '网格大小',
+  memoryStepsLabel: '步数',
   memoryWatch: '看好！👀',
   memoryRepeat: '该你了！',
   memoryStepsHint: '步',

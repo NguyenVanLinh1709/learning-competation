@@ -60,7 +60,7 @@ export default function MemoryResultScreen({ navigation }: Props) {
         score,
         total: config.totalQuestions,
         mode: 'memory',
-        difficulty: config.difficulty,
+        difficulty: `${config.gridDim}x${config.gridDim}·${config.steps}`,
         accuracy,
         avg_time_ms: times.length
           ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
@@ -99,7 +99,7 @@ export default function MemoryResultScreen({ navigation }: Props) {
           <Text style={styles.trophy}>{trophyEmoji}</Text>
           <Text style={[styles.completeText, { color: C.text }]}>{t.memorySoloComplete}</Text>
           <Text style={[styles.subText, { color: C.textMuted }]}>
-            {config?.totalQuestions}q · {config?.difficulty}
+            {config?.totalQuestions}q · {config?.gridDim}×{config?.gridDim} · {config?.steps} {t.memoryStepsHint}
           </Text>
         </Animated.View>
 

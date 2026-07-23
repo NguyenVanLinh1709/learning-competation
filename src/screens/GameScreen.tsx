@@ -98,7 +98,7 @@ export default function GameScreen({ navigation }: Props) {
     setQuitVisible(false);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     resetGame();
-    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+    navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'Setup' }] });
   }, [resetGame, navigation]);
 
   if (!config || questions.length === 0) return null;
