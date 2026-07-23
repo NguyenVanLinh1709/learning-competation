@@ -32,7 +32,7 @@ function StatRow({ label, value, highlight, textColor, mutedColor }: {
 }
 
 export default function VocabSoloResultScreen({ navigation }: Props) {
-  const { config, score, correctCount, wrongCount, responseTimes, resetGame, initGame } = useVocabSoloStore();
+  const { config, score, correctCount, wrongCount, responseTimes, resetGame } = useVocabSoloStore();
   const submitScore = useLeaderboardStore((s) => s.submitScore);
   const { userId, avatarUrl, country } = useProfileStore();
   const { t } = useLanguageStore();
@@ -84,7 +84,6 @@ export default function VocabSoloResultScreen({ navigation }: Props) {
 
   const handlePlayAgain = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    initGame();
     navigation.replace('VocabSoloGame');
   };
 

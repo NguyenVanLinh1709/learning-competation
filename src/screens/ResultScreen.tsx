@@ -60,7 +60,7 @@ function PlayerCard({
 }
 
 export default function ResultScreen({ navigation }: Props) {
-  const { player1, player2, config, resetGame, initGame } = useGameStore();
+  const { player1, player2, config, resetGame } = useGameStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
@@ -87,7 +87,6 @@ export default function ResultScreen({ navigation }: Props) {
 
   const handleRematch = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    initGame();
     navigation.replace('Countdown');
   };
   const handleHome = () => {

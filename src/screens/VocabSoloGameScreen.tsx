@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -8,6 +8,7 @@ import { useVocabSoloStore } from '../store/vocabSoloStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { VocabAnswerButton } from '../components/VocabAnswerButton';
+import ConfirmModal from '../components/ConfirmModal';
 import type { AnswerButtonState, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabSoloGame'> };
@@ -119,20 +120,14 @@ export default function VocabSoloGameScreen({ navigation }: Props) {
     if (phase === 'finished') navigation.replace('VocabSoloResult');
   }, [phase]);
 
-  const handleQuit = useCallback(() => {
-    Alert.alert(t.quitTitle, t.quitMessage, [
-      { text: t.cancelAction, style: 'cancel' },
-      {
-        text: t.quitAction,
-        style: 'destructive',
-        onPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          resetGame();
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-        },
-      },
-    ]);
-  }, [t, resetGame, navigation]);
+  const [quitVisible, setQuitVisible] = useState(false);
+  const handleQuit = useCallback(() => setQuitVisible(true), []);
+  const confirmQuit = useCallback(() => {
+    setQuitVisible(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    resetGame();
+    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+  }, [resetGame, navigation]);
 
   const handleAnswer = useCallback(
     (choiceIndex: number) => {
@@ -256,6 +251,16 @@ export default function VocabSoloGameScreen({ navigation }: Props) {
           </View>
         </>
       )}
+
+      <ConfirmModal
+        visible={quitVisible}
+        title={t.quitTitle}
+        message={t.quitMessage}
+        cancelLabel={t.cancelAction}
+        confirmLabel={t.quitAction}
+        onCancel={() => setQuitVisible(false)}
+        onConfirm={confirmQuit}
+      />
     </LinearGradient>
   );
 }

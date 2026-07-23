@@ -30,7 +30,7 @@ function StatRow({ label, value, highlight, textColor, mutedColor }: {
 }
 
 export default function SoloResultScreen({ navigation }: Props) {
-  const { config, score, correctCount, wrongCount, responseTimes, resetGame, initGame } = useSoloStore();
+  const { config, score, correctCount, wrongCount, responseTimes, resetGame } = useSoloStore();
   const submitScore = useLeaderboardStore((s) => s.submitScore);
   const { userId, avatarUrl, country } = useProfileStore();
   const { t } = useLanguageStore();
@@ -82,7 +82,6 @@ export default function SoloResultScreen({ navigation }: Props) {
 
   const handlePlayAgain = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    initGame();
     navigation.replace('SoloGame');
   };
 

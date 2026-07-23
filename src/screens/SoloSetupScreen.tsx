@@ -107,7 +107,6 @@ export default function SoloSetupScreen({ navigation }: Props) {
               onChangeText={setPlayerName}
               maxLength={16}
               returnKeyType="done"
-              autoFocus
             />
           </View>
 

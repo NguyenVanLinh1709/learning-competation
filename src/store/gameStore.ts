@@ -65,6 +65,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   submitAnswer: (position, choiceIndex, responseTimeMs) => {
     const state = get();
+    if (state.phase !== 'active') return 'wrong';
     const { currentIndex, questions } = state;
     const question = questions[currentIndex];
     const isCorrect = choiceIndex === question.correctIndex;
@@ -95,7 +96,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return 'wrong';
   },
 
-  resolveQuestion: () => set({ phase: 'resolved' }),
+  resolveQuestion: () => {
+    const state = get();
+    // Anyone who never answered this round (timed out, or the opponent
+    // won the race first) is marked wrong so stats reflect every question.
+    const markUnanswered = (p: PlayerState): PlayerState =>
+      p.hasAnswered ? p : { ...p, hasAnswered: true, wrongCount: p.wrongCount + 1 };
+    set({
+      phase: 'resolved',
+      player1: markUnanswered(state.player1),
+      player2: markUnanswered(state.player2),
+    });
+  },
 
   nextQuestion: () => {
     const { currentIndex, config, questions } = get();

@@ -71,7 +71,13 @@ export const useVocabSoloStore = create<VocabSoloStore>((set, get) => ({
     return isCorrect ? 'correct' : 'wrong';
   },
 
-  resolveQuestion: () => set({ phase: 'resolved' }),
+  resolveQuestion: () => {
+    const { selectedIndex, wrongCount } = get();
+    set({
+      phase: 'resolved',
+      ...(selectedIndex === null ? { wrongCount: wrongCount + 1 } : {}),
+    });
+  },
 
   nextQuestion: () => {
     const { currentIndex, config, questions } = get();

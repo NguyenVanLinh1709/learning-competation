@@ -104,6 +104,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
                   >
                     <Text style={styles.modeEmoji}>{m.emoji}</Text>
                     <Text style={[styles.modeLabel, { color: selected ? C.text : C.textMuted }]}>{m.label}</Text>
+                    <Text style={[styles.modeDesc, { color: C.textMuted }]}>{m.desc}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -128,6 +129,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
                   >
                     <Text style={styles.diffEmoji}>{d.emoji}</Text>
                     <Text style={[styles.diffLabel, { color: selected ? C.text : C.textMuted }]}>{d.label}</Text>
+                    <Text style={[styles.diffDesc, { color: C.textMuted }]}>{d.desc}</Text>
                   </TouchableOpacity>
                 );
               })}

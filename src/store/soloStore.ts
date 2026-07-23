@@ -69,7 +69,15 @@ export const useSoloStore = create<SoloStore>((set, get) => ({
     return isCorrect ? 'correct' : 'wrong';
   },
 
-  resolveQuestion: () => set({ phase: 'resolved' }),
+  resolveQuestion: () => {
+    const { selectedIndex, wrongCount } = get();
+    // A timeout calls this directly (no submitAnswer first), so selectedIndex
+    // is still null — count it as a miss so stats reflect every question.
+    set({
+      phase: 'resolved',
+      ...(selectedIndex === null ? { wrongCount: wrongCount + 1 } : {}),
+    });
+  },
 
   nextQuestion: () => {
     const { currentIndex, config, questions } = get();

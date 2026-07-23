@@ -63,7 +63,7 @@ function PlayerCard({ player, isWinner, gradient, labels, textColor, mutedColor,
 }
 
 export default function VocabResultScreen({ navigation }: Props) {
-  const { player1, player2, config, resetGame, initGame } = useVocabStore();
+  const { player1, player2, config, resetGame } = useVocabStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
@@ -96,7 +96,6 @@ export default function VocabResultScreen({ navigation }: Props) {
 
   const handleRematch = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    initGame();
     navigation.replace('VocabCountdown');
   };
 

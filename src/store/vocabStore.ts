@@ -62,6 +62,7 @@ export const useVocabStore = create<VocabStore>((set, get) => ({
 
   submitAnswer: (position, choiceIndex, responseTimeMs) => {
     const state = get();
+    if (state.phase !== 'active') return 'wrong';
     const question = state.questions[state.currentIndex];
     const isCorrect = choiceIndex === question.correctIndex;
 
@@ -89,7 +90,16 @@ export const useVocabStore = create<VocabStore>((set, get) => ({
     return 'wrong';
   },
 
-  resolveQuestion: () => set({ phase: 'resolved' }),
+  resolveQuestion: () => {
+    const state = get();
+    const markUnanswered = (p: PlayerState): PlayerState =>
+      p.hasAnswered ? p : { ...p, hasAnswered: true, wrongCount: p.wrongCount + 1 };
+    set({
+      phase: 'resolved',
+      player1: markUnanswered(state.player1),
+      player2: markUnanswered(state.player2),
+    });
+  },
 
   nextQuestion: () => {
     const { currentIndex, config, questions } = get();

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -8,6 +8,7 @@ import { useSoloStore } from '../store/soloStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { AnswerButton } from '../components/AnswerButton';
+import ConfirmModal from '../components/ConfirmModal';
 import { questionPrompt } from '../utils/questionGenerator';
 import type { AnswerButtonState, RootStackParamList } from '../types';
 
@@ -123,20 +124,14 @@ export default function SoloGameScreen({ navigation }: Props) {
     if (phase === 'finished') navigation.replace('SoloResult');
   }, [phase]);
 
-  const handleQuit = useCallback(() => {
-    Alert.alert(t.quitTitle, t.quitMessage, [
-      { text: t.cancelAction, style: 'cancel' },
-      {
-        text: t.quitAction,
-        style: 'destructive',
-        onPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          resetGame();
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-        },
-      },
-    ]);
-  }, [t, resetGame, navigation]);
+  const [quitVisible, setQuitVisible] = useState(false);
+  const handleQuit = useCallback(() => setQuitVisible(true), []);
+  const confirmQuit = useCallback(() => {
+    setQuitVisible(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    resetGame();
+    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+  }, [resetGame, navigation]);
 
   const handleAnswer = useCallback(
     (choiceIndex: number) => {
@@ -265,6 +260,16 @@ export default function SoloGameScreen({ navigation }: Props) {
           </View>
         </>
       )}
+
+      <ConfirmModal
+        visible={quitVisible}
+        title={t.quitTitle}
+        message={t.quitMessage}
+        cancelLabel={t.cancelAction}
+        confirmLabel={t.quitAction}
+        onCancel={() => setQuitVisible(false)}
+        onConfirm={confirmQuit}
+      />
     </LinearGradient>
   );
 }
