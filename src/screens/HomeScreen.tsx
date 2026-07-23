@@ -169,45 +169,26 @@ export default function HomeScreen({ navigation }: Props) {
           {/* Title */}
           <Animated.View style={[styles.titleBlock, { marginBottom: s(16), opacity: titleOpacity, transform: [{ translateY: titleY }] }]}>
             <Text style={{ fontSize: ms(44), marginBottom: 4 }}>⚡</Text>
-            <Text style={[styles.title, { color: C.text, fontSize: ms(34) }]}>Learning Battle</Text>
+            <Text style={[styles.title, { color: C.text, fontSize: ms(34) }]}>Dual Minds</Text>
           </Animated.View>
 
           {/* Subject cards */}
           <Animated.View style={{ opacity: cardsOpacity, transform: [{ translateY: cardsY }] }}>
             <View style={isTablet ? { flexDirection: 'row', flexWrap: 'wrap', gap: cardGap } : undefined}>
 
-              {/* Mathematics */}
-              <LinearGradient colors={G.p1Button} style={[styles.cardActive, cardActiveBase, { shadowColor: C.p1Primary, width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+              {/* Memory Games */}
+              <LinearGradient colors={['#6366F1', '#818CF8']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#6366F1', width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                 <View style={[styles.cardRow, cardRowStyle]}>
                   <View style={[styles.cardLeft, cardLeftStyle]}>
-                    <Text style={cardEmojiStyle}>🔢</Text>
-                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectMath}</Text>
+                    <Text style={cardEmojiStyle}>🧠</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectMemory}</Text>
                   </View>
                   <View style={[styles.cardDivider, cardDividerStyle]} />
                   <View style={[styles.cardRight, cardRightStyle]}>
-                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Setup'); }} activeOpacity={0.8}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemoryBattleSetup'); }} activeOpacity={0.8}>
                       <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('SoloSetup'); }} activeOpacity={0.8}>
-                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </LinearGradient>
-
-              {/* English Vocabulary */}
-              <LinearGradient colors={['#059669', '#10B981']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#059669', width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-                <View style={[styles.cardRow, cardRowStyle]}>
-                  <View style={[styles.cardLeft, cardLeftStyle]}>
-                    <Text style={cardEmojiStyle}>📖</Text>
-                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectVocab}</Text>
-                  </View>
-                  <View style={[styles.cardDivider, cardDividerStyle]} />
-                  <View style={[styles.cardRight, cardRightStyle]}>
-                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSetup'); }} activeOpacity={0.8}>
-                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSoloSetup'); }} activeOpacity={0.8}>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemorySetup'); }} activeOpacity={0.8}>
                       <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
                     </TouchableOpacity>
                   </View>
@@ -233,19 +214,38 @@ export default function HomeScreen({ navigation }: Props) {
                 </View>
               </LinearGradient>
 
-              {/* Memory Flash */}
-              <LinearGradient colors={['#6366F1', '#818CF8']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#6366F1', width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+              {/* English Vocabulary */}
+              <LinearGradient colors={['#059669', '#10B981']} style={[styles.cardActive, cardActiveBase, { shadowColor: '#059669', width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
                 <View style={[styles.cardRow, cardRowStyle]}>
                   <View style={[styles.cardLeft, cardLeftStyle]}>
-                    <Text style={cardEmojiStyle}>🧠</Text>
-                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectMemory}</Text>
+                    <Text style={cardEmojiStyle}>📖</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectVocab}</Text>
                   </View>
                   <View style={[styles.cardDivider, cardDividerStyle]} />
                   <View style={[styles.cardRight, cardRightStyle]}>
-                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemoryBattleSetup'); }} activeOpacity={0.8}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSetup'); }} activeOpacity={0.8}>
                       <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('MemorySetup'); }} activeOpacity={0.8}>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('VocabSoloSetup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </LinearGradient>
+
+              {/* Mathematics */}
+              <LinearGradient colors={G.p1Button} style={[styles.cardActive, cardActiveBase, { shadowColor: C.p1Primary, width: cardWidth() }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+                <View style={[styles.cardRow, cardRowStyle]}>
+                  <View style={[styles.cardLeft, cardLeftStyle]}>
+                    <Text style={cardEmojiStyle}>🔢</Text>
+                    <Text style={[styles.cardName, cardNameStyle]}>{t.subjectMath}</Text>
+                  </View>
+                  <View style={[styles.cardDivider, cardDividerStyle]} />
+                  <View style={[styles.cardRight, cardRightStyle]}>
+                    <TouchableOpacity style={[styles.modeBtn, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('Setup'); }} activeOpacity={0.8}>
+                      <Text style={[styles.modeBtnText, modeBtnTextStyle]}>⚔️ {t.battle}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modeBtn, styles.modeBtnSolo, modeBtnStyle]} onPress={() => { tap(Haptics.ImpactFeedbackStyle.Medium); navigation.navigate('SoloSetup'); }} activeOpacity={0.8}>
                       <Text style={[styles.modeBtnText, modeBtnTextStyle]}>🎯 {t.solo}</Text>
                     </TouchableOpacity>
                   </View>

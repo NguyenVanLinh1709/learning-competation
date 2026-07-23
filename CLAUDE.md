@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# MathBattle / "Learning Battle"
+# MathBattle / "Dual Minds"
 
 A 2-player (and solo) educational mini-game app built with **Expo 54 / React Native 0.81 / React 19**. Two players share one phone — the screen is split top/bottom, and player 2's half is rotated 180° so they sit across from each other. There are five game families (Math, Vocabulary, Color perception, Memory, Flag Quiz), each with a 2-player "battle" and a solo mode.
 

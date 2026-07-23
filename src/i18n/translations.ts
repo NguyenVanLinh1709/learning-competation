@@ -359,7 +359,7 @@ const en: Translations = {
 
   feedbackBtn: '💬 Feedback',
   feedbackTitle: 'Send Feedback',
-  feedbackSubtitle: 'Help us improve Learning Battle — report a bug or share an idea.',
+  feedbackSubtitle: 'Help us improve Dual Minds — report a bug or share an idea.',
   feedbackTypeGeneral: 'Suggestion',
   feedbackTypeBug: 'Bug Report',
   feedbackPlaceholder: 'Describe your feedback or bug in detail…',
@@ -549,7 +549,7 @@ const vi: Translations = {
 
   feedbackBtn: '💬 Góp ý',
   feedbackTitle: 'Gửi phản hồi',
-  feedbackSubtitle: 'Giúp chúng tôi cải thiện Learning Battle — báo lỗi hoặc chia sẻ ý tưởng.',
+  feedbackSubtitle: 'Giúp chúng tôi cải thiện Dual Minds — báo lỗi hoặc chia sẻ ý tưởng.',
   feedbackTypeGeneral: 'Góp ý',
   feedbackTypeBug: 'Báo lỗi',
   feedbackPlaceholder: 'Mô tả phản hồi hoặc lỗi của bạn…',
@@ -739,7 +739,7 @@ const zh: Translations = {
 
   feedbackBtn: '💬 反馈',
   feedbackTitle: '发送反馈',
-  feedbackSubtitle: '帮助我们改进 Learning Battle — 报告错误或分享想法。',
+  feedbackSubtitle: '帮助我们改进 Dual Minds — 报告错误或分享想法。',
   feedbackTypeGeneral: '建议',
   feedbackTypeBug: '报告错误',
   feedbackPlaceholder: '详细描述您的反馈或错误…',
