@@ -23,7 +23,44 @@ const SHOW_START_DELAY = 550;
 
 // ─── One player's tile grid ──────────────────────────────────────────────────
 
-function MemoryGrid({
+// Memoized so a flashTile change only re-renders the 1-2 tiles whose `lit`
+// state actually flipped, instead of all gridSize tiles per grid (up to 49 at
+// 7x7, ×2 grids) — keeps the fast flash cadence at max difficulty from
+// janking the JS thread. `onTap`/`position` are stable refs/primitives so
+// memo actually skips the untouched tiles instead of comparing new closures.
+const BattleTile = React.memo(function BattleTile({
+  idx, position, size, lit, isWrong, disabled, onTap,
+}: {
+  idx: number;
+  position: PlayerPosition;
+  size: number;
+  lit: boolean;
+  isWrong: boolean;
+  disabled: boolean;
+  onTap: (position: PlayerPosition, tile: number) => void;
+}) {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => onTap(position, idx)}
+      disabled={disabled}
+      style={[
+        styles.tile,
+        {
+          width: size,
+          height: size,
+          backgroundColor: tileColor(idx),
+          opacity: lit ? 1 : 0.26,
+          borderColor: isWrong ? '#DC2626' : lit ? '#FFFFFF' : 'transparent',
+        },
+      ]}
+    >
+      {isWrong && <Text style={styles.tileMark}>✗</Text>}
+    </TouchableOpacity>
+  );
+});
+
+const MemoryGrid = React.memo(function MemoryGrid({
   gridSize,
   cols,
   tileSize,
@@ -34,6 +71,7 @@ function MemoryGrid({
   showing,
   isResolved,
   isRotated,
+  position,
   onTap,
   label,
 }: {
@@ -47,7 +85,8 @@ function MemoryGrid({
   showing: boolean;
   isResolved: boolean;
   isRotated: boolean;
-  onTap: (tile: number) => void;
+  position: PlayerPosition;
+  onTap: (position: PlayerPosition, tile: number) => void;
   label: string;
 }) {
   const disabled = showing || player.hasAnswered || isResolved;
@@ -64,35 +103,23 @@ function MemoryGrid({
 
       <View style={styles.gridWrap}>
         <View style={[styles.grid, { width: cols * tileSize + (cols - 1) * gap, gap }]}>
-          {Array.from({ length: gridSize }, (_, idx) => {
-            const lit = flashTile === idx || tapFlash === idx;
-            const isWrong = isResolved && player.wrongTile === idx;
-            return (
-              <TouchableOpacity
-                key={idx}
-                activeOpacity={0.9}
-                onPress={() => onTap(idx)}
-                disabled={disabled}
-                style={[
-                  styles.tile,
-                  {
-                    width: tileSize,
-                    height: tileSize,
-                    backgroundColor: tileColor(idx),
-                    opacity: lit ? 1 : 0.26,
-                    borderColor: isWrong ? '#DC2626' : lit ? '#FFFFFF' : 'transparent',
-                  },
-                ]}
-              >
-                {isWrong && <Text style={styles.tileMark}>✗</Text>}
-              </TouchableOpacity>
-            );
-          })}
+          {Array.from({ length: gridSize }, (_, idx) => (
+            <BattleTile
+              key={idx}
+              idx={idx}
+              position={position}
+              size={tileSize}
+              lit={flashTile === idx || tapFlash === idx}
+              isWrong={isResolved && player.wrongTile === idx}
+              disabled={disabled}
+              onTap={onTap}
+            />
+          ))}
         </View>
       </View>
     </View>
   );
-}
+});
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 
@@ -113,8 +140,8 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
   const flashMs = memoryFlashMs(gridDim, config?.steps ?? 2);
   const cols = gridDim;
   const gap = gridDim <= 5 ? 10 : gridDim <= 8 ? 6 : 3;
-  const rawTile = Math.floor((width - 32 - (cols - 1) * gap) / cols);
-  const tileSizeCap = Math.max(20, Math.min(96, Math.round(190 / gridDim)));
+  const rawTile = Math.floor((width - 24 - (cols - 1) * gap) / cols);
+  const tileSizeCap = Math.max(20, Math.min(130, Math.round(300 / gridDim)));
   const tileSize = Math.min(rawTile, tileSizeCap);
 
   const [countdownStep, setCountdownStep] = useState(0);
@@ -310,7 +337,8 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
               showing={showing}
               isResolved={isResolved}
               isRotated
-              onTap={(tile) => handleTap('top', tile)}
+              position="top"
+              onTap={handleTap}
               label={statusFor(player2)}
             />
           </View>
@@ -353,7 +381,8 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
               showing={showing}
               isResolved={isResolved}
               isRotated={false}
-              onTap={(tile) => handleTap('bottom', tile)}
+              position="bottom"
+              onTap={handleTap}
               label={statusFor(player1)}
             />
           </View>

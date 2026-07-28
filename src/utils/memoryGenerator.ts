@@ -5,12 +5,12 @@ export interface MemoryRound {
 
 // User-facing bounds for the two Memory Flash sliders (grid dimension is N×N).
 export const MEMORY_GRID_DIM_MIN = 2;
-export const MEMORY_GRID_DIM_MAX = 11;
+export const MEMORY_GRID_DIM_MAX = 7;
 export const MEMORY_STEPS_MIN = 2;
-export const MEMORY_STEPS_MAX = 21;
+export const MEMORY_STEPS_MAX = 15;
 
 const FLASH_MS_MAX = 700; // shown at the easiest setting (2x2 grid, 2 steps)
-const FLASH_MS_MIN = 160; // shown at the hardest setting (11x11 grid, 21 steps)
+const FLASH_MS_MIN = 160; // shown at the hardest setting (7x7 grid, 15 steps)
 
 // How long each tile stays lit while the sequence plays — derived from the
 // user's chosen grid dimension and step count so the ramp scales smoothly

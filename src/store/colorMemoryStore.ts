@@ -37,7 +37,7 @@ export interface ColorMemoryConfig {
   playerName: string;
   gridDim: number; // grid is gridDim x gridDim tiles (2..11)
   totalQuestions: number;
-  timeLimitMs: number; // answer time per question after colors hide (0 = unlimited)
+  timeLimitMs: number; // how long colors are shown to memorize, per question
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -82,7 +82,6 @@ interface ColorMemoryStore {
   initGame: () => void;
   hideColors: () => void;
   submitAnswer: (hex: string, responseTimeMs: number) => 'correct' | 'wrong';
-  timeoutAnswer: () => void;
   nextQuestion: () => void;
   resetGame: () => void;
 }
@@ -148,17 +147,6 @@ export const useColorMemoryStore = create<ColorMemoryStore>((set, get) => ({
       phase: 'resolved',
     });
     return 'wrong';
-  },
-
-  timeoutAnswer: () => {
-    const { phase, showingColors } = get();
-    if (phase !== 'active' || showingColors) return;
-    set({
-      selectedHex: null,
-      lastAnswerCorrect: false,
-      wrongCount: get().wrongCount + 1,
-      phase: 'resolved',
-    });
   },
 
   nextQuestion: () => {

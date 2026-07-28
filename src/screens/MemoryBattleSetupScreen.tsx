@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
@@ -17,6 +17,7 @@ import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
+import { loadLastSetup, saveLastSetup } from '../utils/lastSetup';
 import type { RootStackParamList } from '../types';
 import {
   MEMORY_GRID_DIM_MIN, MEMORY_GRID_DIM_MAX, MEMORY_STEPS_MIN, MEMORY_STEPS_MAX,
@@ -24,6 +25,19 @@ import {
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'MemoryBattleSetup'> };
 type GameMode = 'flash' | 'color';
+
+const LAST_SETUP_KEY = 'memory_battle';
+interface LastSetup {
+  p1Name: string;
+  p2Name: string;
+  mode: GameMode;
+  gridDim: number;
+  steps: number;
+  colorGridDim: number;
+  questionCount: number;
+  timeLimitMs: number;
+}
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
 const MEMORY_PRIMARY = '#6366F1';
 const CM_PRIMARY = '#F97316';
@@ -58,18 +72,36 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
   const accentColor = isColor ? CM_PRIMARY : MEMORY_PRIMARY;
   const accentBg = isColor ? 'rgba(249,115,22,0.14)' : 'rgba(99,102,241,0.14)';
 
+  useEffect(() => {
+    loadLastSetup<LastSetup>(LAST_SETUP_KEY).then((saved) => {
+      if (!saved) return;
+      if (saved.p1Name) setP1Name(saved.p1Name);
+      if (saved.p2Name) setP2Name(saved.p2Name);
+      if (saved.mode) setMode(saved.mode);
+      if (saved.gridDim) setGridDim(clamp(saved.gridDim, MEMORY_GRID_DIM_MIN, MEMORY_GRID_DIM_MAX));
+      if (saved.steps) setSteps(clamp(saved.steps, MEMORY_STEPS_MIN, MEMORY_STEPS_MAX));
+      if (saved.colorGridDim) setColorGridDim(clamp(saved.colorGridDim, COLOR_MEMORY_GRID_DIM_MIN, COLOR_MEMORY_GRID_DIM_MAX));
+      if (saved.questionCount) setQuestionCount(saved.questionCount);
+      if (saved.timeLimitMs !== undefined) setTimeLimitMs(saved.timeLimitMs);
+    });
+  }, []);
+
   const canStart = p1Name.trim().length > 0 && p2Name.trim().length > 0;
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
   const handleStart = () => {
     if (!canStart) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    saveLastSetup<LastSetup>(LAST_SETUP_KEY, {
+      p1Name: p1Name.trim(), p2Name: p2Name.trim(), mode, gridDim, steps, colorGridDim, questionCount, timeLimitMs,
+    });
     if (isColor) {
       setColorConfig({
         player1Name: p1Name.trim(),
         player2Name: p2Name.trim(),
         gridDim: colorGridDim,
         totalQuestions: questionCount,
+        timeLimitMs,
       });
       navigation.navigate('ColorMemoryBattleGame');
     } else {
@@ -93,7 +125,8 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
-          contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]}
+          style={styles.flex}
+          contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 10 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -132,7 +165,12 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
                   { backgroundColor: C.surface, borderColor: C.border },
                   mode === 'color' && { borderColor: CM_PRIMARY, backgroundColor: 'rgba(249,115,22,0.14)' },
                 ]}
-                onPress={() => { tap(); setMode('color'); }}
+                onPress={() => {
+                  tap();
+                  setMode('color');
+                  // ∞ isn't a valid "time to memorize" — fall back if it was picked in Flash mode.
+                  if (timeLimitMs <= 0) setTimeLimitMs(15000);
+                }}
                 activeOpacity={0.85}
               >
                 <Text style={styles.modeEmoji}>🎨</Text>
@@ -222,11 +260,13 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Time per question */}
+          {/* Time per question — for Color Memory this is how long colors stay visible to memorize, so ∞ isn't offered */}
           <View style={styles.section}>
-            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.timeLimitLabel}</Text>
+            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>
+              {isColor ? t.colorMemoryRevealTimeLabel : t.timeLimitLabel}
+            </Text>
             <View style={styles.timeLimitRow}>
-              {TIME_LIMITS.map((tl) => (
+              {(isColor ? TIME_LIMITS.filter((tl) => tl.value > 0) : TIME_LIMITS).map((tl) => (
                 <TouchableOpacity
                   key={tl.value}
                   style={[styles.timeLimitBtn, { backgroundColor: C.surface, borderColor: C.border },
@@ -241,7 +281,10 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Start */}
+        </ScrollView>
+
+        {/* Start — fixed footer */}
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 12, borderTopColor: C.border }]}>
           <TouchableOpacity
             style={[styles.startBtn, !canStart && styles.startBtnDisabled, { shadowColor: accentColor }]}
             onPress={handleStart}
@@ -259,7 +302,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
               </Text>
             </LinearGradient>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
 
       <HowToPlayModal
@@ -276,31 +319,31 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   outer: { flex: 1 },
   flex: { flex: 1 },
-  scroll: { padding: 20, paddingTop: Platform.OS === 'ios' ? 56 : 40, paddingBottom: 40 },
+  scroll: { padding: 20, paddingBottom: 8 },
 
-  topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 },
+  topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
   backBtn: { width: 70 },
   backText: { fontSize: 17, fontWeight: '600' },
   title: { fontSize: 18, fontWeight: '900', textAlign: 'center', flex: 1 },
 
 
-  section: { marginBottom: 20, marginTop: 10 },
-  sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
+  section: { marginBottom: 14 },
+  sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 8 },
 
   sliderHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
   sliderValue: { fontSize: 15, fontWeight: '800' },
-  slider: { width: '100%', height: 40 },
+  slider: { width: '100%', height: 36 },
 
-  modeRow: { flexDirection: 'row', gap: 10 },
-  modeBtn: { flex: 1, borderWidth: 1.5, borderRadius: 14, paddingVertical: 12, alignItems: 'center', gap: 3 },
+  modeRow: { flexDirection: 'row', gap: 8 },
+  modeBtn: { flex: 1, borderWidth: 1.5, borderRadius: 14, paddingVertical: 10, alignItems: 'center', gap: 3 },
   modeEmoji: { fontSize: 24 },
   modeBtnLabel: { fontSize: 13, fontWeight: '800' },
   modeBtnHint: { fontSize: 10, fontWeight: '500' },
 
   optionRow: { flexDirection: 'row', gap: 8 },
-  optionBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 12, alignItems: 'center', gap: 2 },
+  optionBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 10, alignItems: 'center', gap: 2 },
   timeLimitRow: { flexDirection: 'row', gap: 6 },
-  timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 11, alignItems: 'center' },
   timeLimitLabel: { fontSize: 13, fontWeight: '800' },
   diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   diffBtn: { flex: 0, width: '23%', paddingVertical: 10, paddingHorizontal: 2 },
@@ -308,11 +351,12 @@ const styles = StyleSheet.create({
   optionLabel: { fontSize: 13, fontWeight: '700' },
   optionHint: { fontSize: 10, fontWeight: '500', textAlign: 'center' },
 
+  footer: { paddingHorizontal: 20, paddingTop: 10, borderTopWidth: StyleSheet.hairlineWidth },
   startBtn: {
-    borderRadius: 18, overflow: 'hidden', marginTop: 8,
+    borderRadius: 18, overflow: 'hidden',
     shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 14, elevation: 8,
   },
   startBtnDisabled: { opacity: 0.5, shadowOpacity: 0 },
-  startGradient: { paddingVertical: 18, alignItems: 'center' },
+  startGradient: { paddingVertical: 16, alignItems: 'center' },
   startText: { color: '#FFFFFF', fontSize: 18, fontWeight: '900', letterSpacing: 0.5 },
 });

@@ -141,6 +141,7 @@ export interface Translations {
   colorMemorySetup: string;
   colorMemoryTagline: string;
   colorMemoryWatch: string;
+  colorMemoryRevealTimeLabel: string;
   colorMemoryQuestion: (pos: number) => string;
   startColorMemoryPractice: string;
   colorMemorySoloComplete: string;
@@ -339,6 +340,7 @@ const en: Translations = {
   colorMemorySetup: 'Color Memory',
   colorMemoryTagline: 'MEMORIZE · THEN RECALL',
   colorMemoryWatch: 'Memorize! 🎨',
+  colorMemoryRevealTimeLabel: 'TIME TO MEMORIZE',
   colorMemoryQuestion: (pos) => `What color was at position ${pos}?`,
   startColorMemoryPractice: '🎨  START COLOR MEMORY',
   colorMemorySoloComplete: 'Color Memory Complete!',
@@ -531,6 +533,7 @@ const vi: Translations = {
   colorMemorySetup: 'Ghi nhớ màu sắc',
   colorMemoryTagline: 'GHI NHỚ · RỒI TRẢ LỜI',
   colorMemoryWatch: 'Ghi nhớ nhé! 🎨',
+  colorMemoryRevealTimeLabel: 'THỜI GIAN GHI NHỚ',
   colorMemoryQuestion: (pos) => `Màu nào ở vị trí ${pos}?`,
   startColorMemoryPractice: '🎨  BẮT ĐẦU GHI NHỚ MÀU SẮC',
   colorMemorySoloComplete: 'Hoàn thành ghi nhớ màu sắc!',
@@ -723,6 +726,7 @@ const zh: Translations = {
   colorMemorySetup: '颜色记忆',
   colorMemoryTagline: '记住颜色 · 然后回忆',
   colorMemoryWatch: '记住！🎨',
+  colorMemoryRevealTimeLabel: '记忆时间',
   colorMemoryQuestion: (pos) => `第 ${pos} 位是什么颜色？`,
   startColorMemoryPractice: '🎨  开始颜色记忆',
   colorMemorySoloComplete: '颜色记忆完成！',

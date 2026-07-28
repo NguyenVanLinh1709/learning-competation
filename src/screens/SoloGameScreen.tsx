@@ -10,6 +10,7 @@ import { useTheme } from '../hooks/useTheme';
 import { AnswerButton } from '../components/AnswerButton';
 import ConfirmModal from '../components/ConfirmModal';
 import { questionPrompt } from '../utils/questionGenerator';
+import { SIZES } from '../constants/theme';
 import type { AnswerButtonState, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'SoloGame'> };
@@ -337,5 +338,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     paddingHorizontal: 16,
     paddingBottom: 24,
+    width: '100%',
+    maxWidth: SIZES.maxPlayWidth,
+    alignSelf: 'center',
   },
 });

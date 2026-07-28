@@ -10,6 +10,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorPerceptionStore } from '../store/colorPerceptionStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import { SIZES } from '../constants/theme';
 import type { RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorGame'> };
@@ -33,7 +34,9 @@ export default function ColorGameScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const tileSize = Math.floor((width - TILE_H_PADDING * 2 - TILE_GAP * 3) / 4);
+  // Capped so tiles don't balloon on tablets — unlike Memory/Color Memory,
+  // this grid previously had no ceiling on tile size at all.
+  const tileSize = Math.floor((Math.min(width, SIZES.maxPlayWidth) - TILE_H_PADDING * 2 - TILE_GAP * 3) / 4);
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);
@@ -237,8 +240,8 @@ export default function ColorGameScreen({ navigation }: Props) {
 
           {/* Instruction */}
           <View style={styles.instructionArea}>
-            <Text style={[styles.instructionText, { color: C.text }]}>{t.colorFindDifferent}</Text>
-            <Text style={[styles.instructionSub, { color: C.textMuted }]}>{t.colorTapNumber}</Text>
+            <Text style={[styles.instructionText, { color: C.text }]} numberOfLines={1} adjustsFontSizeToFit>{t.colorFindDifferent}</Text>
+            <Text style={[styles.instructionSub, { color: C.textMuted }]} numberOfLines={1} adjustsFontSizeToFit>{t.colorTapNumber}</Text>
           </View>
 
           {/* Color tiles — 4 × 2 grid */}

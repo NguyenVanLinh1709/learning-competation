@@ -21,6 +21,41 @@ const RESOLVE_DELAY_MS = 1300;
 const SHOW_START_DELAY = 550;
 const MEMORY_PRIMARY = '#6366F1';
 
+// Memoized so a flashTile change only re-renders the 1-2 tiles whose `lit`
+// state actually flipped, instead of all gridSize tiles (up to 49 at 7x7) —
+// keeps the fast flash cadence at max difficulty from janking the JS thread.
+const MemoryTile = React.memo(function MemoryTile({
+  idx, size, lit, isWrong, disabled, onTap,
+}: {
+  idx: number;
+  size: number;
+  lit: boolean;
+  isWrong: boolean;
+  disabled: boolean;
+  onTap: (tile: number) => void;
+}) {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => onTap(idx)}
+      disabled={disabled}
+      style={[
+        styles.tile,
+        {
+          width: size,
+          height: size,
+          backgroundColor: tileColor(idx),
+          opacity: lit ? 1 : 0.28,
+          borderColor: isWrong ? '#DC2626' : lit ? '#FFFFFF' : 'transparent',
+          transform: [{ scale: lit ? 1 : 0.94 }],
+        },
+      ]}
+    >
+      {isWrong && <Text style={styles.tileMark}>✗</Text>}
+    </TouchableOpacity>
+  );
+});
+
 export default function MemoryGameScreen({ navigation }: Props) {
   const {
     config, rounds, currentIndex,
@@ -38,9 +73,9 @@ export default function MemoryGameScreen({ navigation }: Props) {
   const flashMs = memoryFlashMs(gridDim, config?.steps ?? 2);
   const cols = gridDim;
   const GAP = gridDim <= 5 ? 14 : gridDim <= 8 ? 8 : 5;
-  const H_PAD = 24;
+  const H_PAD = 16;
   const rawTile = Math.floor((width - H_PAD * 2 - GAP * (cols - 1)) / cols);
-  const tileSizeCap = Math.max(28, Math.min(150, Math.round(300 / gridDim)));
+  const tileSizeCap = Math.max(28, Math.min(160, Math.round(340 / gridDim)));
   const tileSize = Math.min(rawTile, tileSizeCap);
 
   const [countdownStep, setCountdownStep] = useState(0);
@@ -69,10 +104,11 @@ export default function MemoryGameScreen({ navigation }: Props) {
   };
 
   const startTimer = useCallback(() => {
-    if (!config || config.timeLimitMs <= 0) return;
+    if (!config) return;
     clearTimer();
     questionStartRef.current = Date.now();
     setRemainingMs(config.timeLimitMs);
+    if (config.timeLimitMs <= 0) return;
     timerRef.current = setInterval(() => {
       const left = Math.max(0, config.timeLimitMs - (Date.now() - questionStartRef.current));
       setRemainingMs(left);
@@ -271,10 +307,14 @@ export default function MemoryGameScreen({ navigation }: Props) {
 
           {/* Instruction */}
           <View style={styles.instructionArea}>
-            <Text style={[styles.instructionText, { color: showing ? MEMORY_PRIMARY : C.text }]}>
+            <Text
+              style={[styles.instructionText, { color: showing ? MEMORY_PRIMARY : C.text }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
               {showing ? t.memoryWatch : t.memoryRepeat}
             </Text>
-            <Text style={[styles.instructionSub, { color: C.textMuted }]}>
+            <Text style={[styles.instructionSub, { color: C.textMuted }]} numberOfLines={1} adjustsFontSizeToFit>
               {showing
                 ? `${round.sequence.length} ${t.memoryStepsHint}`
                 : `${inputIndex} / ${round.sequence.length}`}
@@ -284,32 +324,17 @@ export default function MemoryGameScreen({ navigation }: Props) {
           {/* Tile grid */}
           <View style={[styles.gridArea]}>
             <View style={[styles.grid, { width: cols * tileSize + (cols - 1) * GAP, gap: GAP }]}>
-              {Array.from({ length: gridSize }, (_, idx) => {
-                const color = tileColor(idx);
-                const lit = flashTile === idx || tapFlash === idx;
-                const isWrong = isResolved && wrongTile === idx;
-                return (
-                  <TouchableOpacity
-                    key={idx}
-                    activeOpacity={0.9}
-                    onPress={() => handleTap(idx)}
-                    disabled={!inputOpen}
-                    style={[
-                      styles.tile,
-                      {
-                        width: tileSize,
-                        height: tileSize,
-                        backgroundColor: color,
-                        opacity: lit ? 1 : 0.28,
-                        borderColor: isWrong ? '#DC2626' : lit ? '#FFFFFF' : 'transparent',
-                        transform: [{ scale: lit ? 1 : 0.94 }],
-                      },
-                    ]}
-                  >
-                    {isWrong && <Text style={styles.tileMark}>✗</Text>}
-                  </TouchableOpacity>
-                );
-              })}
+              {Array.from({ length: gridSize }, (_, idx) => (
+                <MemoryTile
+                  key={idx}
+                  idx={idx}
+                  size={tileSize}
+                  lit={flashTile === idx || tapFlash === idx}
+                  isWrong={isResolved && wrongTile === idx}
+                  disabled={!inputOpen}
+                  onTap={handleTap}
+                />
+              ))}
             </View>
           </View>
 

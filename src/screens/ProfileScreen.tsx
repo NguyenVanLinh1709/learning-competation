@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator, FlatList, Image, KeyboardAvoidingView, Modal, Platform,
-  StyleSheet, Text, TextInput, TouchableOpacity, View,
+  StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,6 +14,7 @@ import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import { uploadAvatar } from '../lib/avatar';
 import { COUNTRIES, countryName, flagForCountry } from '../data/countries';
+import { makeResponsive } from '../utils/responsive';
 import type { RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'> };
@@ -36,6 +37,8 @@ export default function ProfileScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C, G, isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const { isTablet } = makeResponsive(width);
 
   const [name, setName] = useState(displayName);
   const [pickedCountry, setPickedCountry] = useState(country);
@@ -92,6 +95,7 @@ export default function ProfileScreen({ navigation }: Props) {
 
   return (
     <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 16, paddingBottom: insets.bottom }]}>
+      <View style={[styles.contentWrapper, isTablet && { maxWidth: 480, alignSelf: 'center', width: '100%' }]}>
       {/* Header */}
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
@@ -159,6 +163,7 @@ export default function ProfileScreen({ navigation }: Props) {
           </LinearGradient>
         </TouchableOpacity>
       </KeyboardAvoidingView>
+      </View>
 
       {/* Country picker modal */}
       <Modal visible={pickerOpen} animationType="slide" transparent onRequestClose={() => setPickerOpen(false)}>
@@ -215,6 +220,7 @@ const AVATAR_SIZE = 112;
 
 const styles = StyleSheet.create({
   outer: { flex: 1, paddingTop: Platform.OS === 'ios' ? 60 : 44, paddingHorizontal: 16 },
+  contentWrapper: { flex: 1 },
 
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 },
   backBtn: { width: 40, height: 40, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },

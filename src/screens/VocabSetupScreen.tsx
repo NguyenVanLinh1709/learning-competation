@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
@@ -14,9 +14,20 @@ import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
+import { loadLastSetup, saveLastSetup } from '../utils/lastSetup';
 import type { RootStackParamList, VocabDifficulty, VocabMode } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabSetup'> };
+
+const LAST_SETUP_KEY = 'vocab_battle';
+interface LastSetup {
+  p1Name: string;
+  p2Name: string;
+  vocabMode: VocabMode;
+  difficulty: VocabDifficulty;
+  questionCount: number;
+  timeLimitMs: number;
+}
 
 const QUESTION_COUNTS = [10, 20, 30];
 
@@ -43,6 +54,18 @@ export default function VocabSetupScreen({ navigation }: Props) {
   const [questionCount, setQuestionCount] = useState(20);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);
 
+  useEffect(() => {
+    loadLastSetup<LastSetup>(LAST_SETUP_KEY).then((saved) => {
+      if (!saved) return;
+      if (saved.p1Name) setP1Name(saved.p1Name);
+      if (saved.p2Name) setP2Name(saved.p2Name);
+      if (saved.vocabMode) setVocabMode(saved.vocabMode);
+      if (saved.difficulty) setDifficulty(saved.difficulty);
+      if (saved.questionCount) setQuestionCount(saved.questionCount);
+      if (saved.timeLimitMs !== undefined) setTimeLimitMs(saved.timeLimitMs);
+    });
+  }, []);
+
   const canStart = p1Name.trim().length > 0 && p2Name.trim().length > 0;
 
   const difficulties: { label: string; desc: string; value: VocabDifficulty; emoji: string }[] = [
@@ -65,13 +88,16 @@ export default function VocabSetupScreen({ navigation }: Props) {
       timeLimitMs,
       vocabMode,
     });
+    saveLastSetup<LastSetup>(LAST_SETUP_KEY, {
+      p1Name: p1Name.trim(), p2Name: p2Name.trim(), vocabMode, difficulty, questionCount, timeLimitMs,
+    });
     navigation.navigate('VocabCountdown');
   };
 
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.flex} contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           {/* Header */}
           <View style={styles.topRow}>
@@ -175,7 +201,10 @@ export default function VocabSetupScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Start */}
+        </ScrollView>
+
+        {/* Start — fixed footer */}
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
           <TouchableOpacity
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={handleStart}
@@ -191,8 +220,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
               <Text style={styles.startText}>{t.startVocabBattle}</Text>
             </LinearGradient>
           </TouchableOpacity>
-
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
 
       <HowToPlayModal
@@ -238,8 +266,9 @@ const styles = StyleSheet.create({
   timeLimitLabel: { fontSize: 13, fontWeight: '800' },
   optionLabel: { fontSize: 13, fontWeight: '700' },
 
+  footer: { paddingHorizontal: 20, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
   startBtn: {
-    borderRadius: 18, overflow: 'hidden', marginTop: 8,
+    borderRadius: 18, overflow: 'hidden',
     shadowColor: '#059669', shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.5, shadowRadius: 14, elevation: 8,
   },

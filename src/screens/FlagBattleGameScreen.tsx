@@ -395,6 +395,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row', flexWrap: 'wrap',
     gap: 8,
     alignContent: 'center',
+    width: '100%',
+    maxWidth: SIZES.maxPlayWidth,
+    alignSelf: 'center',
   },
 
   // Flag button

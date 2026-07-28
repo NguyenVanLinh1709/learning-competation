@@ -8,6 +8,7 @@ export interface ColorMemoryBattleConfig {
   player2Name: string;
   gridDim: number; // grid is gridDim x gridDim tiles (2..11)
   totalQuestions: number;
+  timeLimitMs: number; // how long colors are shown to memorize, per question
 }
 
 export interface ColorMemoryBattlePlayerState {

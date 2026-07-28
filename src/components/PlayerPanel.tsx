@@ -4,6 +4,7 @@ import { AnswerButton } from './AnswerButton';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguageStore } from '../store/languageStore';
 import { questionPrompt } from '../utils/questionGenerator';
+import { SIZES } from '../constants/theme';
 import type { AnswerButtonState, GamePhase, PlayerState, Question } from '../types';
 
 interface Props {
@@ -160,5 +161,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flex: 1,
     alignContent: 'center',
+    width: '100%',
+    maxWidth: SIZES.maxPlayWidth,
+    alignSelf: 'center',
   },
 });

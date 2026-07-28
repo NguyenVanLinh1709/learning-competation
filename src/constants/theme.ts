@@ -117,4 +117,7 @@ export const SIZES = {
   buttonRadius: 14,
   padding: 14,
   centerBarHeight: 52,
+  // Caps how wide a game board / answer grid grows on tablets — without this,
+  // percentage-width tiles and buttons balloon to fill the full tablet width.
+  maxPlayWidth: 560,
 };

@@ -7,6 +7,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useFlagSoloStore } from '../store/flagSoloStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import { SIZES } from '../constants/theme';
 import type { RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'FlagSoloGame'> };
@@ -326,6 +327,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     columnGap: 12,
     rowGap: 8,
+    width: '100%',
+    maxWidth: SIZES.maxPlayWidth,
+    alignSelf: 'center',
   },
   flagBtn: {
     width: '47%',

@@ -14,9 +14,18 @@ import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import { loadLastSetup, saveLastSetup } from '../utils/lastSetup';
 import type { RootStackParamList, VocabDifficulty, VocabMode } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabSoloSetup'> };
+
+const LAST_SETUP_KEY = 'vocab_solo';
+interface LastSetup {
+  vocabMode: VocabMode;
+  difficulty: VocabDifficulty;
+  questionCount: number;
+  timeLimitMs: number;
+}
 
 const QUESTION_COUNTS = [10, 20, 30];
 
@@ -47,6 +56,16 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
   const [questionCount, setQuestionCount] = useState(20);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);
 
+  useEffect(() => {
+    loadLastSetup<LastSetup>(LAST_SETUP_KEY).then((saved) => {
+      if (!saved) return;
+      if (saved.vocabMode) setVocabMode(saved.vocabMode);
+      if (saved.difficulty) setDifficulty(saved.difficulty);
+      if (saved.questionCount) setQuestionCount(saved.questionCount);
+      if (saved.timeLimitMs !== undefined) setTimeLimitMs(saved.timeLimitMs);
+    });
+  }, []);
+
   const canStart = playerName.trim().length > 0;
 
   const difficulties: { label: string; desc: string; value: VocabDifficulty; emoji: string }[] = [
@@ -61,6 +80,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setDisplayName(playerName.trim());
     setConfig({ playerName: playerName.trim(), difficulty, totalQuestions: questionCount, timeLimitMs, vocabMode });
+    saveLastSetup<LastSetup>(LAST_SETUP_KEY, { vocabMode, difficulty, questionCount, timeLimitMs });
     navigation.navigate('VocabSoloGame');
   };
 
@@ -69,7 +89,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.flex} contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           {/* Header */}
           <View style={styles.topRow}>
@@ -186,7 +206,10 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Start button */}
+        </ScrollView>
+
+        {/* Start button — fixed footer */}
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
           <TouchableOpacity
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={handleStart}
@@ -202,8 +225,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
               <Text style={styles.startText}>{t.startVocabPractice}</Text>
             </LinearGradient>
           </TouchableOpacity>
-
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
 
       <HowToPlayModal
@@ -255,7 +277,8 @@ const styles = StyleSheet.create({
   timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   timeLimitLabel: { fontSize: 13, fontWeight: '800' },
 
-  startBtn: { borderRadius: 18, overflow: 'hidden', marginTop: 8, shadowColor: '#059669', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 14, elevation: 8 },
+  footer: { paddingHorizontal: 20, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
+  startBtn: { borderRadius: 18, overflow: 'hidden', shadowColor: '#059669', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 14, elevation: 8 },
   startBtnDisabled: { opacity: 0.5, shadowOpacity: 0 },
   startGradient: { paddingVertical: 18, alignItems: 'center' },
   startText: { color: '#FFFFFF', fontSize: 18, fontWeight: '900', letterSpacing: 0.5 },

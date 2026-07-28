@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useRef, useState,
+} from 'react';
 import {
   Alert, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
@@ -16,7 +18,7 @@ import { SIZES } from '../constants/theme';
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorMemoryBattleGame'> };
 
 const CM_PRIMARY = '#F97316';
-const REVEAL_MS = 5000;
+const DEFAULT_REVEAL_MS = 5000;
 const RESOLVE_DELAY_MS = 1600;
 const COUNTDOWN_STEPS = ['3', '2', '1', 'GO!'];
 const STEP_MS = 800;
@@ -36,13 +38,19 @@ function getGridInfo(gridDim: number, screenWidth: number) {
 
 // ─── Player half ─────────────────────────────────────────────────────────────
 
-function PlayerHalf({
+// Memoized so the 50ms reveal countdown tick doesn't re-render both players'
+// grids (up to 121 tiles each at 11x11) every tick — only phase/round
+// transitions actually change these props, so memo skips almost all ticks.
+// `onChoiceTap`/`position` must be stable refs/primitives (not an inline
+// closure from the parent) for the memo comparison to actually hold.
+const PlayerHalf = React.memo(function PlayerHalf({
   player,
   round,
   showingColors,
   isResolved,
   isRotated,
   gridInfo,
+  position,
   onChoiceTap,
   questionPosition,
 }: {
@@ -52,7 +60,8 @@ function PlayerHalf({
   isResolved: boolean;
   isRotated: boolean;
   gridInfo: ReturnType<typeof getGridInfo>;
-  onChoiceTap: (hex: string) => void;
+  position: PlayerPosition;
+  onChoiceTap: (position: PlayerPosition, hex: string) => void;
   questionPosition: number;
 }) {
   const accentColor = isRotated ? '#F72585' : CM_PRIMARY;
@@ -134,7 +143,7 @@ function PlayerHalf({
             return (
               <TouchableOpacity
                 key={hex}
-                onPress={() => onChoiceTap(hex)}
+                onPress={() => onChoiceTap(position, hex)}
                 disabled={!canAnswer}
                 activeOpacity={0.8}
                 style={[styles.choiceBtn, { borderColor, borderWidth: 2, backgroundColor: bgColor }]}
@@ -158,7 +167,7 @@ function PlayerHalf({
       )}
     </View>
   );
-}
+});
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 
@@ -175,12 +184,15 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
 
   const gridDim = config?.gridDim ?? 2;
-  const gridInfo = getGridInfo(gridDim, width);
+  const gridInfo = useMemo(() => getGridInfo(gridDim, width), [gridDim, width]);
+  // "Time per question" from Setup — how long colors stay visible to
+  // memorize. Falls back to the old fixed 5s if unset/0.
+  const revealMs = config && config.timeLimitMs > 0 ? config.timeLimitMs : DEFAULT_REVEAL_MS;
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);
 
-  const [revealLeft, setRevealLeft] = useState(REVEAL_MS);
+  const [revealLeft, setRevealLeft] = useState(revealMs);
   const revealTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const revealStartRef = useRef<number>(0);
   const questionStartRef = useRef<number>(0);
@@ -218,10 +230,10 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
     if (!countdownDone || !showingColors || phase !== 'active') return;
 
     revealStartRef.current = Date.now();
-    setRevealLeft(REVEAL_MS);
+    setRevealLeft(revealMs);
 
     revealTimerRef.current = setInterval(() => {
-      const left = Math.max(0, REVEAL_MS - (Date.now() - revealStartRef.current));
+      const left = Math.max(0, revealMs - (Date.now() - revealStartRef.current));
       setRevealLeft(left);
       if (left <= 0) {
         clearReveal();
@@ -232,7 +244,7 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
     }, 50);
 
     return clearReveal;
-  }, [showingColors, phase, countdownDone, currentIndex]);
+  }, [showingColors, phase, countdownDone, currentIndex, revealMs]);
 
   // Resolve after both answered or one correct
   useEffect(() => {
@@ -296,7 +308,7 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
 
   const round = rounds[currentIndex];
   const isResolved = phase === 'resolved' || phase === 'finished';
-  const revealProgress = Math.max(0, revealLeft / REVEAL_MS);
+  const revealProgress = Math.max(0, revealLeft / revealMs);
 
   return (
     <View style={[styles.root, { backgroundColor: C.screenBg }]}>
@@ -319,7 +331,8 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
               isResolved={isResolved}
               isRotated
               gridInfo={gridInfo}
-              onChoiceTap={(hex) => handleChoiceTap('top', hex)}
+              position="top"
+              onChoiceTap={handleChoiceTap}
               questionPosition={round.questionPosition}
             />
           </View>
@@ -370,7 +383,8 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
               isResolved={isResolved}
               isRotated={false}
               gridInfo={gridInfo}
-              onChoiceTap={(hex) => handleChoiceTap('bottom', hex)}
+              position="bottom"
+              onChoiceTap={handleChoiceTap}
               questionPosition={round.questionPosition}
             />
           </View>

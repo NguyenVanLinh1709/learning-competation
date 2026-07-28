@@ -15,7 +15,7 @@ import type { RootStackParamList } from '../types';
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorMemoryGame'> };
 
 const CM_PRIMARY = '#F97316';
-const REVEAL_MS = 5000;
+const DEFAULT_REVEAL_MS = 5000;
 const RESOLVE_DELAY_MS = 1200;
 const COUNTDOWN_STEPS = ['3', '2', '1', 'GO!'];
 const STEP_MS = 800;
@@ -33,11 +33,68 @@ function getGridInfo(gridDim: number, screenWidth: number) {
   return { cols, tile, GAP };
 }
 
+// Memoized so the 50ms reveal/answer countdown tick (which drives the timer
+// bar for up to ~35s per question) doesn't re-render the whole grid — up to
+// 121 tiles at 11x11 — every tick. None of this component's props change
+// during that countdown, only during phase/round transitions, so memo skips
+// almost all of those re-renders entirely.
+const ColorGrid = React.memo(function ColorGrid({
+  colorCount, cols, tile, gap, showingColors, colors, questionPosition,
+}: {
+  colorCount: number;
+  cols: number;
+  tile: number;
+  gap: number;
+  showingColors: boolean;
+  colors: string[];
+  questionPosition: number;
+}) {
+  const gridRows: number[][] = [];
+  for (let i = 0; i < colorCount; i += cols) {
+    gridRows.push(Array.from({ length: Math.min(cols, colorCount - i) }, (_, j) => i + j));
+  }
+  return (
+    <View style={{ gap }}>
+      {gridRows.map((row, rowIdx) => (
+        <View key={rowIdx} style={[styles.gridRow, { gap }]}>
+          {row.map((posIdx) => {
+            const isQuestionTile = !showingColors && posIdx === questionPosition;
+            const tileColor = showingColors ? colors[posIdx] : '#6B7280';
+            return (
+              <View
+                key={posIdx}
+                style={[
+                  styles.colorTile,
+                  {
+                    width: tile,
+                    height: tile,
+                    backgroundColor: tileColor,
+                    borderColor: isQuestionTile ? '#FFFFFF' : 'transparent',
+                    borderWidth: isQuestionTile ? 3 : 0,
+                  },
+                ]}
+              >
+                {isQuestionTile ? (
+                  <Text style={[styles.tileMark, { fontSize: Math.max(14, Math.min(36, Math.floor(tile * 0.55))) }]}>?</Text>
+                ) : (
+                  <Text style={[styles.posLabelText, { fontSize: Math.max(9, Math.min(15, Math.floor(tile * 0.32))) }]}>
+                    {posIdx + 1}
+                  </Text>
+                )}
+              </View>
+            );
+          })}
+        </View>
+      ))}
+    </View>
+  );
+});
+
 export default function ColorMemoryGameScreen({ navigation }: Props) {
   const {
     config, rounds, currentIndex,
     score, phase, showingColors, lastAnswerCorrect, selectedHex,
-    initGame, hideColors, submitAnswer, timeoutAnswer, nextQuestion, resetGame,
+    initGame, hideColors, submitAnswer, nextQuestion, resetGame,
   } = useColorMemoryStore();
 
   const { t } = useLanguageStore();
@@ -48,6 +105,10 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
   const gridDim = config?.gridDim ?? 2;
   const colorCount = gridDim * gridDim;
   const { cols, tile, GAP } = getGridInfo(gridDim, width);
+  // "Time per question" from Setup — how long colors stay visible to
+  // memorize. Falls back to the old fixed 5s if unset/0 (e.g. a setup saved
+  // before this became configurable, or an old "∞" pick).
+  const revealMs = config && config.timeLimitMs > 0 ? config.timeLimitMs : DEFAULT_REVEAL_MS;
 
   // Intro countdown
   const [countdownStep, setCountdownStep] = useState(0);
@@ -56,22 +117,13 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
   const countdownOpacity = useRef(new Animated.Value(0)).current;
 
   // Reveal timer
-  const [revealLeft, setRevealLeft] = useState(REVEAL_MS);
+  const [revealLeft, setRevealLeft] = useState(revealMs);
   const revealTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const revealStartRef = useRef<number>(0);
   const questionStartRef = useRef<number>(0);
 
   const clearReveal = useCallback(() => {
     if (revealTimerRef.current) { clearInterval(revealTimerRef.current); revealTimerRef.current = null; }
-  }, []);
-
-  // Answer timer
-  const [answerLeft, setAnswerLeft] = useState(0);
-  const answerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const answerStartRef = useRef<number>(0);
-
-  const clearAnswerTimer = useCallback(() => {
-    if (answerTimerRef.current) { clearInterval(answerTimerRef.current); answerTimerRef.current = null; }
   }, []);
 
   // Tap flash for choice selection
@@ -118,10 +170,10 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
     if (!countdownDone || !showingColors || phase !== 'active') return;
 
     revealStartRef.current = Date.now();
-    setRevealLeft(REVEAL_MS);
+    setRevealLeft(revealMs);
 
     revealTimerRef.current = setInterval(() => {
-      const left = Math.max(0, REVEAL_MS - (Date.now() - revealStartRef.current));
+      const left = Math.max(0, revealMs - (Date.now() - revealStartRef.current));
       setRevealLeft(left);
       if (left <= 0) {
         clearReveal();
@@ -132,28 +184,7 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
     }, 50);
 
     return clearReveal;
-  }, [showingColors, phase, countdownDone, currentIndex]);
-
-  // Answer timer — fires once colors hide and the player must pick an answer
-  useEffect(() => {
-    if (!countdownDone || showingColors || phase !== 'active') return;
-    if (!config || config.timeLimitMs <= 0) return;
-
-    answerStartRef.current = Date.now();
-    setAnswerLeft(config.timeLimitMs);
-
-    answerTimerRef.current = setInterval(() => {
-      const left = Math.max(0, config.timeLimitMs - (Date.now() - answerStartRef.current));
-      setAnswerLeft(left);
-      if (left <= 0) {
-        clearAnswerTimer();
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        timeoutAnswer();
-      }
-    }, 50);
-
-    return clearAnswerTimer;
-  }, [showingColors, phase, countdownDone, currentIndex, config?.timeLimitMs]);
+  }, [showingColors, phase, countdownDone, currentIndex, revealMs]);
 
   // Advance after resolve
   useEffect(() => {
@@ -176,13 +207,12 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
         onPress: () => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           clearReveal();
-          clearAnswerTimer();
           resetGame();
           navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemorySetup' }] });
         },
       },
     ]);
-  }, [t, resetGame, navigation, clearReveal, clearAnswerTimer]);
+  }, [t, resetGame, navigation, clearReveal]);
 
   const handleChoiceTap = useCallback((hex: string) => {
     if (phase !== 'active' || showingColors) return;
@@ -201,22 +231,10 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
 
   const round = rounds[currentIndex];
   const isResolved = phase === 'resolved' || phase === 'finished';
-  const revealProgress = Math.max(0, revealLeft / REVEAL_MS);
-  const isAnswerUnlimited = config.timeLimitMs <= 0;
-  const answerProgress = isAnswerUnlimited ? 1 : Math.max(0, answerLeft / config.timeLimitMs);
-  const answerTimerColor = isAnswerUnlimited
-    ? C.timerGreen
-    : answerProgress > 0.5 ? C.timerGreen
-    : answerProgress > 0.25 ? C.timerYellow
-    : C.timerRed;
+  const revealProgress = Math.max(0, revealLeft / revealMs);
 
   const countdownLabel = COUNTDOWN_STEPS[countdownStep];
   const isGo = countdownStep === COUNTDOWN_STEPS.length - 1;
-
-  const gridRows: number[][] = [];
-  for (let i = 0; i < colorCount; i += cols) {
-    gridRows.push(Array.from({ length: Math.min(cols, colorCount - i) }, (_, j) => i + j));
-  }
 
   return (
     <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 12, paddingBottom: insets.bottom }]}>
@@ -270,10 +288,10 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
             ) : (
               <>
                 <View style={[styles.timerTrack, { backgroundColor: C.surface }]}>
-                  <View style={[styles.timerFill, { backgroundColor: answerTimerColor, width: `${answerProgress * 100}%` }]} />
+                  <View style={[styles.timerFill, { backgroundColor: C.timerGreen, width: '100%' }]} />
                 </View>
-                <Text style={[styles.timerText, { color: answerTimerColor }]}>
-                  {isResolved ? '✓' : isAnswerUnlimited ? '∞' : `${Math.ceil(answerLeft / 1000)}s`}
+                <Text style={[styles.timerText, { color: C.timerGreen }]}>
+                  {isResolved ? '✓' : '∞'}
                 </Text>
               </>
             )}
@@ -284,15 +302,19 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
           {!showingColors && (
             <View style={styles.instructionArea}>
               {isResolved ? (
-                <Text style={[styles.instructionText, { color: lastAnswerCorrect ? C.timerGreen : C.timerRed }]}>
+                <Text
+                  style={[styles.instructionText, { color: lastAnswerCorrect ? C.timerGreen : C.timerRed }]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
                   {lastAnswerCorrect ? '✅  Correct!' : `❌  It was ${colorName(round.correctHex)}`}
                 </Text>
               ) : (
                 <>
-                  <Text style={[styles.instructionText, { color: C.text }]}>
+                  <Text style={[styles.instructionText, { color: C.text }]} numberOfLines={2} adjustsFontSizeToFit>
                     {t.colorMemoryQuestion(round.questionPosition + 1)}
                   </Text>
-                  <Text style={[styles.instructionSub, { color: C.textMuted }]}>
+                  <Text style={[styles.instructionSub, { color: C.textMuted }]} numberOfLines={1} adjustsFontSizeToFit>
                     Tap the correct color below
                   </Text>
                 </>
@@ -302,39 +324,15 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
 
           {/* Color grid */}
           <View style={styles.gridArea}>
-            <View style={{ gap: GAP }}>
-              {gridRows.map((row, rowIdx) => (
-                <View key={rowIdx} style={[styles.gridRow, { gap: GAP }]}>
-                  {row.map((posIdx) => {
-                    const isQuestionTile = !showingColors && posIdx === round.questionPosition;
-                    const tileColor = showingColors ? round.colors[posIdx] : '#6B7280';
-                    return (
-                      <View
-                        key={posIdx}
-                        style={[
-                          styles.colorTile,
-                          {
-                            width: tile,
-                            height: tile,
-                            backgroundColor: tileColor,
-                            borderColor: isQuestionTile ? '#FFFFFF' : 'transparent',
-                            borderWidth: isQuestionTile ? 3 : 0,
-                          },
-                        ]}
-                      >
-                        {isQuestionTile ? (
-                          <Text style={[styles.tileMark, { fontSize: Math.max(14, Math.min(36, Math.floor(tile * 0.55))) }]}>?</Text>
-                        ) : (
-                          <Text style={[styles.posLabelText, { fontSize: Math.max(9, Math.min(15, Math.floor(tile * 0.32))) }]}>
-                            {posIdx + 1}
-                          </Text>
-                        )}
-                      </View>
-                    );
-                  })}
-                </View>
-              ))}
-            </View>
+            <ColorGrid
+              colorCount={colorCount}
+              cols={cols}
+              tile={tile}
+              gap={GAP}
+              showingColors={showingColors}
+              colors={round.colors}
+              questionPosition={round.questionPosition}
+            />
             {showingColors && (
               <Text style={[styles.revealHint, { color: CM_PRIMARY }]}>
                 {t.colorMemoryWatch} · {colorCount} colors

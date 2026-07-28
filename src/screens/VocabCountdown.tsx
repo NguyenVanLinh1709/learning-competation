@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,6 +18,7 @@ export default function VocabCountdown({ navigation }: Props) {
   const { config, initGame } = useVocabStore();
   const { t } = useLanguageStore();
   const { C, G } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [stepIndex, setStepIndex] = useState(0);
   const scale = useRef(new Animated.Value(0.3)).current;
@@ -56,7 +58,7 @@ export default function VocabCountdown({ navigation }: Props) {
 
   return (
     <LinearGradient colors={G.home} style={styles.container}>
-      <Text style={[styles.versus, { color: C.textMuted }]}>
+      <Text style={[styles.versus, { color: C.textMuted, top: insets.top + 40 }]}>
         {config ? `${config.player1Name}  📖  ${config.player2Name}` : '📖'}
       </Text>
 
@@ -70,7 +72,7 @@ export default function VocabCountdown({ navigation }: Props) {
         {STEPS[stepIndex]}
       </Animated.Text>
 
-      <Text style={[styles.hint, { color: C.textMuted }]}>{t.getReady}</Text>
+      <Text style={[styles.hint, { color: C.textMuted, bottom: insets.bottom + 40 }]}>{t.getReady}</Text>
     </LinearGradient>
   );
 }
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   versus: {
     fontSize: 16, fontWeight: '700', letterSpacing: 1,
-    position: 'absolute', top: 80, textAlign: 'center', paddingHorizontal: 20,
+    position: 'absolute', textAlign: 'center', paddingHorizontal: 20,
   },
   countText: {
     fontSize: 130, fontWeight: '900',
@@ -87,5 +89,5 @@ const styles = StyleSheet.create({
     textShadowRadius: 40, textShadowColor: 'rgba(5,150,105,0.4)',
   },
   goText: { fontSize: 90 },
-  hint: { fontSize: 14, letterSpacing: 2, position: 'absolute', bottom: 80 },
+  hint: { fontSize: 14, letterSpacing: 2, position: 'absolute' },
 });

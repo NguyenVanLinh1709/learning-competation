@@ -9,6 +9,7 @@ import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { VocabAnswerButton } from '../components/VocabAnswerButton';
 import ConfirmModal from '../components/ConfirmModal';
+import { SIZES } from '../constants/theme';
 import type { AnswerButtonState, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'VocabSoloGame'> };
@@ -328,5 +329,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     paddingHorizontal: 16,
     paddingBottom: 24,
+    width: '100%',
+    maxWidth: SIZES.maxPlayWidth,
+    alignSelf: 'center',
   },
 });

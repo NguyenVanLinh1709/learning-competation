@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
@@ -14,10 +14,20 @@ import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
+import { loadLastSetup, saveLastSetup } from '../utils/lastSetup';
 import type { RootStackParamList } from '../types';
 import type { ColorDifficulty } from '../utils/colorPerceptionGenerator';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorBattleSetup'> };
+
+const LAST_SETUP_KEY = 'color_battle';
+interface LastSetup {
+  p1Name: string;
+  p2Name: string;
+  difficulty: ColorDifficulty;
+  questionCount: number;
+  timeLimitMs: number;
+}
 
 const QUESTION_COUNTS = [10, 20, 30];
 const DIFFICULTIES: { label: string; value: ColorDifficulty; emoji: string; hint: string }[] = [
@@ -50,6 +60,17 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
   const [questionCount, setQuestionCount] = useState(10);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);
 
+  useEffect(() => {
+    loadLastSetup<LastSetup>(LAST_SETUP_KEY).then((saved) => {
+      if (!saved) return;
+      if (saved.p1Name) setP1Name(saved.p1Name);
+      if (saved.p2Name) setP2Name(saved.p2Name);
+      if (saved.difficulty) setDifficulty(saved.difficulty);
+      if (saved.questionCount) setQuestionCount(saved.questionCount);
+      if (saved.timeLimitMs !== undefined) setTimeLimitMs(saved.timeLimitMs);
+    });
+  }, []);
+
   const canStart = p1Name.trim().length > 0 && p2Name.trim().length > 0;
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -63,6 +84,9 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
       totalQuestions: questionCount,
       timeLimitMs,
     });
+    saveLastSetup<LastSetup>(LAST_SETUP_KEY, {
+      p1Name: p1Name.trim(), p2Name: p2Name.trim(), difficulty, questionCount, timeLimitMs,
+    });
     navigation.navigate('ColorBattleGame');
   };
 
@@ -70,7 +94,8 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
-          contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]}
+          style={styles.flex}
+          contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -147,7 +172,10 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Start */}
+        </ScrollView>
+
+        {/* Start — fixed footer */}
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
           <TouchableOpacity
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={handleStart}
@@ -163,7 +191,7 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
               <Text style={styles.startText}>{t.startColorBattle}</Text>
             </LinearGradient>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
 
       <HowToPlayModal
@@ -200,8 +228,9 @@ const styles = StyleSheet.create({
   optionLabel: { fontSize: 13, fontWeight: '700' },
   optionHint: { fontSize: 10, fontWeight: '500', textAlign: 'center' },
 
+  footer: { paddingHorizontal: 20, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
   startBtn: {
-    borderRadius: 18, overflow: 'hidden', marginTop: 8,
+    borderRadius: 18, overflow: 'hidden',
     shadowColor: '#7C3AED', shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.5, shadowRadius: 14, elevation: 8,
   },

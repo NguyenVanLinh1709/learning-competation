@@ -122,7 +122,9 @@ export default function ColorBattleGameScreen({ navigation }: Props) {
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
-  const tileSize = Math.floor((width - 32 - TILE_GAP * 3) / 4);
+  // Capped so tiles don't balloon on tablets — unlike Memory/Color Memory,
+  // this grid previously had no ceiling on tile size at all.
+  const tileSize = Math.floor((Math.min(width, SIZES.maxPlayWidth) - 32 - TILE_GAP * 3) / 4);
 
   const [countdownStep, setCountdownStep] = useState(0);
   const [countdownDone, setCountdownDone] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
@@ -14,9 +14,20 @@ import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
+import { loadLastSetup, saveLastSetup } from '../utils/lastSetup';
 import type { DifficultyLevel, MathOperation, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Setup'> };
+
+const LAST_SETUP_KEY = 'math_battle';
+interface LastSetup {
+  p1Name: string;
+  p2Name: string;
+  difficulty: DifficultyLevel;
+  operation: MathOperation;
+  questionCount: number;
+  timeLimitMs: number;
+}
 
 const QUESTION_COUNTS = [10, 20, 30];
 
@@ -42,6 +53,18 @@ export default function SetupScreen({ navigation }: Props) {
   const [operation, setOperation] = useState<MathOperation>('mixed');
   const [questionCount, setQuestionCount] = useState(20);
   const [timeLimitMs, setTimeLimitMs] = useState(15000);
+
+  useEffect(() => {
+    loadLastSetup<LastSetup>(LAST_SETUP_KEY).then((saved) => {
+      if (!saved) return;
+      if (saved.p1Name) setP1Name(saved.p1Name);
+      if (saved.p2Name) setP2Name(saved.p2Name);
+      if (saved.difficulty) setDifficulty(saved.difficulty);
+      if (saved.operation) setOperation(saved.operation);
+      if (saved.questionCount) setQuestionCount(saved.questionCount);
+      if (saved.timeLimitMs !== undefined) setTimeLimitMs(saved.timeLimitMs);
+    });
+  }, []);
 
   const canStart = p1Name.trim().length > 0 && p2Name.trim().length > 0;
 
@@ -71,6 +94,9 @@ export default function SetupScreen({ navigation }: Props) {
     if (!canStart) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setConfig({ player1Name: p1Name.trim(), player2Name: p2Name.trim(), difficulty, operation, totalQuestions: questionCount, timeLimitMs });
+    saveLastSetup<LastSetup>(LAST_SETUP_KEY, {
+      p1Name: p1Name.trim(), p2Name: p2Name.trim(), difficulty, operation, questionCount, timeLimitMs,
+    });
     navigation.navigate('Countdown');
   };
 
@@ -79,7 +105,7 @@ export default function SetupScreen({ navigation }: Props) {
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.flex} contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           {/* Header */}
           <View style={styles.topRow}>
@@ -191,7 +217,10 @@ export default function SetupScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Start button */}
+        </ScrollView>
+
+        {/* Start button — fixed footer */}
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
           <TouchableOpacity
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={handleStart}
@@ -207,8 +236,7 @@ export default function SetupScreen({ navigation }: Props) {
               <Text style={styles.startText}>{t.startBattle}</Text>
             </LinearGradient>
           </TouchableOpacity>
-
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
 
       <HowToPlayModal
@@ -245,7 +273,8 @@ const styles = StyleSheet.create({
   timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
   timeLimitLabel: { fontSize: 13, fontWeight: '800' },
 
-  startBtn: { borderRadius: 18, overflow: 'hidden', marginTop: 8, shadowColor: '#4361EE', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 14, elevation: 8 },
+  footer: { paddingHorizontal: 20, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
+  startBtn: { borderRadius: 18, overflow: 'hidden', shadowColor: '#4361EE', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 14, elevation: 8 },
   startBtnDisabled: { opacity: 0.5, shadowOpacity: 0 },
   startGradient: { paddingVertical: 18, alignItems: 'center' },
   startText: { color: '#FFFFFF', fontSize: 18, fontWeight: '900', letterSpacing: 0.5 },

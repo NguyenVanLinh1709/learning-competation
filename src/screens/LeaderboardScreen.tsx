@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import {
   ActivityIndicator, FlatList, Image, Platform, RefreshControl,
-  StyleSheet, Text, TouchableOpacity, View,
+  StyleSheet, Text, TouchableOpacity, useWindowDimensions, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,6 +12,7 @@ import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import { flagForCountry } from '../data/countries';
+import { makeResponsive } from '../utils/responsive';
 import type { GameMode, LeaderboardEntry, RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Leaderboard'> };
@@ -47,6 +48,8 @@ export default function LeaderboardScreen({ navigation }: Props) {
   const { t } = useLanguageStore();
   const { C, G, isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const { isTablet } = makeResponsive(width);
 
   useEffect(() => {
     fetchTop();
@@ -188,6 +191,7 @@ export default function LeaderboardScreen({ navigation }: Props) {
 
   return (
     <LinearGradient colors={G.home} style={[styles.outer, { paddingTop: insets.top + 16, paddingBottom: insets.bottom }]}>
+      <View style={[styles.contentWrapper, isTablet && { maxWidth: 640, alignSelf: 'center', width: '100%' }]}>
       {/* Header */}
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
@@ -246,12 +250,14 @@ export default function LeaderboardScreen({ navigation }: Props) {
       {loading && entries.length === 0 && (
         <ActivityIndicator style={styles.loader} color={C.p1Primary} size="large" />
       )}
+      </View>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   outer: { flex: 1, paddingTop: Platform.OS === 'ios' ? 60 : 44, paddingHorizontal: 16 },
+  contentWrapper: { flex: 1 },
 
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingHorizontal: 4 },
   backBtn: {
