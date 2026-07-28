@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Alert, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
+  StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -10,6 +10,7 @@ import type { MemoryBattlePlayerState } from '../store/memoryBattleStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import { TimerBar } from '../components/TimerBar';
+import ConfirmModal from '../components/ConfirmModal';
 import { memoryFlashMs, tileColor } from '../utils/memoryShared';
 import type { PlayerPosition, RootStackParamList } from '../types';
 import { SIZES } from '../constants/theme';
@@ -275,20 +276,14 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
     [inputOpen, phase, submitTap, resolveQuestion, clearTimer],
   );
 
-  const handleQuit = useCallback(() => {
-    Alert.alert(t.quitTitle, t.quitMessage, [
-      { text: t.cancelAction, style: 'cancel' },
-      {
-        text: t.quitAction,
-        style: 'destructive',
-        onPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          resetGame();
-          navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemoryBattleSetup' }] });
-        },
-      },
-    ]);
-  }, [t, resetGame, navigation]);
+  const [quitVisible, setQuitVisible] = useState(false);
+  const handleQuit = useCallback(() => setQuitVisible(true), []);
+  const confirmQuit = useCallback(() => {
+    setQuitVisible(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    resetGame();
+    navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemoryBattleSetup' }] });
+  }, [resetGame, navigation]);
 
   if (!config || rounds.length === 0) {
     const label = COUNTDOWN_STEPS[countdownStep];
@@ -388,6 +383,16 @@ export default function MemoryBattleGameScreen({ navigation }: Props) {
           </View>
         </>
       )}
+
+      <ConfirmModal
+        visible={quitVisible}
+        title={t.quitTitle}
+        message={t.quitMessage}
+        cancelLabel={t.cancelAction}
+        confirmLabel={t.quitAction}
+        onCancel={() => setQuitVisible(false)}
+        onConfirm={confirmQuit}
+      />
     </View>
   );
 }

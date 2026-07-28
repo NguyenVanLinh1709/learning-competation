@@ -68,11 +68,11 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
 
   const canStart = playerName.trim().length > 0;
 
-  const difficulties: { label: string; desc: string; value: VocabDifficulty; emoji: string }[] = [
-    { label: t.vocabEasy,   desc: t.vocabEasyDesc,   value: 'easy',   emoji: '🌱' },
-    { label: t.vocabMedium, desc: t.vocabMediumDesc, value: 'medium', emoji: '🔥' },
-    { label: t.vocabHard,   desc: t.vocabHardDesc,   value: 'hard',   emoji: '💀' },
-    { label: t.vocabExpert, desc: t.vocabExpertDesc, value: 'expert', emoji: '🧠' },
+  const difficulties: { label: string; value: VocabDifficulty; emoji: string }[] = [
+    { label: t.vocabEasy,   value: 'easy',   emoji: '🌱' },
+    { label: t.vocabMedium, value: 'medium', emoji: '🔥' },
+    { label: t.vocabHard,   value: 'hard',   emoji: '💀' },
+    { label: t.vocabExpert, value: 'expert', emoji: '🧠' },
   ];
 
   const handleStart = () => {
@@ -89,7 +89,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
   return (
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView style={styles.flex} contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.flex} contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 8 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           {/* Header */}
           <View style={styles.topRow}>
@@ -122,8 +122,8 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.vocabModeLabel}</Text>
             <View style={styles.modeRow}>
               {([
-                { value: 'vocab' as VocabMode, label: t.vocabModeVocab, desc: t.vocabModeVocabDesc, emoji: '📖' },
-                { value: 'odd_one_out' as VocabMode, label: t.vocabModeOddOneOut, desc: t.vocabModeOddOneOutDesc, emoji: '🔍' },
+                { value: 'vocab' as VocabMode, label: t.vocabModeVocab, emoji: '📖' },
+                { value: 'odd_one_out' as VocabMode, label: t.vocabModeOddOneOut, emoji: '🔍' },
               ]).map((m) => {
                 const selected = vocabMode === m.value;
                 return (
@@ -138,7 +138,6 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
                   >
                     <Text style={styles.modeEmoji}>{m.emoji}</Text>
                     <Text style={[styles.modeLabel, { color: selected ? C.text : C.textMuted }]}>{m.label}</Text>
-                    <Text style={[styles.modeDesc, { color: C.textMuted }]}>{m.desc}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -163,7 +162,6 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
                   >
                     <Text style={styles.diffEmoji}>{d.emoji}</Text>
                     <Text style={[styles.diffLabel, { color: selected ? C.text : C.textMuted }]}>{d.label}</Text>
-                    <Text style={[styles.diffDesc, { color: C.textMuted }]}>{d.desc}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -209,7 +207,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
         </ScrollView>
 
         {/* Start button — fixed footer */}
-        <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 10, borderTopColor: C.border }]}>
           <TouchableOpacity
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={handleStart}
@@ -241,45 +239,43 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   outer: { flex: 1 },
   flex: { flex: 1 },
-  scroll: { padding: 20, paddingTop: Platform.OS === 'ios' ? 56 : 40, paddingBottom: 40 },
+  scroll: { padding: 16, paddingTop: Platform.OS === 'ios' ? 44 : 28, paddingBottom: 24 },
 
-  topRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 },
+  topRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 },
   backBtn: { width: 70, paddingTop: 2 },
   backText: { fontSize: 17, fontWeight: '600' },
   titleBlock: { flex: 1, alignItems: 'center' },
   title: { fontSize: 18, fontWeight: '900', textAlign: 'center' },
   tagline: { fontSize: 9, fontWeight: '700', letterSpacing: 1.5, textAlign: 'center', marginTop: 4 },
 
-  section: { marginBottom: 20 },
-  playerTag: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, marginBottom: 8 },
+  section: { marginBottom: 14 },
+  playerTag: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, marginBottom: 6 },
   playerTagText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800', letterSpacing: 1.5 },
-  input: { borderWidth: 1.5, borderRadius: 14, padding: 14, fontSize: 17, fontWeight: '700' },
+  input: { borderWidth: 1.5, borderRadius: 14, padding: 12, fontSize: 17, fontWeight: '700' },
 
-  sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
+  sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 6 },
 
   modeRow: { flexDirection: 'row', gap: 8 },
-  modeBtn: { flex: 1, borderWidth: 1.5, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 },
+  modeBtn: { flex: 1, borderWidth: 1.5, borderRadius: 14, padding: 10, alignItems: 'center', gap: 3 },
   modeEmoji: { fontSize: 22 },
   modeLabel: { fontSize: 14, fontWeight: '800' },
-  modeDesc: { fontSize: 10, textAlign: 'center', letterSpacing: 0.2 },
 
   diffGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  diffBtn: { width: '48%', borderWidth: 1.5, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 },
+  diffBtn: { width: '48%', borderWidth: 1.5, borderRadius: 14, padding: 10, alignItems: 'center', gap: 3 },
   diffEmoji: { fontSize: 22 },
   diffLabel: { fontSize: 14, fontWeight: '800' },
-  diffDesc: { fontSize: 10, textAlign: 'center', letterSpacing: 0.2 },
 
   optionRow: { flexDirection: 'row', gap: 8 },
-  optionBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
+  optionBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
   optionLabel: { fontSize: 13, fontWeight: '700' },
 
   timeLimitRow: { flexDirection: 'row', gap: 6 },
-  timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 11, alignItems: 'center' },
   timeLimitLabel: { fontSize: 13, fontWeight: '800' },
 
-  footer: { paddingHorizontal: 20, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
+  footer: { paddingHorizontal: 16, paddingTop: 10, borderTopWidth: StyleSheet.hairlineWidth },
   startBtn: { borderRadius: 18, overflow: 'hidden', shadowColor: '#059669', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.5, shadowRadius: 14, elevation: 8 },
   startBtnDisabled: { opacity: 0.5, shadowOpacity: 0 },
-  startGradient: { paddingVertical: 18, alignItems: 'center' },
+  startGradient: { paddingVertical: 14, alignItems: 'center' },
   startText: { color: '#FFFFFF', fontSize: 18, fontWeight: '900', letterSpacing: 0.5 },
 });

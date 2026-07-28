@@ -73,18 +73,18 @@ export default function SoloSetupScreen({ navigation }: Props) {
   ];
 
   const operations = [
-    { label: '+',       value: 'addition'       as MathOperation },
-    { label: '−',       value: 'subtraction'    as MathOperation },
-    { label: '×',       value: 'multiplication' as MathOperation },
-    { label: '÷',       value: 'division'       as MathOperation },
-    { label: t.mixedOp, value: 'mixed'          as MathOperation },
+    { label: '+', value: 'addition'       as MathOperation },
+    { label: '−', value: 'subtraction'    as MathOperation },
+    { label: '×', value: 'multiplication' as MathOperation },
+    { label: '÷', value: 'division'       as MathOperation },
   ];
 
   const modes = [
-    { emoji: '📏', label: t.convertOp,  value: 'conversion' as MathOperation },
-    { emoji: '½',  label: t.fractionOp, value: 'fraction'   as MathOperation },
-    { emoji: '🔢', label: t.sequenceOp, value: 'sequence'   as MathOperation },
-    { emoji: '🧮', label: t.countOp,    value: 'count'      as MathOperation },
+    { emoji: '🔀', label: t.mixedOp,      value: 'mixed'      as MathOperation },
+    { emoji: '📏', label: t.convertOp,    value: 'conversion' as MathOperation },
+    { emoji: '½',  label: t.fractionOp,   value: 'fraction'   as MathOperation },
+    { emoji: '🔢', label: t.sequenceOp,   value: 'sequence'   as MathOperation },
+    { emoji: '🧮', label: t.countOp,      value: 'count'      as MathOperation },
     { emoji: '⚖️', label: t.comparisonOp, value: 'comparison' as MathOperation },
   ];
 
@@ -172,11 +172,11 @@ export default function SoloSetupScreen({ navigation }: Props) {
                 </TouchableOpacity>
               ))}
             </View>
-            <View style={[styles.optionRow, { marginTop: 8 }]}>
+            <View style={[styles.modeGrid, { marginTop: 8 }]}>
               {modes.map((m) => (
                 <TouchableOpacity
                   key={m.value}
-                  style={[styles.optionBtn, { backgroundColor: C.surface, borderColor: C.border },
+                  style={[styles.modeGridBtn, { backgroundColor: C.surface, borderColor: C.border },
                     operation === m.value && { borderColor: C.p1Primary, backgroundColor: 'rgba(67,97,238,0.15)' }]}
                   onPress={() => { tap(); setOperation(m.value); }}
                 >
@@ -185,7 +185,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
                     style={[styles.optionLabel, { color: operation === m.value ? C.text : C.textMuted }]}
                     numberOfLines={1}
                     adjustsFontSizeToFit
-                    minimumFontScale={0.75}
+                    minimumFontScale={0.7}
                   >
                     {m.label}
                   </Text>
@@ -286,6 +286,9 @@ const styles = StyleSheet.create({
   optionEmoji: { fontSize: 18 },
   optionLabel: { fontSize: 13, fontWeight: '700' },
   opLabel: { fontSize: 18 },
+
+  modeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  modeGridBtn: { width: '31%', borderWidth: 1.5, borderRadius: 12, paddingVertical: 10, alignItems: 'center', gap: 4 },
 
   timeLimitRow: { flexDirection: 'row', gap: 6 },
   timeLimitBtn: { flex: 1, borderWidth: 1.5, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },

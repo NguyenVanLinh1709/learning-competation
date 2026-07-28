@@ -85,13 +85,9 @@ export interface Translations {
   vocabSetup: string;
   vocabDifficultyLabel: string;
   vocabEasy: string;
-  vocabEasyDesc: string;
   vocabMedium: string;
-  vocabMediumDesc: string;
   vocabHard: string;
-  vocabHardDesc: string;
   vocabExpert: string;
-  vocabExpertDesc: string;
   startVocabBattle: string;
 
   // Vocab solo
@@ -103,9 +99,7 @@ export interface Translations {
   // Vocab mode selector
   vocabModeLabel: string;
   vocabModeVocab: string;
-  vocabModeVocabDesc: string;
   vocabModeOddOneOut: string;
-  vocabModeOddOneOutDesc: string;
   oddOneOutQuestion: string;
 
   // Color perception
@@ -289,13 +283,9 @@ const en: Translations = {
   vocabSetup: 'Vocab Battle Setup',
   vocabDifficultyLabel: 'DIFFICULTY',
   vocabEasy: 'Easy',
-  vocabEasyDesc: 'Common, everyday words',
   vocabMedium: 'Medium',
-  vocabMediumDesc: 'Wider variety of words',
   vocabHard: 'Hard',
-  vocabHardDesc: 'Less common words',
   vocabExpert: 'Expert',
-  vocabExpertDesc: 'Advanced vocabulary',
   startVocabBattle: '📖  START VOCAB BATTLE',
 
   vocabSoloSetup: 'Vocab Practice',
@@ -305,9 +295,7 @@ const en: Translations = {
 
   vocabModeLabel: 'MODE',
   vocabModeVocab: 'Vocab',
-  vocabModeVocabDesc: 'Translate words',
   vocabModeOddOneOut: 'Odd One Out',
-  vocabModeOddOneOutDesc: 'Find the different word',
   oddOneOutQuestion: 'Which word doesn\'t belong?',
 
   subjectColor: 'Color Sense',
@@ -482,13 +470,9 @@ const vi: Translations = {
   vocabSetup: 'Thiết lập Từ vựng',
   vocabDifficultyLabel: 'ĐỘ KHÓ',
   vocabEasy: 'Dễ',
-  vocabEasyDesc: 'Từ thông dụng, dễ hiểu',
   vocabMedium: 'Vừa',
-  vocabMediumDesc: 'Từ vựng đa dạng hơn',
   vocabHard: 'Khó',
-  vocabHardDesc: 'Từ ít thông dụng hơn',
   vocabExpert: 'Chuyên gia',
-  vocabExpertDesc: 'Từ vựng nâng cao',
   startVocabBattle: '📖  BẮT ĐẦU TỪ VỰNG',
 
   vocabSoloSetup: 'Luyện từ vựng',
@@ -498,9 +482,7 @@ const vi: Translations = {
 
   vocabModeLabel: 'CHẾ ĐỘ',
   vocabModeVocab: 'Từ vựng',
-  vocabModeVocabDesc: 'Dịch từ tiếng Anh',
   vocabModeOddOneOut: 'Tìm từ khác',
-  vocabModeOddOneOutDesc: 'Tìm từ không cùng nhóm',
   oddOneOutQuestion: 'Từ nào không thuộc nhóm?',
 
   subjectColor: 'Cảm nhận màu sắc',
@@ -675,13 +657,9 @@ const zh: Translations = {
   vocabSetup: '词汇对战设置',
   vocabDifficultyLabel: '难度',
   vocabEasy: '简单',
-  vocabEasyDesc: '常见基础词汇',
   vocabMedium: '中等',
-  vocabMediumDesc: '词汇更丰富',
   vocabHard: '困难',
-  vocabHardDesc: '较少见的词汇',
   vocabExpert: '专家',
-  vocabExpertDesc: '高级词汇',
   startVocabBattle: '📖  开始词汇对战',
 
   vocabSoloSetup: '词汇练习',
@@ -691,9 +669,7 @@ const zh: Translations = {
 
   vocabModeLabel: '模式',
   vocabModeVocab: '词汇',
-  vocabModeVocabDesc: '翻译单词',
   vocabModeOddOneOut: '找不同',
-  vocabModeOddOneOutDesc: '找出不属于同类的词',
   oddOneOutQuestion: '哪个词不属于同类？',
 
   subjectColor: '色彩感知',

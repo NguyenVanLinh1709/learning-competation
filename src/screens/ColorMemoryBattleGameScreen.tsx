@@ -2,7 +2,7 @@ import React, {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import {
-  Alert, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
+  StyleSheet, Text, TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -12,6 +12,7 @@ import type { ColorMemoryBattlePlayerState } from '../store/colorMemoryBattleSto
 import { COLOR_MEMORY_PALETTE } from '../store/colorMemoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import ConfirmModal from '../components/ConfirmModal';
 import type { PlayerPosition, RootStackParamList } from '../types';
 import { SIZES } from '../constants/theme';
 
@@ -281,20 +282,14 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
     }
   }, [phase, showingColors, submitAnswer]);
 
-  const handleQuit = useCallback(() => {
-    Alert.alert(t.quitTitle, t.quitMessage, [
-      { text: t.cancelAction, style: 'cancel' },
-      {
-        text: t.quitAction,
-        style: 'destructive',
-        onPress: () => {
-          clearReveal();
-          resetGame();
-          navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemoryBattleSetup' }] });
-        },
-      },
-    ]);
-  }, [t, resetGame, navigation, clearReveal]);
+  const [quitVisible, setQuitVisible] = useState(false);
+  const handleQuit = useCallback(() => setQuitVisible(true), []);
+  const confirmQuit = useCallback(() => {
+    setQuitVisible(false);
+    clearReveal();
+    resetGame();
+    navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemoryBattleSetup' }] });
+  }, [resetGame, navigation, clearReveal]);
 
   if (!config || rounds.length === 0) {
     return (
@@ -390,6 +385,16 @@ export default function ColorMemoryBattleGameScreen({ navigation }: Props) {
           </View>
         </>
       )}
+
+      <ConfirmModal
+        visible={quitVisible}
+        title={t.quitTitle}
+        message={t.quitMessage}
+        cancelLabel={t.cancelAction}
+        confirmLabel={t.quitAction}
+        onCancel={() => setQuitVisible(false)}
+        onConfirm={confirmQuit}
+      />
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Alert, Animated, Platform, StyleSheet, Text,
+  Animated, Platform, StyleSheet, Text,
   TouchableOpacity, View, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorMemoryStore, COLOR_MEMORY_PALETTE } from '../store/colorMemoryStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
+import ConfirmModal from '../components/ConfirmModal';
 import type { RootStackParamList } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorMemoryGame'> };
@@ -198,21 +199,15 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
     if (phase === 'finished') navigation.replace('ColorMemoryResult');
   }, [phase]);
 
-  const handleQuit = useCallback(() => {
-    Alert.alert(t.quitTitle, t.quitMessage, [
-      { text: t.cancelAction, style: 'cancel' },
-      {
-        text: t.quitAction,
-        style: 'destructive',
-        onPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          clearReveal();
-          resetGame();
-          navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemorySetup' }] });
-        },
-      },
-    ]);
-  }, [t, resetGame, navigation, clearReveal]);
+  const [quitVisible, setQuitVisible] = useState(false);
+  const handleQuit = useCallback(() => setQuitVisible(true), []);
+  const confirmQuit = useCallback(() => {
+    setQuitVisible(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    clearReveal();
+    resetGame();
+    navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'MemorySetup' }] });
+  }, [resetGame, navigation, clearReveal]);
 
   const handleChoiceTap = useCallback((hex: string) => {
     if (phase !== 'active' || showingColors) return;
@@ -380,6 +375,16 @@ export default function ColorMemoryGameScreen({ navigation }: Props) {
 
         </>
       )}
+
+      <ConfirmModal
+        visible={quitVisible}
+        title={t.quitTitle}
+        message={t.quitMessage}
+        cancelLabel={t.cancelAction}
+        confirmLabel={t.quitAction}
+        onCancel={() => setQuitVisible(false)}
+        onConfirm={confirmQuit}
+      />
     </LinearGradient>
   );
 }
