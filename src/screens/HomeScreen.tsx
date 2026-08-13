@@ -6,6 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+import Constants from 'expo-constants';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types';
 import { useTheme } from '../hooks/useTheme';
@@ -17,6 +18,7 @@ import { makeResponsive } from '../utils/responsive';
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Home'> };
 
 const LANG_ORDER: LangCode[] = ['en', 'vi', 'zh'];
+const APP_VERSION = Constants.expoConfig?.version;
 
 export default function HomeScreen({ navigation }: Props) {
   const { C, G, isDark, toggle } = useTheme();
@@ -274,6 +276,12 @@ export default function HomeScreen({ navigation }: Props) {
             </View>
           </Animated.View>
         </ScrollView>
+
+        {APP_VERSION && (
+          <Text style={[styles.version, { color: C.textMuted, fontSize: ms(11) }]}>
+            v{APP_VERSION}
+          </Text>
+        )}
       </View>
 
       {/* ── Language dropdown Modal ── */}
@@ -352,6 +360,9 @@ const styles = StyleSheet.create({
   profileBtn: { borderWidth: 2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   profileAvatar: { width: '100%', height: '100%' },
   profileIcon: { fontWeight: '800' },
+
+  // Footer
+  version: { textAlign: 'center', fontWeight: '600', paddingTop: 6, opacity: 0.6 },
 
   // Title
   titleBlock: { alignItems: 'center' },
