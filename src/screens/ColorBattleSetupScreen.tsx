@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
+  KeyboardAvoidingView, NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +14,12 @@ import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
+import TourButton from '../components/TourButton';
+import TourOverlay from '../components/TourOverlay';
+import { useTourStore } from '../store/tourStore';
+import { useTourTarget } from '../hooks/useTourTarget';
+import { isTourSeen } from '../utils/tourSeen';
+import { screenTours } from '../content/screenTours';
 import { loadLastSetup, saveLastSetup } from '../utils/lastSetup';
 import type { RootStackParamList } from '../types';
 import type { ColorDifficulty } from '../utils/colorPerceptionGenerator';
@@ -21,6 +27,7 @@ import type { ColorDifficulty } from '../utils/colorPerceptionGenerator';
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'ColorBattleSetup'> };
 
 const LAST_SETUP_KEY = 'color_battle';
+const TOUR_ID = LAST_SETUP_KEY;
 interface LastSetup {
   p1Name: string;
   p2Name: string;
@@ -53,6 +60,37 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollYRef = useRef(0);
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const delta = y - scrollYRef.current;
+    scrollYRef.current = y;
+    // Shift every cached target rect by the real scroll delta as it happens —
+    // more reliable than predicting where an animated scrollTo will land,
+    // since RN clamps it to the actual scrollable extent.
+    if (delta !== 0 && useTourStore.getState().activeTour === TOUR_ID) {
+      useTourStore.getState().shiftTargets(TOUR_ID, delta);
+    }
+  };
+
+  const playerNamesTarget = useTourTarget(`${TOUR_ID}:playerNames`);
+  const difficultyTarget = useTourTarget(`${TOUR_ID}:difficulty`);
+  const questionsTarget = useTourTarget(`${TOUR_ID}:questions`);
+  const timeLimitTarget = useTourTarget(`${TOUR_ID}:timeLimit`);
+  const startBtnTarget = useTourTarget(`${TOUR_ID}:startBtn`);
+
+  const beginTour = () => {
+    setHowToOpen(false);
+    useTourStore.getState().startTour(TOUR_ID, screenTours[TOUR_ID] as string[]);
+  };
+
+  useEffect(() => {
+    isTourSeen(TOUR_ID).then((seen) => {
+      if (!seen) setTimeout(beginTour, 250);
+    });
+  }, []);
 
   const [p1Name, setP1Name] = useState('Player A');
   const [p2Name, setP2Name] = useState('Player B');
@@ -94,23 +132,36 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
+          ref={scrollViewRef}
           style={styles.flex}
           contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
         >
           {/* Header */}
           <View style={styles.topRow}>
             <BackButton onPress={() => navigation.goBack()} />
             <Text style={[styles.title, { color: C.text }]}>{t.colorBattleSetup}</Text>
-            <InfoButton onPress={() => setHowToOpen(true)} />
+            <View style={styles.topRightIcons}>
+              <TourButton onPress={beginTour} />
+              <InfoButton onPress={() => setHowToOpen(true)} />
+            </View>
           </View>
 
           {/* Player names */}
-          <PlayerNames p1Name={p1Name} p2Name={p2Name} setP1Name={setP1Name} setP2Name={setP2Name} />
+          <PlayerNames
+            ref={playerNamesTarget.ref}
+            onLayout={playerNamesTarget.onLayout}
+            p1Name={p1Name}
+            p2Name={p2Name}
+            setP1Name={setP1Name}
+            setP2Name={setP2Name}
+          />
 
           {/* Difficulty */}
-          <View style={styles.section}>
+          <View style={styles.section} ref={difficultyTarget.ref} onLayout={difficultyTarget.onLayout}>
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.difficultyLabel}</Text>
             <View style={styles.diffGrid}>
               {DIFFICULTIES.map((d) => (
@@ -134,7 +185,7 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
           </View>
 
           {/* Question count */}
-          <View style={styles.section}>
+          <View style={styles.section} ref={questionsTarget.ref} onLayout={questionsTarget.onLayout}>
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.questionsLabel}</Text>
             <View style={styles.optionRow}>
               {QUESTION_COUNTS.map((n) => (
@@ -154,7 +205,7 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
           </View>
 
           {/* Time per question */}
-          <View style={styles.section}>
+          <View style={styles.section} ref={timeLimitTarget.ref} onLayout={timeLimitTarget.onLayout}>
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.timeLimitLabel}</Text>
             <View style={styles.timeLimitRow}>
               {TIME_LIMITS.map((tl) => (
@@ -177,6 +228,8 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
         {/* Start — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
           <TouchableOpacity
+            ref={startBtnTarget.ref}
+            onLayout={startBtnTarget.onLayout}
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={handleStart}
             disabled={!canStart}
@@ -200,6 +253,8 @@ export default function ColorBattleSetupScreen({ navigation }: Props) {
         title={t.howToPlayTitle}
         body={t.colorBattleHowTo}
       />
+
+      <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />
     </LinearGradient>
   );
 }
@@ -213,7 +268,7 @@ const styles = StyleSheet.create({
   backBtn: { width: 70 },
   backText: { fontSize: 17, fontWeight: '600' },
   title: { fontSize: 18, fontWeight: '900', textAlign: 'center', flex: 1 },
-
+  topRightIcons: { flexDirection: 'row', gap: 8 },
 
   section: { marginBottom: 20 },
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },

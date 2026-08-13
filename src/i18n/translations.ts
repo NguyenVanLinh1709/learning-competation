@@ -128,6 +128,9 @@ export interface Translations {
   memorySoloComplete: string;
   memoryBattleSetup: string;
   startMemoryBattle: string;
+  memoryModeLabel: string;
+  memoryModeFlash: string;
+  memoryModeColor: string;
 
   // Color Memory
   subjectColorMemory: string;
@@ -207,6 +210,33 @@ export interface Translations {
   flagBattleHowTo: string;
   flagSoloHowTo: string;
 
+  // Tour guide
+  tourBack: string;
+  tourSkip: string;
+  tourNext: string;
+  tourGotIt: string;
+  tourPlayerNamesTitle: string;
+  tourPlayerNamesBody: string;
+  tourDifficultyTitle: string;
+  tourDifficultyBody: string;
+  tourOperationTitle: string;
+  tourOperationBody: string;
+  tourVocabModeTitle: string;
+  tourVocabModeBody: string;
+  tourMemoryModeTitle: string;
+  tourMemoryModeBody: string;
+  tourMemoryGridTitle: string;
+  tourMemoryGridBody: string;
+  tourMemoryRevealTitle: string;
+  tourMemoryRevealBody: string;
+  tourMemoryStepsTitle: string;
+  tourMemoryStepsBody: string;
+  tourQuestionsTitle: string;
+  tourQuestionsBody: string;
+  tourTimeLimitTitle: string;
+  tourTimeLimitBody: string;
+  tourStartTitle: string;
+  tourStartBody: string;
 }
 
 const en: Translations = {
@@ -322,6 +352,9 @@ const en: Translations = {
   memorySoloComplete: 'Memory Practice Complete!',
   memoryBattleSetup: 'Memory Battle Setup',
   startMemoryBattle: '🧠  START MEMORY BATTLE',
+  memoryModeLabel: 'MODE',
+  memoryModeFlash: 'Memory Flash',
+  memoryModeColor: 'Color Memory',
 
   subjectColorMemory: 'Color Memory',
   subjectColorMemoryDesc: 'Remember colors by position · Test your visual memory',
@@ -394,6 +427,33 @@ const en: Translations = {
   colorMemorySoloHowTo: '• A grid of colors is shown for 5 seconds — memorize it!\n• Colors hide — pick the color that was at the highlighted position.\n• Answer before time runs out!',
   flagBattleHowTo: '• A country name appears — pick its flag from 4 choices.\n• Both players see the same question — tap the correct flag first.\n• First correct answer wins the round!',
   flagSoloHowTo: '• A country name appears — pick its flag from 4 choices.\n• Answer before each question\'s timer runs out.\n• Score as many correct answers as you can!',
+
+  tourBack: 'Back',
+  tourSkip: 'Skip',
+  tourNext: 'Next',
+  tourGotIt: 'Got it',
+  tourPlayerNamesTitle: 'Player names',
+  tourPlayerNamesBody: 'Type each player\'s name here — Player 2 on top, Player 1 on the bottom, matching their half of the screen.',
+  tourDifficultyTitle: 'Difficulty',
+  tourDifficultyBody: 'Pick how challenging the questions should be.',
+  tourOperationTitle: 'Operation',
+  tourOperationBody: 'Choose which math operation to practice, or pick a special mode like fractions or sequences.',
+  tourVocabModeTitle: 'Game mode',
+  tourVocabModeBody: 'Choose between picking a word\'s meaning or spotting the odd one out.',
+  tourMemoryModeTitle: 'Game mode',
+  tourMemoryModeBody: 'Switch between Memory Flash (repeat a tile sequence) and Color Memory (recall a color grid).',
+  tourMemoryGridTitle: 'Grid size',
+  tourMemoryGridBody: 'Drag to set how big the memory grid is — bigger grids are harder.',
+  tourMemoryRevealTitle: 'Memorize time',
+  tourMemoryRevealBody: 'This is how long the color grid stays visible before it hides.',
+  tourMemoryStepsTitle: 'Sequence length',
+  tourMemoryStepsBody: 'Drag to set how many tiles flash in the sequence you\'ll need to repeat.',
+  tourQuestionsTitle: 'Question count',
+  tourQuestionsBody: 'Choose how many questions the game will have.',
+  tourTimeLimitTitle: 'Time per question',
+  tourTimeLimitBody: 'Set how long each question stays on screen before time runs out.',
+  tourStartTitle: 'Start',
+  tourStartBody: 'Once everything looks good, tap here to begin!',
 };
 
 const vi: Translations = {
@@ -509,6 +569,9 @@ const vi: Translations = {
   memorySoloComplete: 'Hoàn thành luyện trí nhớ!',
   memoryBattleSetup: 'Thiết lập đấu trí nhớ',
   startMemoryBattle: '🧠  BẮT ĐẦU ĐẤU TRÍ NHỚ',
+  memoryModeLabel: 'CHẾ ĐỘ',
+  memoryModeFlash: 'Trí Nhớ Chớp',
+  memoryModeColor: 'Trí Nhớ Màu',
 
   subjectColorMemory: 'Ghi nhớ màu sắc',
   subjectColorMemoryDesc: 'Nhớ màu theo vị trí · Kiểm tra trí nhớ thị giác',
@@ -581,6 +644,33 @@ const vi: Translations = {
   colorMemorySoloHowTo: '• Một lưới màu hiện ra trong 5 giây — hãy ghi nhớ thật kỹ!\n• Màu biến mất — chọn đúng màu tại vị trí được hỏi.\n• Trả lời trước khi hết giờ!',
   flagBattleHowTo: '• Tên một quốc gia hiện ra, chọn đúng lá cờ trong 4 lựa chọn.\n• Cả hai người chơi cùng thấy một câu hỏi — ai chạm đúng cờ trước sẽ ghi điểm.\n• Nhiều điểm hơn sẽ thắng!',
   flagSoloHowTo: '• Tên một quốc gia hiện ra, chọn đúng lá cờ trong 4 lựa chọn.\n• Trả lời trước khi hết giờ mỗi câu.\n• Ghi càng nhiều điểm càng tốt!',
+
+  tourBack: 'Quay lại',
+  tourSkip: 'Bỏ qua',
+  tourNext: 'Tiếp',
+  tourGotIt: 'Đã hiểu',
+  tourPlayerNamesTitle: 'Tên người chơi',
+  tourPlayerNamesBody: 'Nhập tên từng người chơi ở đây — Người 2 ở trên, Người 1 ở dưới, đúng với nửa màn hình của mỗi người.',
+  tourDifficultyTitle: 'Độ khó',
+  tourDifficultyBody: 'Chọn mức độ khó của câu hỏi.',
+  tourOperationTitle: 'Phép tính',
+  tourOperationBody: 'Chọn phép tính muốn luyện, hoặc chọn chế độ đặc biệt như phân số hay dãy số.',
+  tourVocabModeTitle: 'Chế độ chơi',
+  tourVocabModeBody: 'Chọn giữa đoán nghĩa của từ hoặc tìm từ khác loại.',
+  tourMemoryModeTitle: 'Chế độ chơi',
+  tourMemoryModeBody: 'Chuyển đổi giữa Trí Nhớ Chớp (lặp lại thứ tự ô sáng) và Trí Nhớ Màu (nhớ lưới màu).',
+  tourMemoryGridTitle: 'Kích thước lưới',
+  tourMemoryGridBody: 'Kéo để chỉnh kích thước lưới trí nhớ — lưới càng lớn càng khó.',
+  tourMemoryRevealTitle: 'Thời gian ghi nhớ',
+  tourMemoryRevealBody: 'Đây là thời gian lưới màu hiển thị trước khi ẩn đi.',
+  tourMemoryStepsTitle: 'Độ dài dãy',
+  tourMemoryStepsBody: 'Kéo để chỉnh số ô sáng lên trong dãy mà bạn cần lặp lại.',
+  tourQuestionsTitle: 'Số câu hỏi',
+  tourQuestionsBody: 'Chọn số lượng câu hỏi cho ván chơi.',
+  tourTimeLimitTitle: 'Thời gian mỗi câu',
+  tourTimeLimitBody: 'Chỉnh thời gian mỗi câu hỏi hiển thị trước khi hết giờ.',
+  tourStartTitle: 'Bắt đầu',
+  tourStartBody: 'Khi mọi thứ đã ổn, chạm vào đây để bắt đầu!',
 };
 
 const zh: Translations = {
@@ -696,6 +786,9 @@ const zh: Translations = {
   memorySoloComplete: '记忆练习完成！',
   memoryBattleSetup: '记忆对战设置',
   startMemoryBattle: '🧠  开始记忆对战',
+  memoryModeLabel: '模式',
+  memoryModeFlash: '闪现记忆',
+  memoryModeColor: '色彩记忆',
 
   subjectColorMemory: '颜色记忆',
   subjectColorMemoryDesc: '按位置记忆颜色 · 测试视觉记忆',
@@ -768,6 +861,33 @@ const zh: Translations = {
   colorMemorySoloHowTo: '• 一组颜色方块会显示5秒，请仔细记住！\n• 颜色隐藏后，选出指定位置原本的颜色。\n• 请在时间用完前作答！',
   flagBattleHowTo: '• 屏幕出现国家名称，从4面旗帜中选出正确的一面。\n• 两位玩家看到相同题目，谁先点对谁得分。\n• 得分多者获胜！',
   flagSoloHowTo: '• 屏幕出现国家名称，从4面旗帜中选出正确的一面。\n• 请在每题倒计时结束前作答。\n• 尽可能多地答对题目！',
+
+  tourBack: '上一步',
+  tourSkip: '跳过',
+  tourNext: '下一步',
+  tourGotIt: '知道了',
+  tourPlayerNamesTitle: '玩家姓名',
+  tourPlayerNamesBody: '在这里输入每位玩家的名字——玩家2在上方，玩家1在下方，对应各自的屏幕区域。',
+  tourDifficultyTitle: '难度',
+  tourDifficultyBody: '选择题目的难度等级。',
+  tourOperationTitle: '运算',
+  tourOperationBody: '选择要练习的运算类型，或选择分数、数列等特殊模式。',
+  tourVocabModeTitle: '游戏模式',
+  tourVocabModeBody: '在选词义和找出不同类之间切换。',
+  tourMemoryModeTitle: '游戏模式',
+  tourMemoryModeBody: '在闪现记忆（复现方块顺序）和色彩记忆（记住颜色网格）之间切换。',
+  tourMemoryGridTitle: '网格大小',
+  tourMemoryGridBody: '拖动以设置记忆网格的大小——网格越大越难。',
+  tourMemoryRevealTitle: '记忆时间',
+  tourMemoryRevealBody: '这是颜色网格隐藏前的可见时长。',
+  tourMemoryStepsTitle: '序列长度',
+  tourMemoryStepsBody: '拖动以设置需要复现的闪烁方块数量。',
+  tourQuestionsTitle: '题目数量',
+  tourQuestionsBody: '选择本局游戏的题目数量。',
+  tourTimeLimitTitle: '每题时间',
+  tourTimeLimitBody: '设置每道题在时间用完前的显示时长。',
+  tourStartTitle: '开始',
+  tourStartBody: '一切设置好后，点击这里开始吧！',
 };
 
 export const TRANSLATIONS: Record<LangCode, Translations> = { en, vi, zh };

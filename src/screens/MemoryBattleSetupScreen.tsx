@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
+  KeyboardAvoidingView, NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet,
   Text, TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,6 +17,12 @@ import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
 import PlayerNames from '../components/PlayerNames';
+import TourButton from '../components/TourButton';
+import TourOverlay from '../components/TourOverlay';
+import { useTourStore } from '../store/tourStore';
+import { useTourTarget } from '../hooks/useTourTarget';
+import { isTourSeen } from '../utils/tourSeen';
+import { screenTours } from '../content/screenTours';
 import { loadLastSetup, saveLastSetup } from '../utils/lastSetup';
 import type { RootStackParamList } from '../types';
 import {
@@ -27,6 +33,7 @@ type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Memory
 type GameMode = 'flash' | 'color';
 
 const LAST_SETUP_KEY = 'memory_battle';
+const TOUR_ID = LAST_SETUP_KEY;
 interface LastSetup {
   p1Name: string;
   p2Name: string;
@@ -59,6 +66,28 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
 
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollYRef = useRef(0);
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const delta = y - scrollYRef.current;
+    scrollYRef.current = y;
+    // Shift every cached target rect by the real scroll delta as it happens —
+    // more reliable than predicting where an animated scrollTo will land,
+    // since RN clamps it to the actual scrollable extent.
+    if (delta !== 0 && useTourStore.getState().activeTour === TOUR_ID) {
+      useTourStore.getState().shiftTargets(TOUR_ID, delta);
+    }
+  };
+
+  const playerNamesTarget = useTourTarget(`${TOUR_ID}:playerNames`);
+  const memoryModeTarget = useTourTarget(`${TOUR_ID}:memoryMode`);
+  const memoryGridTarget = useTourTarget(`${TOUR_ID}:memoryGrid`);
+  const memoryStepsTarget = useTourTarget(`${TOUR_ID}:memorySteps`);
+  const questionsTarget = useTourTarget(`${TOUR_ID}:questions`);
+  const timeLimitTarget = useTourTarget(`${TOUR_ID}:timeLimit`);
+  const startBtnTarget = useTourTarget(`${TOUR_ID}:startBtn`);
+
   const [p1Name, setP1Name] = useState('Player A');
   const [p2Name, setP2Name] = useState('Player B');
   const [mode, setMode] = useState<GameMode>('flash');
@@ -71,6 +100,28 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
   const isColor = mode === 'color';
   const accentColor = isColor ? CM_PRIMARY : MEMORY_PRIMARY;
   const accentBg = isColor ? 'rgba(249,115,22,0.14)' : 'rgba(99,102,241,0.14)';
+
+  const beginTour = () => {
+    setHowToOpen(false);
+    const entry = screenTours[TOUR_ID];
+    const tourSteps = typeof entry === 'function' ? entry(mode) : entry;
+    useTourStore.getState().startTour(TOUR_ID, tourSteps);
+  };
+
+  useEffect(() => {
+    isTourSeen(TOUR_ID).then((seen) => {
+      if (!seen) setTimeout(beginTour, 250);
+    });
+  }, []);
+
+  // Re-resolve the running tour's step list if the user switches Flash <-> Color mid-tour.
+  useEffect(() => {
+    if (useTourStore.getState().activeTour === TOUR_ID) {
+      const entry = screenTours[TOUR_ID];
+      const resolved = typeof entry === 'function' ? entry(mode) : entry;
+      useTourStore.getState().updateSteps(resolved);
+    }
+  }, [mode]);
 
   useEffect(() => {
     loadLastSetup<LastSetup>(LAST_SETUP_KEY).then((saved) => {
@@ -125,24 +176,37 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
     <LinearGradient colors={G.home} style={styles.outer}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
+          ref={scrollViewRef}
           style={styles.flex}
           contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 10 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
         >
           {/* Header */}
           <View style={styles.topRow}>
             <BackButton onPress={() => navigation.goBack()} />
             <Text style={[styles.title, { color: C.text }]}>{t.memoryBattleSetup}</Text>
-            <InfoButton onPress={() => setHowToOpen(true)} />
+            <View style={styles.topRightIcons}>
+              <TourButton onPress={beginTour} />
+              <InfoButton onPress={() => setHowToOpen(true)} />
+            </View>
           </View>
 
           {/* Player names */}
-          <PlayerNames p1Name={p1Name} p2Name={p2Name} setP1Name={setP1Name} setP2Name={setP2Name} />
+          <PlayerNames
+            ref={playerNamesTarget.ref}
+            onLayout={playerNamesTarget.onLayout}
+            p1Name={p1Name}
+            p2Name={p2Name}
+            setP1Name={setP1Name}
+            setP2Name={setP2Name}
+          />
 
           {/* Mode selector */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>MODE</Text>
+          <View style={styles.section} ref={memoryModeTarget.ref} onLayout={memoryModeTarget.onLayout}>
+            <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.memoryModeLabel}</Text>
             <View style={styles.modeRow}>
               <TouchableOpacity
                 style={[
@@ -155,7 +219,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
               >
                 <Text style={styles.modeEmoji}>🧠</Text>
                 <Text style={[styles.modeBtnLabel, { color: mode === 'flash' ? C.text : C.textMuted }]}>
-                  Memory Flash
+                  {t.memoryModeFlash}
                 </Text>
               </TouchableOpacity>
 
@@ -175,7 +239,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
               >
                 <Text style={styles.modeEmoji}>🎨</Text>
                 <Text style={[styles.modeBtnLabel, { color: mode === 'color' ? C.text : C.textMuted }]}>
-                  Color Memory
+                  {t.memoryModeColor}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -183,7 +247,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
 
           {/* Difficulty */}
           {isColor ? (
-            <View style={styles.section}>
+            <View style={styles.section} ref={memoryGridTarget.ref} onLayout={memoryGridTarget.onLayout}>
               <View style={styles.sliderHeaderRow}>
                 <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.memoryGridSizeLabel}</Text>
                 <Text style={[styles.sliderValue, { color: accentColor }]}>{colorGridDim}×{colorGridDim}</Text>
@@ -202,7 +266,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
             </View>
           ) : (
             <>
-              <View style={styles.section}>
+              <View style={styles.section} ref={memoryGridTarget.ref} onLayout={memoryGridTarget.onLayout}>
                 <View style={styles.sliderHeaderRow}>
                   <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.memoryGridSizeLabel}</Text>
                   <Text style={[styles.sliderValue, { color: accentColor }]}>{gridDim}×{gridDim}</Text>
@@ -220,7 +284,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
                 />
               </View>
 
-              <View style={styles.section}>
+              <View style={styles.section} ref={memoryStepsTarget.ref} onLayout={memoryStepsTarget.onLayout}>
                 <View style={styles.sliderHeaderRow}>
                   <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.memoryStepsLabel}</Text>
                   <Text style={[styles.sliderValue, { color: accentColor }]}>{steps}</Text>
@@ -241,7 +305,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
           )}
 
           {/* Question count */}
-          <View style={styles.section}>
+          <View style={styles.section} ref={questionsTarget.ref} onLayout={questionsTarget.onLayout}>
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>{t.questionsLabel}</Text>
             <View style={styles.optionRow}>
               {QUESTION_COUNTS.map((n) => (
@@ -261,7 +325,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
           </View>
 
           {/* Time per question — for Color Memory this is how long colors stay visible to memorize, so ∞ isn't offered */}
-          <View style={styles.section}>
+          <View style={styles.section} ref={timeLimitTarget.ref} onLayout={timeLimitTarget.onLayout}>
             <Text style={[styles.sectionLabel, { color: C.textMuted }]}>
               {isColor ? t.colorMemoryRevealTimeLabel : t.timeLimitLabel}
             </Text>
@@ -286,6 +350,8 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
         {/* Start — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 12, borderTopColor: C.border }]}>
           <TouchableOpacity
+            ref={startBtnTarget.ref}
+            onLayout={startBtnTarget.onLayout}
             style={[styles.startBtn, !canStart && styles.startBtnDisabled, { shadowColor: accentColor }]}
             onPress={handleStart}
             disabled={!canStart}
@@ -312,6 +378,8 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
         body={isColor ? t.colorMemoryBattleHowTo : t.memoryFlashBattleHowTo}
         accentColor={accentColor}
       />
+
+      <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />
     </LinearGradient>
   );
 }
@@ -325,7 +393,7 @@ const styles = StyleSheet.create({
   backBtn: { width: 70 },
   backText: { fontSize: 17, fontWeight: '600' },
   title: { fontSize: 18, fontWeight: '900', textAlign: 'center', flex: 1 },
-
+  topRightIcons: { flexDirection: 'row', gap: 8 },
 
   section: { marginBottom: 14 },
   sectionLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 3, marginBottom: 8 },

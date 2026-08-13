@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from 'react-native';
+import {
+  LayoutChangeEvent, StyleProp, StyleSheet, Text, TextInput, View, ViewStyle,
+} from 'react-native';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 
@@ -9,6 +11,7 @@ type Props = {
   setP1Name: (v: string) => void;
   setP2Name: (v: string) => void;
   style?: StyleProp<ViewStyle>;
+  onLayout?: (e: LayoutChangeEvent) => void;
 };
 
 /**
@@ -17,7 +20,10 @@ type Props = {
  * a colored position badge, the name input, and a pencil hint so it reads
  * unmistakably as a text field.
  */
-export default function PlayerNames({ p1Name, p2Name, setP1Name, setP2Name, style }: Props) {
+const PlayerNames = React.forwardRef<View, Props>(function PlayerNames(
+  { p1Name, p2Name, setP1Name, setP2Name, style, onLayout },
+  ref,
+) {
   const { t } = useLanguageStore();
   const { C } = useTheme();
 
@@ -60,7 +66,7 @@ export default function PlayerNames({ p1Name, p2Name, setP1Name, setP2Name, styl
   );
 
   return (
-    <View style={[styles.wrap, style]}>
+    <View ref={ref} onLayout={onLayout} style={[styles.wrap, style]}>
       <Field
         color={C.p2Primary}
         label={t.posTop}
@@ -78,7 +84,9 @@ export default function PlayerNames({ p1Name, p2Name, setP1Name, setP2Name, styl
       />
     </View>
   );
-}
+});
+
+export default PlayerNames;
 
 const styles = StyleSheet.create({
   wrap: { marginBottom: 22 },
