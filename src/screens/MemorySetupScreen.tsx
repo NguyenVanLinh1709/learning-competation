@@ -11,11 +11,14 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemoryStore } from '../store/memoryStore';
 import { useColorMemoryStore, COLOR_MEMORY_GRID_DIM_MIN, COLOR_MEMORY_GRID_DIM_MAX } from '../store/colorMemoryStore';
 import { useProfileStore } from '../store/profileStore';
+import { useCreditsStore } from '../store/creditsStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import CreditsBadge from '../components/CreditsBadge';
+import OutOfCreditsModal from '../components/OutOfCreditsModal';
 import TourButton from '../components/TourButton';
 import TourOverlay from '../components/TourOverlay';
 import { useTourStore } from '../store/tourStore';
@@ -63,6 +66,7 @@ export default function MemorySetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+  const [outOfCreditsVisible, setOutOfCreditsVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollYRef = useRef(0);
@@ -135,8 +139,7 @@ export default function MemorySetupScreen({ navigation }: Props) {
   const canStart = playerName.trim().length > 0;
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-  const handleStart = () => {
-    if (!canStart) return;
+  const proceedToGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setDisplayName(playerName.trim());
     saveLastSetup<LastSetup>(LAST_SETUP_KEY, { mode, gridDim, steps, colorGridDim, questionCount, timeLimitMs });
@@ -146,6 +149,15 @@ export default function MemorySetupScreen({ navigation }: Props) {
     } else {
       setFlashConfig({ playerName: playerName.trim(), gridDim, steps, totalQuestions: questionCount, timeLimitMs });
       navigation.navigate('MemoryGame');
+    }
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (useCreditsStore.getState().consumeCredit('memory')) {
+      proceedToGame();
+    } else {
+      setOutOfCreditsVisible(true);
     }
   };
 
@@ -342,6 +354,7 @@ export default function MemorySetupScreen({ navigation }: Props) {
 
         {/* Start — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 12, borderTopColor: C.border }]}>
+          <CreditsBadge family="memory" />
           <TouchableOpacity
             ref={startBtnTarget.ref}
             onLayout={startBtnTarget.onLayout}
@@ -370,6 +383,13 @@ export default function MemorySetupScreen({ navigation }: Props) {
         title={t.howToPlayTitle}
         body={isColor ? t.colorMemorySoloHowTo : t.memoryFlashSoloHowTo}
         accentColor={accentColor}
+      />
+
+      <OutOfCreditsModal
+        visible={outOfCreditsVisible}
+        family="memory"
+        onCancel={() => setOutOfCreditsVisible(false)}
+        onGranted={() => { setOutOfCreditsVisible(false); proceedToGame(); }}
       />
 
       <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />

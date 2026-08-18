@@ -1,11 +1,21 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { useTheme } from '../hooks/useTheme';
 
 type Props = {
   onPress: () => void;
 };
+
+// Tour guide feature temporarily disabled — not ready to release yet.
+// Renders nothing so the 🧭 button disappears from every screen's header in
+// one place. Uncomment the block below (and tourStore.ts's real startTour)
+// to bring the whole tour-guide feature back.
+export default function TourButton(_props: Props) {
+  return null;
+}
+
+/*
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '../hooks/useTheme';
 
 export default function TourButton({ onPress }: Props) {
   const { C } = useTheme();
@@ -38,3 +48,4 @@ const styles = StyleSheet.create({
   },
   icon: { fontSize: 15 },
 });
+*/

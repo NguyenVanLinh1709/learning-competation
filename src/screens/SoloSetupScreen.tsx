@@ -9,11 +9,14 @@ import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSoloStore } from '../store/soloStore';
 import { useProfileStore } from '../store/profileStore';
+import { useCreditsStore } from '../store/creditsStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import CreditsBadge from '../components/CreditsBadge';
+import OutOfCreditsModal from '../components/OutOfCreditsModal';
 import TourButton from '../components/TourButton';
 import TourOverlay from '../components/TourOverlay';
 import { useTourStore } from '../store/tourStore';
@@ -52,6 +55,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+  const [outOfCreditsVisible, setOutOfCreditsVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollYRef = useRef(0);
@@ -126,13 +130,21 @@ export default function SoloSetupScreen({ navigation }: Props) {
     { emoji: '⚖️', label: t.comparisonOp, value: 'comparison' as MathOperation },
   ];
 
-  const handleStart = () => {
-    if (!canStart) return;
+  const proceedToGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setDisplayName(playerName.trim());
     setConfig({ playerName: playerName.trim(), difficulty, operation, totalQuestions: questionCount, timeLimitMs });
     saveLastSetup<LastSetup>(LAST_SETUP_KEY, { difficulty, operation, questionCount, timeLimitMs });
     navigation.navigate('SoloGame');
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (useCreditsStore.getState().consumeCredit('math')) {
+      proceedToGame();
+    } else {
+      setOutOfCreditsVisible(true);
+    }
   };
 
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -283,6 +295,7 @@ export default function SoloSetupScreen({ navigation }: Props) {
 
         {/* Start button — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
+          <CreditsBadge family="math" />
           <TouchableOpacity
             ref={startBtnTarget.ref}
             onLayout={startBtnTarget.onLayout}
@@ -308,6 +321,13 @@ export default function SoloSetupScreen({ navigation }: Props) {
         onClose={() => setHowToOpen(false)}
         title={t.howToPlayTitle}
         body={t.mathSoloHowTo}
+      />
+
+      <OutOfCreditsModal
+        visible={outOfCreditsVisible}
+        family="math"
+        onCancel={() => setOutOfCreditsVisible(false)}
+        onGranted={() => { setOutOfCreditsVisible(false); proceedToGame(); }}
       />
 
       <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />

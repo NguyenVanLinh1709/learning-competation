@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import mobileAds from 'react-native-google-mobile-ads';
 
 import HomeScreen from './src/screens/HomeScreen';
 import SetupScreen from './src/screens/SetupScreen';
@@ -45,6 +46,7 @@ import FeedbackScreen from './src/screens/FeedbackScreen';
 // import LeaderboardScreen from './src/screens/LeaderboardScreen'; // tạm ẩn Leaderboard (không xoá)
 import ProfileScreen from './src/screens/ProfileScreen';
 import { useProfileStore } from './src/store/profileStore';
+import { useCreditsStore } from './src/store/creditsStore';
 import type { RootStackParamList } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -52,6 +54,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
   useEffect(() => {
     useProfileStore.getState().init();
+    useCreditsStore.getState().init();
+    mobileAds().initialize();
   }, []);
 
   return (

@@ -1,4 +1,6 @@
 export type DifficultyLevel = 'easy' | 'medium' | 'hard';
+// Play-credit pool key — one shared pool per game family (Solo + Battle share it).
+export type GameFamily = 'math' | 'vocab' | 'color' | 'memory' | 'flag';
 export type MathOperation =
   | 'addition' | 'subtraction' | 'multiplication' | 'division' | 'mixed'
   | 'conversion' | 'fraction' | 'sequence' | 'count' | 'comparison';

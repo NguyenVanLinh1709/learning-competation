@@ -11,11 +11,14 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemoryBattleStore } from '../store/memoryBattleStore';
 import { useColorMemoryBattleStore } from '../store/colorMemoryBattleStore';
 import { COLOR_MEMORY_GRID_DIM_MIN, COLOR_MEMORY_GRID_DIM_MAX } from '../store/colorMemoryStore';
+import { useCreditsStore } from '../store/creditsStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import CreditsBadge from '../components/CreditsBadge';
+import OutOfCreditsModal from '../components/OutOfCreditsModal';
 import PlayerNames from '../components/PlayerNames';
 import TourButton from '../components/TourButton';
 import TourOverlay from '../components/TourOverlay';
@@ -65,6 +68,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+  const [outOfCreditsVisible, setOutOfCreditsVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollYRef = useRef(0);
@@ -140,8 +144,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
   const canStart = p1Name.trim().length > 0 && p2Name.trim().length > 0;
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-  const handleStart = () => {
-    if (!canStart) return;
+  const proceedToGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     saveLastSetup<LastSetup>(LAST_SETUP_KEY, {
       p1Name: p1Name.trim(), p2Name: p2Name.trim(), mode, gridDim, steps, colorGridDim, questionCount, timeLimitMs,
@@ -165,6 +168,15 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
         timeLimitMs,
       });
       navigation.navigate('MemoryBattleGame');
+    }
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (useCreditsStore.getState().consumeCredit('memory')) {
+      proceedToGame();
+    } else {
+      setOutOfCreditsVisible(true);
     }
   };
 
@@ -349,6 +361,7 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
 
         {/* Start — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 12, borderTopColor: C.border }]}>
+          <CreditsBadge family="memory" />
           <TouchableOpacity
             ref={startBtnTarget.ref}
             onLayout={startBtnTarget.onLayout}
@@ -377,6 +390,13 @@ export default function MemoryBattleSetupScreen({ navigation }: Props) {
         title={t.howToPlayTitle}
         body={isColor ? t.colorMemoryBattleHowTo : t.memoryFlashBattleHowTo}
         accentColor={accentColor}
+      />
+
+      <OutOfCreditsModal
+        visible={outOfCreditsVisible}
+        family="memory"
+        onCancel={() => setOutOfCreditsVisible(false)}
+        onGranted={() => { setOutOfCreditsVisible(false); proceedToGame(); }}
       />
 
       <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />

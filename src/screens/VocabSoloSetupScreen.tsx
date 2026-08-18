@@ -9,11 +9,14 @@ import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useVocabSoloStore } from '../store/vocabSoloStore';
 import { useProfileStore } from '../store/profileStore';
+import { useCreditsStore } from '../store/creditsStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import CreditsBadge from '../components/CreditsBadge';
+import OutOfCreditsModal from '../components/OutOfCreditsModal';
 import TourButton from '../components/TourButton';
 import TourOverlay from '../components/TourOverlay';
 import { useTourStore } from '../store/tourStore';
@@ -54,6 +57,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+  const [outOfCreditsVisible, setOutOfCreditsVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollYRef = useRef(0);
@@ -113,13 +117,21 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
     { label: t.vocabExpert, value: 'expert', emoji: '🧠' },
   ];
 
-  const handleStart = () => {
-    if (!canStart) return;
+  const proceedToGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setDisplayName(playerName.trim());
     setConfig({ playerName: playerName.trim(), difficulty, totalQuestions: questionCount, timeLimitMs, vocabMode });
     saveLastSetup<LastSetup>(LAST_SETUP_KEY, { vocabMode, difficulty, questionCount, timeLimitMs });
     navigation.navigate('VocabSoloGame');
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (useCreditsStore.getState().consumeCredit('vocab')) {
+      proceedToGame();
+    } else {
+      setOutOfCreditsVisible(true);
+    }
   };
 
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -257,6 +269,7 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
 
         {/* Start button — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 10, borderTopColor: C.border }]}>
+          <CreditsBadge family="vocab" />
           <TouchableOpacity
             ref={startBtnTarget.ref}
             onLayout={startBtnTarget.onLayout}
@@ -282,6 +295,13 @@ export default function VocabSoloSetupScreen({ navigation }: Props) {
         onClose={() => setHowToOpen(false)}
         title={t.howToPlayTitle}
         body={t.vocabSoloHowTo}
+      />
+
+      <OutOfCreditsModal
+        visible={outOfCreditsVisible}
+        family="vocab"
+        onCancel={() => setOutOfCreditsVisible(false)}
+        onGranted={() => { setOutOfCreditsVisible(false); proceedToGame(); }}
       />
 
       <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />

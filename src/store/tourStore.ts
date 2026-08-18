@@ -49,7 +49,14 @@ export const useTourStore = create<TourStore>((set, get) => ({
       return { targets: next };
     }),
 
-  startTour: (tourId, steps) => set({ activeTour: tourId, steps, stepIndex: 0 }),
+  // Tour guide feature temporarily disabled — not ready to release yet.
+  // This is the single kill-switch: every screen still calls startTour() on
+  // first visit / via the tour button, but it's now a no-op so activeTour
+  // never becomes truthy, which makes TourOverlay (`if (!activeTour) return
+  // null;`) and useTourTarget's re-measure effect inert everywhere for free.
+  // Uncomment the line below (and TourButton.tsx's real render) to re-enable.
+  // startTour: (tourId, steps) => set({ activeTour: tourId, steps, stepIndex: 0 }),
+  startTour: () => {},
 
   // Re-resolves the step list of the tour currently running (e.g. Memory Setup
   // switching Flash <-> Color mid-tour) without losing which step the user is on.

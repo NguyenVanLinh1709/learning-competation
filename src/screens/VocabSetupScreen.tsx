@@ -8,11 +8,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useVocabStore } from '../store/vocabStore';
+import { useCreditsStore } from '../store/creditsStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import CreditsBadge from '../components/CreditsBadge';
+import OutOfCreditsModal from '../components/OutOfCreditsModal';
 import PlayerNames from '../components/PlayerNames';
 import TourButton from '../components/TourButton';
 import TourOverlay from '../components/TourOverlay';
@@ -53,6 +56,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+  const [outOfCreditsVisible, setOutOfCreditsVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollYRef = useRef(0);
@@ -116,8 +120,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
 
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-  const handleStart = () => {
-    if (!canStart) return;
+  const proceedToGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setConfig({
       player1Name: p1Name.trim(),
@@ -131,6 +134,15 @@ export default function VocabSetupScreen({ navigation }: Props) {
       p1Name: p1Name.trim(), p2Name: p2Name.trim(), vocabMode, difficulty, questionCount, timeLimitMs,
     });
     navigation.navigate('VocabCountdown');
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (useCreditsStore.getState().consumeCredit('vocab')) {
+      proceedToGame();
+    } else {
+      setOutOfCreditsVisible(true);
+    }
   };
 
   return (
@@ -260,6 +272,7 @@ export default function VocabSetupScreen({ navigation }: Props) {
 
         {/* Start — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 10, borderTopColor: C.border }]}>
+          <CreditsBadge family="vocab" />
           <TouchableOpacity
             ref={startBtnTarget.ref}
             onLayout={startBtnTarget.onLayout}
@@ -285,6 +298,13 @@ export default function VocabSetupScreen({ navigation }: Props) {
         onClose={() => setHowToOpen(false)}
         title={t.howToPlayTitle}
         body={t.vocabBattleHowTo}
+      />
+
+      <OutOfCreditsModal
+        visible={outOfCreditsVisible}
+        family="vocab"
+        onCancel={() => setOutOfCreditsVisible(false)}
+        onGranted={() => { setOutOfCreditsVisible(false); proceedToGame(); }}
       />
 
       <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />

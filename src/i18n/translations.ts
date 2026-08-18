@@ -64,6 +64,17 @@ export interface Translations {
   quitAction: string;
   cancelAction: string;
 
+  // Play credits / rewarded ads
+  creditsRemaining: (n: number) => string;
+  creditsBankFull: string;
+  creditsExpireHint: (hours: number) => string;
+  outOfCreditsTitle: string;
+  outOfCreditsMessage: string;
+  watchAdButton: string;
+  watchAdLoading: string;
+  watchAdFailed: string;
+  retryAction: string;
+
   // Countdown
   getReady: string;
 
@@ -296,6 +307,16 @@ const en: Translations = {
   quitAction: 'Quit',
   cancelAction: 'Cancel',
 
+  creditsRemaining: (n) => `${n} play${n === 1 ? '' : 's'} left`,
+  creditsBankFull: 'Bank full',
+  creditsExpireHint: (hours) => `Bonus plays expire in ~${hours}h`,
+  outOfCreditsTitle: 'Out of plays',
+  outOfCreditsMessage: 'Watch a short ad to get more plays for this game.',
+  watchAdButton: 'Watch Ad',
+  watchAdLoading: 'Loading ad…',
+  watchAdFailed: "Couldn't load the ad. Please try again.",
+  retryAction: 'Retry',
+
   getReady: 'Get ready…',
 
   wins: (name) => `${name} WINS!`,
@@ -513,6 +534,16 @@ const vi: Translations = {
   quitAction: 'Thoát',
   cancelAction: 'Hủy',
 
+  creditsRemaining: (n) => `Còn ${n} lượt`,
+  creditsBankFull: 'Đã đầy',
+  creditsExpireHint: (hours) => `Lượt tích lũy hết hạn sau ~${hours}h`,
+  outOfCreditsTitle: 'Hết lượt chơi',
+  outOfCreditsMessage: 'Xem một quảng cáo ngắn để nhận thêm lượt chơi cho game này.',
+  watchAdButton: 'Xem quảng cáo',
+  watchAdLoading: 'Đang tải quảng cáo…',
+  watchAdFailed: 'Không tải được quảng cáo. Vui lòng thử lại.',
+  retryAction: 'Thử lại',
+
   getReady: 'Chuẩn bị…',
 
   wins: (name) => `${name} THẮNG!`,
@@ -729,6 +760,16 @@ const zh: Translations = {
   quitMessage: '确定要退出吗？',
   quitAction: '退出',
   cancelAction: '取消',
+
+  creditsRemaining: (n) => `剩余 ${n} 次`,
+  creditsBankFull: '已存满',
+  creditsExpireHint: (hours) => `奖励次数将在约 ${hours} 小时后过期`,
+  outOfCreditsTitle: '游戏次数已用完',
+  outOfCreditsMessage: '观看一段简短的广告即可获得更多游戏次数。',
+  watchAdButton: '观看广告',
+  watchAdLoading: '广告加载中…',
+  watchAdFailed: '广告加载失败，请重试。',
+  retryAction: '重试',
 
   getReady: '准备好了吗…',
 

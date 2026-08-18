@@ -19,6 +19,9 @@ type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>
 
 const LANG_ORDER: LangCode[] = ['en', 'vi', 'zh'];
 const APP_VERSION = Constants.expoConfig?.version;
+// Android's versionCode is what Google Play Console uses to identify each
+// uploaded build — shown alongside the marketing version for easy lookup.
+const APP_VERSION_CODE = Constants.expoConfig?.android?.versionCode;
 
 export default function HomeScreen({ navigation }: Props) {
   const { C, G, isDark, toggle } = useTheme();
@@ -279,7 +282,7 @@ export default function HomeScreen({ navigation }: Props) {
 
         {APP_VERSION && (
           <Text style={[styles.version, { color: C.textMuted, fontSize: ms(11) }]}>
-            v{APP_VERSION}
+            v{APP_VERSION}{APP_VERSION_CODE ? ` (${APP_VERSION_CODE})` : ''}
           </Text>
         )}
       </View>

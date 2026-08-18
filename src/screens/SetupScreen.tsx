@@ -8,11 +8,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useGameStore } from '../store/gameStore';
+import { useCreditsStore } from '../store/creditsStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import CreditsBadge from '../components/CreditsBadge';
+import OutOfCreditsModal from '../components/OutOfCreditsModal';
 import PlayerNames from '../components/PlayerNames';
 import TourButton from '../components/TourButton';
 import TourOverlay from '../components/TourOverlay';
@@ -53,6 +56,7 @@ export default function SetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+  const [outOfCreditsVisible, setOutOfCreditsVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollYRef = useRef(0);
@@ -129,14 +133,22 @@ export default function SetupScreen({ navigation }: Props) {
     { emoji: '⚖️', label: t.comparisonOp, value: 'comparison' as MathOperation },
   ];
 
-  const handleStart = () => {
-    if (!canStart) return;
+  const proceedToGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setConfig({ player1Name: p1Name.trim(), player2Name: p2Name.trim(), difficulty, operation, totalQuestions: questionCount, timeLimitMs });
     saveLastSetup<LastSetup>(LAST_SETUP_KEY, {
       p1Name: p1Name.trim(), p2Name: p2Name.trim(), difficulty, operation, questionCount, timeLimitMs,
     });
     navigation.navigate('Countdown');
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (useCreditsStore.getState().consumeCredit('math')) {
+      proceedToGame();
+    } else {
+      setOutOfCreditsVisible(true);
+    }
   };
 
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -278,6 +290,7 @@ export default function SetupScreen({ navigation }: Props) {
 
         {/* Start button — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
+          <CreditsBadge family="math" />
           <TouchableOpacity
             ref={startBtnTarget.ref}
             onLayout={startBtnTarget.onLayout}
@@ -303,6 +316,13 @@ export default function SetupScreen({ navigation }: Props) {
         onClose={() => setHowToOpen(false)}
         title={t.howToPlayTitle}
         body={t.mathBattleHowTo}
+      />
+
+      <OutOfCreditsModal
+        visible={outOfCreditsVisible}
+        family="math"
+        onCancel={() => setOutOfCreditsVisible(false)}
+        onGranted={() => { setOutOfCreditsVisible(false); proceedToGame(); }}
       />
 
       <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />

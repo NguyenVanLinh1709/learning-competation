@@ -8,11 +8,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useFlagBattleStore } from '../store/flagBattleStore';
+import { useCreditsStore } from '../store/creditsStore';
 import { useLanguageStore } from '../store/languageStore';
 import { useTheme } from '../hooks/useTheme';
 import BackButton from '../components/BackButton';
 import InfoButton from '../components/InfoButton';
 import HowToPlayModal from '../components/HowToPlayModal';
+import CreditsBadge from '../components/CreditsBadge';
+import OutOfCreditsModal from '../components/OutOfCreditsModal';
 import PlayerNames from '../components/PlayerNames';
 import TourButton from '../components/TourButton';
 import TourOverlay from '../components/TourOverlay';
@@ -54,6 +57,7 @@ export default function FlagBattleSetupScreen({ navigation }: Props) {
   const { C, G } = useTheme();
   const insets = useSafeAreaInsets();
   const [howToOpen, setHowToOpen] = useState(false);
+  const [outOfCreditsVisible, setOutOfCreditsVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollYRef = useRef(0);
@@ -113,8 +117,7 @@ export default function FlagBattleSetupScreen({ navigation }: Props) {
 
   const tap = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-  const handleStart = () => {
-    if (!canStart) return;
+  const proceedToGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setConfig({
       player1Name: p1Name.trim(),
@@ -127,6 +130,15 @@ export default function FlagBattleSetupScreen({ navigation }: Props) {
       p1Name: p1Name.trim(), p2Name: p2Name.trim(), difficulty, questionCount, timeLimitMs,
     });
     navigation.navigate('FlagBattleGame');
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (useCreditsStore.getState().consumeCredit('flag')) {
+      proceedToGame();
+    } else {
+      setOutOfCreditsVisible(true);
+    }
   };
 
   return (
@@ -228,6 +240,7 @@ export default function FlagBattleSetupScreen({ navigation }: Props) {
 
         {/* Start — fixed footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 16, borderTopColor: C.border }]}>
+          <CreditsBadge family="flag" />
           <TouchableOpacity
             ref={startBtnTarget.ref}
             onLayout={startBtnTarget.onLayout}
@@ -253,6 +266,13 @@ export default function FlagBattleSetupScreen({ navigation }: Props) {
         onClose={() => setHowToOpen(false)}
         title={t.howToPlayTitle}
         body={t.flagBattleHowTo}
+      />
+
+      <OutOfCreditsModal
+        visible={outOfCreditsVisible}
+        family="flag"
+        onCancel={() => setOutOfCreditsVisible(false)}
+        onGranted={() => { setOutOfCreditsVisible(false); proceedToGame(); }}
       />
 
       <TourOverlay scrollViewRef={scrollViewRef} scrollYRef={scrollYRef} />
